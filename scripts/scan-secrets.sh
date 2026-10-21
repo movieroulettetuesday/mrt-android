@@ -30,7 +30,7 @@ CONTENT_PATTERNS=(
   '^[[:space:]]*[a-z0-9_.]*(password|passwd|secret|token|api_key|apikey)[[:space:]]*[=:][[:space:]]*[^[:space:]$"'"'"'{(]{8,}'
 )
 # Blocked file names (basename or path regex).
-FILE_PATTERNS='(\.jks|\.keystore|\.p12|\.p8|\.pem|\.key|\.mobileprovision)$|(^|/)google-services\.json$|(^|/)GoogleService-Info\.plist$|(^|/)\.env(\..*)?$|(^|/)local\.properties$|(^|/)(keystore|signing)\.properties$'
+FILE_PATTERNS='(^|/)\.dev\.vars(\..*)?$|(\.jks|\.keystore|\.p12|\.p8|\.pem|\.key|\.mobileprovision)$|(^|/)google-services\.json$|(^|/)GoogleService-Info\.plist$|(^|/)\.env(\..*)?$|(^|/)local\.properties$|(^|/)(keystore|signing)\.properties$'
 ALLOW_FILES='(^|/)\.env\.example$|^scripts/scan-secrets\.sh$'
 
 findings=0
@@ -55,7 +55,7 @@ check_text() {
     fi
   done
   # Literal value of a known secret from the environment, if set (value never printed).
-  for v in TMDB_API_TOKEN MRT_UPLOAD_KEYSTORE_PASSWORD MRT_UPLOAD_KEY_PASSWORD; do
+  for v in TMDB_API_TOKEN MRT_UPLOAD_KEYSTORE_PASSWORD MRT_UPLOAD_KEY_PASSWORD MRT_CLOUDKIT_API_TOKEN CK_KEY_ID CK_PRIVATE_KEY; do
     local val="${!v:-}"
     if [ -n "$val" ] && [ "${#val}" -ge 8 ] && printf '%s' "$text" | grep -F -q -e "$val"; then
       report "$label: contains the value of \$$v"

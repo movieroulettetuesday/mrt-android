@@ -1,0 +1,22 @@
+# Cloudflare Worker for the MRT Android community writes (see ../KEYS_SETUP.md).
+# No secrets here: CK_KEY_ID and CK_PRIVATE_KEY are set with `wrangler secret put`.
+name = "mrt-community-relay"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+CK_CONTAINER = "iCloud.com.movieroulettetuesday.app"
+CK_ENVIRONMENT = "production"
+
+# Per-client-IP limits (Workers Rate Limiting API; counters are per Cloudflare location, best effort).
+# namespace_id is any account-unique integer string; period must be 10 or 60 seconds.
+[[ratelimits]]
+name = "WRITE_LIMITER"
+namespace_id = "7301"
+simple = { limit = 20, period = 60 }
+
+[[ratelimits]]
+name = "SUGGEST_LIMITER"
+namespace_id = "7302"
+simple = { limit = 2, period = 60 }

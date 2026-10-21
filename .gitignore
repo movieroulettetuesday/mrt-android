@@ -33,3 +33,9 @@ GoogleService-Info.plist
 .env
 .env.*
 !.env.example
+
+# relay/ (Cloudflare Worker): dependencies, wrangler state, local secrets
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
