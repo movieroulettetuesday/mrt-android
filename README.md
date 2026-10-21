@@ -7,7 +7,7 @@ Native Android port of the Movie Roulette Tuesday iOS app
 - Package / applicationId: `com.movieroulettetuesday.app` (same as the iOS bundle id)
 - minSdk 26, targetSdk/compileSdk 36
 - Versioning: `versionName` is semantic (`MAJOR.MINOR.PATCH`); `versionCode` is an integer that goes up by 1 for every Play upload and is never reused.
-- Feature parity checklist: [PARITY.md](PARITY.md)
+- Feature parity checklist: [PARITY.md](PARITY.md) · backend options: [docs/backend-options.md](docs/backend-options.md) · dev notes: [docs/NOTES.md](docs/NOTES.md)
 
 ## Build
 
