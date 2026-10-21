@@ -70,6 +70,11 @@ interface CommunityStore {
     /** recordName → half-stars 1...10. */
     suspend fun fetchRatings(movieId: String): Map<String, Int>
     suspend fun submitRating(movieId: String, halfStars: Int): String
+    /**
+     * Bulk read for the jackpot averages (iOS 56606a6): movieId → (recordName → half-stars) for the
+     * given ids (callers chunk to ≤ 100). Default: one [fetchRatings] per movie.
+     */
+    suspend fun fetchRatings(movieIds: List<String>): Map<String, Map<String, Int>> = movieIds.associateWith { fetchRatings(it) }
     suspend fun submitSuggestion(suggestion: InAppSuggestion, appVersion: String)
 }
 
@@ -90,14 +95,27 @@ class WebCommunityStore(
             URLEncoder.encode(config.apiToken, "UTF-8")
 
     override suspend fun fetchVotes(pollId: String): Map<String, String> =
-        query(CommunityRecordNames.VOTE_RECORD_TYPE, "pollId", pollId, listOf("option")) { fields ->
+        query(CommunityRecordNames.VOTE_RECORD_TYPE, "pollId", JsonPrimitive(pollId), "STRING", listOf("option")) { fields ->
             fields.string("option")
         }
 
     override suspend fun fetchRatings(movieId: String): Map<String, Int> =
-        query(CommunityRecordNames.RATING_RECORD_TYPE, "movieId", movieId, listOf("halfStars", "stars")) { fields ->
+        query(CommunityRecordNames.RATING_RECORD_TYPE, "movieId", JsonPrimitive(movieId), "STRING", listOf("halfStars", "stars")) { fields ->
             HalfStars.resolved(fields.int("halfStars"), fields.int("stars"))
         }
+
+    /** `ListenerRating WHERE movieId IN <chunk>`, 200 per page, at most 5,000 records per chunk. */
+    override suspend fun fetchRatings(movieIds: List<String>): Map<String, Map<String, Int>> {
+        if (movieIds.isEmpty()) return emptyMap()
+        val out = LinkedHashMap<String, MutableMap<String, Int>>()
+        val rows = query(CommunityRecordNames.RATING_RECORD_TYPE, "movieId", JsonArray(movieIds.map(::JsonPrimitive)), "STRING_LIST",
+            listOf("movieId", "halfStars", "stars"), BULK_MAX_RECORDS) { fields ->
+            val movie = fields.string("movieId") ?: return@query null
+            HalfStars.resolved(fields.int("halfStars"), fields.int("stars"))?.let { movie to it }
+        }
+        rows.forEach { (name, pair) -> out.getOrPut(pair.first) { LinkedHashMap() }[name] = pair.second }
+        return out
+    }
 
     override suspend fun submitVote(pollId: String, option: String): String {
         val key = CommunityRecordNames.voteKey(pollId, installId())
@@ -128,8 +146,10 @@ class WebCommunityStore(
     private suspend fun <V> query(
         recordType: String,
         field: String,
-        value: String,
+        value: JsonElement,
+        valueType: String,
         desiredKeys: List<String>,
+        maxRecords: Int = MAX_RECORDS,
         decode: (JsonObject) -> V?,
     ): Map<String, V> {
         if (!config.canRead) throw CommunityError.NotSetUp()
@@ -144,8 +164,8 @@ class WebCommunityStore(
                     putJsonArray("filterBy") {
                         add(buildJsonObject {
                             put("fieldName", field)
-                            put("comparator", "EQUALS")
-                            putJsonObject("fieldValue") { put("value", value); put("type", "STRING") }
+                            put("comparator", if (valueType == "STRING_LIST") "IN" else "EQUALS")
+                            putJsonObject("fieldValue") { put("value", value); put("type", valueType) }
                         })
                     }
                 }
@@ -160,7 +180,7 @@ class WebCommunityStore(
                 val name = (o["recordName"] as? JsonPrimitive)?.content ?: continue
                 val fields = o["fields"] as? JsonObject ?: continue
                 decode(fields)?.let { out[name] = it }
-                if (out.size >= MAX_RECORDS) return out
+                if (out.size >= maxRecords) return out
             }
             marker = (json["continuationMarker"] as? JsonPrimitive)?.content?.takeIf { it.isNotEmpty() }
         } while (marker != null)
@@ -196,6 +216,8 @@ class WebCommunityStore(
     companion object {
         const val PAGE_SIZE = 200
         const val MAX_RECORDS = 2000
+        const val BULK_MAX_RECORDS = 5000
+        const val BULK_CHUNK = 100
 
         private fun JsonElement.str(): String? = (this as? JsonPrimitive)?.takeIf { it.isString }?.content
         private fun JsonObject.string(k: String) = this[k]?.jsonObjectOrNull()?.get("value")?.str()

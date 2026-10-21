@@ -36,7 +36,7 @@ class CommunityService(
     private val store: CommunityStore,
     private val defaults: KeyValueStore,
     val pollOverrides: PollOverrides? = null,
-    clock: () -> Long = System::currentTimeMillis,
+    private val clock: () -> Long = System::currentTimeMillis,
 ) {
     private data class Local<V>(val value: V, val recordName: String)
 
@@ -48,6 +48,11 @@ class CommunityService(
     private val pollCache = TimedCache<String, Map<String, String>>(60_000, clock = clock)
     private val ratingCache = TimedCache<String, Map<String, Int>>(60_000, clock = clock)
     private val backoff = CommunityBackoff(clock)
+
+    /** Bulk-read averages for the rating-weighted jackpot (`community.listenerRatingsSnapshot`). */
+    private var snapshot: Map<String, RatingAggregate> = loadSnapshot()
+    private var lastBulkStart: Long? = null
+    private val ratingFetchedAt = HashMap<String, Long>()
 
     init {
         _state.update { it.copy(myVotes = votedPolls.mapValues { e -> e.value.value }, myRatings = listenerRatings.mapValues { e -> e.value.value }) }
@@ -135,6 +140,7 @@ class CommunityService(
         try {
             val ratings = store.fetchRatings(movieId)
             ratingCache.insert(movieId, ratings)
+            ratingFetchedAt[movieId] = clock()
             setError(movieId, null)
             publishRating(movieId, ratings)
         } catch (e: Exception) {
@@ -173,9 +179,77 @@ class CommunityService(
         _state.update { it.copy(ratingAggregates = it.ratingAggregates + (movieId to RatingAggregate.fromHalfStars(merged.values))) }
     }
 
-    /** Listener averages in stars for movies loaded so far (for a rating-weighted jackpot). */
-    fun knownAverages(): Map<String, Double> =
-        _state.value.ratingAggregates.mapNotNull { (id, agg) -> agg.average?.let { id to it } }.toMap()
+    /**
+     * Listener averages in stars for the rating-weighted jackpot: the bulk snapshot, overlaid by any
+     * movie page loaded since. Missing movies count as unrated in the selector.
+     */
+    fun knownAverages(): Map<String, Double> {
+        val out = HashMap<String, Double>()
+        snapshot.forEach { (id, agg) -> agg.average?.let { out[id] = it } }
+        _state.value.ratingAggregates.forEach { (id, agg) -> agg.average?.let { out[id] = it } ?: out.remove(id) }
+        return out
+    }
+
+    /**
+     * Bulk read (iOS 56606a6): `ListenerRating WHERE movieId IN` chunks of ≤ 100 catalog ids, at launch
+     * once the catalog loads and after an episode refresh; at most once every 5 minutes and never
+     * during a back-off. Failures are silent (previous values kept). Per-movie data fetched after
+     * the bulk read started is not overwritten; this device's own rating is merged by record name.
+     */
+    suspend fun refreshListenerAverages(movieIds: List<String>, force: Boolean = false) {
+        val ids = movieIds.distinct()
+        if (ids.isEmpty() || backoff.secondsRemaining() != null) return
+        val started = clock()
+        lastBulkStart?.let { if (!force && started - it < BULK_INTERVAL_MS) return }
+        lastBulkStart = started
+        val fetched = HashMap<String, Map<String, Int>>()
+        try {
+            for (chunk in ids.chunked(WebCommunityStore.BULK_CHUNK)) fetched += store.fetchRatings(chunk)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            backoff.note(e)
+            return
+        }
+        val next = snapshot.toMutableMap()
+        for (id in ids) {
+            if ((ratingFetchedAt[id] ?: Long.MIN_VALUE) >= started) continue
+            val merged = CommunityMerge.merging(fetched[id].orEmpty(), own(listenerRatings[id]))
+            next[id] = RatingAggregate.fromHalfStars(merged.values)
+        }
+        snapshot = next
+        saveSnapshot(next, started)
+    }
+
+    private fun loadSnapshot(): Map<String, RatingAggregate> {
+        val root = loadObject(SNAPSHOT_KEY) ?: return emptyMap()
+        if ((root["version"] as? JsonPrimitive)?.intOrNull != 1) return emptyMap()
+        val movies = root["movies"] as? JsonObject ?: return emptyMap()
+        val out = HashMap<String, RatingAggregate>()
+        for ((id, e) in movies) {
+            val o = e as? JsonObject ?: continue
+            val count = (o["count"] as? JsonPrimitive)?.intOrNull ?: continue
+            val avg = (o["average"] as? JsonPrimitive)?.takeUnless { it is kotlinx.serialization.json.JsonNull }?.content?.toDoubleOrNull()
+            val hist = (o["histogram"] as? kotlinx.serialization.json.JsonArray)?.mapNotNull { (it as? JsonPrimitive)?.intOrNull }
+            if (count < 0 || hist == null || hist.size != 5 || (avg != null && !avg.isFinite())) continue
+            out[id] = RatingAggregate(count, avg, hist)
+        }
+        return out
+    }
+
+    private fun saveSnapshot(map: Map<String, RatingAggregate>, at: Long) = defaults.putString(SNAPSHOT_KEY, buildJsonObject {
+        put("version", 1)
+        put("updatedAt", at / 1000.0) // seconds since 1970 (Android-only storage)
+        put("movies", buildJsonObject {
+            map.forEach { (id, a) ->
+                put(id, buildJsonObject {
+                    put("count", a.count)
+                    put("average", a.average?.let(::JsonPrimitive) ?: kotlinx.serialization.json.JsonNull)
+                    put("histogram", kotlinx.serialization.json.JsonArray(a.histogram.map(::JsonPrimitive)))
+                })
+            }
+        })
+    }.toString())
 
     // endregion
 
@@ -247,5 +321,7 @@ class CommunityService(
     companion object {
         const val VOTED_POLLS_KEY = "community.votedPolls"
         const val LISTENER_HALF_STARS_KEY = "community.listenerHalfStars"
+        const val SNAPSHOT_KEY = "community.listenerRatingsSnapshot"
+        const val BULK_INTERVAL_MS = 5 * 60 * 1000L
     }
 }

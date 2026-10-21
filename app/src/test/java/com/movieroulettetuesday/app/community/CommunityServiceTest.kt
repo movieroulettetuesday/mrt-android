@@ -133,4 +133,36 @@ class CommunityServiceTest {
         defaults.putString(InstallId.KEY, "garbage")
         assertNotEquals("garbage", InstallId(defaults).value)
     }
+
+    @Test
+    fun bulkAveragesThrottleSnapshotAndNeverOverwriteFresherData() = runBlocking {
+        val store = FakeCommunityStore().apply {
+            ratings["a"] = mutableMapOf("r1" to 2)          // 1 star
+            ratings["b"] = mutableMapOf("r2" to 10, "r3" to 8) // 4.5
+        }
+        val s = CommunityService(store, defaults, clock = { now })
+        s.refreshListenerAverages(listOf("a", "b", "c"))
+        assertEquals(mapOf("a" to 1.0, "b" to 4.5), s.knownAverages())
+        val calls = store.fetches
+        now += 60_000
+        s.refreshListenerAverages(listOf("a", "b", "c")) // < 5 min: skipped
+        assertEquals(calls, store.fetches)
+        // Snapshot survives a restart (first spin already weighted).
+        val restarted = CommunityService(store, defaults, clock = { now })
+        assertEquals(mapOf("a" to 1.0, "b" to 4.5), restarted.knownAverages())
+        assertTrue(defaults.getString(CommunityService.SNAPSHOT_KEY)!!.contains("\"version\":1"))
+        // A movie page loaded later wins over the snapshot.
+        store.ratings["a"] = mutableMapOf("r1" to 2, "r9" to 10)
+        restarted.loadRating("a")
+        assertEquals(3.0, restarted.knownAverages()["a"]!!, 1e-9)
+        // Failure is silent and keeps previous values; it also starts a back-off.
+        now += 10 * 60_000
+        store.fail = CommunityError.Busy(30)
+        restarted.refreshListenerAverages(listOf("a", "b"))
+        assertEquals(4.5, restarted.knownAverages()["b"]!!, 1e-9)
+        assertTrue(restarted.state.value.errors.isEmpty())
+        // Corrupt / unknown-version cache counts as none.
+        defaults.putString(CommunityService.SNAPSHOT_KEY, "{\"version\":2,\"movies\":{}}")
+        assertTrue(CommunityService(store, defaults).knownAverages().isEmpty())
+    }
 }

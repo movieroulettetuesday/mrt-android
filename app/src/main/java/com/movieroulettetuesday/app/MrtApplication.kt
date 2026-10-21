@@ -27,6 +27,7 @@ import com.movieroulettetuesday.app.notifications.NewEpisodeWatermarkStore
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -50,8 +51,24 @@ class MrtApplication : Application() {
         if (!isUnderTest && preferences.newEpisodeAlerts.value) NewEpisodeSchedule.schedule(this) // KEEP: no reset
         val config = if (isUnderTest) CommunityConfig.disabled
         else CommunityConfig.fromBuild(BuildConfig.MRT_CLOUDKIT_API_TOKEN, BuildConfig.MRT_RELAY_URL)
-        if (config.canRead) community = createCommunity(WebCommunityStore(config, installId = { InstallId(settings).value }))
+        if (config.canRead) {
+            community = createCommunity(WebCommunityStore(config, installId = { InstallId(settings).value }))
+            // Jackpot averages: one bulk read once the catalog has loaded (iOS 56606a6).
+            appScope.launch {
+                val loaded = catalogRepository.state.first { it is CatalogRepository.State.Loaded } as CatalogRepository.State.Loaded
+                refreshListenerAverages(loaded.catalog)
+            }
+        }
     }
+
+    private suspend fun refreshListenerAverages(catalog: com.movieroulettetuesday.app.catalog.MovieCatalog?) {
+        val c = community ?: return
+        catalog ?: return
+        c.refreshListenerAverages(catalog.movies.map { it.id })
+    }
+
+    /** Listener averages for `RatingWeightedSelector` (swap in when iOS 1.0.1 ships; default stays iOS main). */
+    val listenerAverages: () -> Map<String, Double> = { community?.knownAverages().orEmpty() }
 
     /**
      * Listener polls + ratings (Option A: CloudKit Web Services reads, relay writes). null = this
@@ -82,7 +99,12 @@ class MrtApplication : Application() {
                 widgetBridge.publishLatestEpisode(it)
             }
             // iOS ContentView: the catalog refreshes at launch and after each feed fetch (no foreground trigger).
-            repo.onNetworkFetched = { appScope.launch { if (catalogRepository.refresh()) widgetBridge.catalogUpdated() } }
+            repo.onNetworkFetched = {
+                appScope.launch {
+                    if (catalogRepository.refresh()) widgetBridge.catalogUpdated()
+                    refreshListenerAverages((catalogRepository.state.value as? CatalogRepository.State.Loaded)?.catalog)
+                }
+            }
         }
     }
 

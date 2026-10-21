@@ -147,4 +147,18 @@ class WebCommunityStoreTest {
         val dead = WebCommunityStore(CommunityConfig("tok", "", cloudKitBase = "http://127.0.0.1:1"), { installId }, 2_000)
         try { dead.fetchVotes("p"); fail() } catch (_: CommunityError.Offline) {}
     }
+
+    @Test
+    fun bulkRatingsUseInQueryAndGroupByMovie() = runBlocking {
+        mock.handler = {
+            Reply(200, """{"records":[${MockCloudKit.ratingRecord("r1", 7, 4).replace("\"value\":\"m\"", "\"value\":\"a\"")},${MockCloudKit.ratingRecord("r2", null, 2).replace("\"value\":\"m\"", "\"value\":\"b\"")},${MockCloudKit.ratingRecord("r3", 10, 5).replace("\"value\":\"m\"", "\"value\":\"a\"")}]}""")
+        }
+        val got = store().fetchRatings(listOf("a", "b", "c"))
+        assertEquals(mapOf("a" to mapOf("r1" to 7, "r3" to 10), "b" to mapOf("r2" to 4)), got)
+        val b = mock.requests.single().body!!
+        assertEquals("IN", b.s("query", "filterBy", "0", "comparator"))
+        assertEquals("STRING_LIST", b.s("query", "filterBy", "0", "fieldValue", "type"))
+        assertEquals("c", b.s("query", "filterBy", "0", "fieldValue", "value", "2"))
+        assertEquals("movieId", b.s("desiredKeys", "0"))
+    }
 }
