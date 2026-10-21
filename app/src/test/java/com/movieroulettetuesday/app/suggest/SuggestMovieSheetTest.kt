@@ -47,7 +47,7 @@ class SuggestMovieSheetTest {
         compose.onNodeWithTag("suggest-email").performScrollTo().assertIsEnabled().performClick()
         val intent = shadowOf(app).nextStartedActivity
         assertEquals(Intent.ACTION_SENDTO, intent.action)
-        assertTrue(intent.dataString!!.startsWith("mailto:theMrtPodcast@gmail.com?subject=Movie%20suggestion%3A%20Tremors"))
+        assertTrue(intent.dataString!!.startsWith("mailto:theMrtPodcast@gmail.com?subject=Movie%20suggestion:%20Tremors"))
         assertEquals("Movie suggestion: Tremors (1990)", intent.getStringExtra(Intent.EXTRA_SUBJECT))
         val body = intent.getStringExtra(Intent.EXTRA_TEXT)!!
         assertTrue(body, body.contains("Why: Graboids\nFrom: Laura from Ohio"))

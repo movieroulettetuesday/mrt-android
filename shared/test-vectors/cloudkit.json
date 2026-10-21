@@ -1,0 +1,600 @@
+{
+  "_generated" : {
+    "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
+    "iosCommit" : "b673df1",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+  },
+  "container" : "iCloud.com.movieroulettetuesday.app",
+  "database" : "public",
+  "defaultPolls" : {
+    "argumentHostEdgeCases" : [
+      {
+        "episodeGuid" : "Buzzsprout-19913482",
+        "hosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Rachael"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Karl"
+          },
+          {
+            "id" : "host-3",
+            "label" : "Matt"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ]
+      },
+      {
+        "episodeGuid" : "Buzzsprout-19913482",
+        "hosts" : [
+          "Solo"
+        ],
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Host A"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Host B"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ]
+      },
+      {
+        "episodeGuid" : "Buzzsprout-19913482",
+        "hosts" : [
+          " A ",
+          "",
+          "B"
+        ],
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "A"
+          },
+          {
+            "id" : "host-2",
+            "label" : "B"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ]
+      }
+    ],
+    "cases" : [
+      {
+        "episodeGuid" : "Buzzsprout-19913482",
+        "kind" : "argument",
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Rachael"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Karl"
+          },
+          {
+            "id" : "host-3",
+            "label" : "Matt"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ],
+        "pollId" : "Buzzsprout-19913482.argument",
+        "question" : "Who won the argument?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-19877460",
+        "kind" : "goodOrBad",
+        "options" : [
+          {
+            "id" : "good",
+            "label" : "Good"
+          },
+          {
+            "id" : "bad",
+            "label" : "Bad"
+          }
+        ],
+        "pollId" : "Buzzsprout-19877460.good-bad",
+        "question" : "Was this movie good or bad?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-1",
+        "kind" : "goodOrBad",
+        "options" : [
+          {
+            "id" : "good",
+            "label" : "Good"
+          },
+          {
+            "id" : "bad",
+            "label" : "Bad"
+          }
+        ],
+        "pollId" : "Buzzsprout-1.good-bad",
+        "question" : "Was this movie good or bad?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-2",
+        "kind" : "goodOrBad",
+        "options" : [
+          {
+            "id" : "good",
+            "label" : "Good"
+          },
+          {
+            "id" : "bad",
+            "label" : "Bad"
+          }
+        ],
+        "pollId" : "Buzzsprout-2.good-bad",
+        "question" : "Was this movie good or bad?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-3",
+        "kind" : "argument",
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Rachael"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Karl"
+          },
+          {
+            "id" : "host-3",
+            "label" : "Matt"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ],
+        "pollId" : "Buzzsprout-3.argument",
+        "question" : "Who won the argument?"
+      },
+      {
+        "episodeGuid" : "weird guid",
+        "kind" : "goodOrBad",
+        "options" : [
+          {
+            "id" : "good",
+            "label" : "Good"
+          },
+          {
+            "id" : "bad",
+            "label" : "Bad"
+          }
+        ],
+        "pollId" : "h433de6f547ea7d3e8f5a0de60071dc6c.good-bad",
+        "question" : "Was this movie good or bad?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-12065131",
+        "kind" : "argument",
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Rachael"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Karl"
+          },
+          {
+            "id" : "host-3",
+            "label" : "Matt"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ],
+        "pollId" : "Buzzsprout-12065131.argument",
+        "question" : "Who won the argument?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-12065362",
+        "kind" : "recommend",
+        "options" : [
+          {
+            "id" : "yes",
+            "label" : "Yes"
+          },
+          {
+            "id" : "no",
+            "label" : "No"
+          }
+        ],
+        "pollId" : "Buzzsprout-12065362.recommend",
+        "question" : "Would you recommend it?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-12096558",
+        "kind" : "argument",
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Rachael"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Karl"
+          },
+          {
+            "id" : "host-3",
+            "label" : "Matt"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ],
+        "pollId" : "Buzzsprout-12096558.argument",
+        "question" : "Who won the argument?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-12096587",
+        "kind" : "goodOrBad",
+        "options" : [
+          {
+            "id" : "good",
+            "label" : "Good"
+          },
+          {
+            "id" : "bad",
+            "label" : "Bad"
+          }
+        ],
+        "pollId" : "Buzzsprout-12096587.good-bad",
+        "question" : "Was this movie good or bad?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-12096595",
+        "kind" : "argument",
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Rachael"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Karl"
+          },
+          {
+            "id" : "host-3",
+            "label" : "Matt"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ],
+        "pollId" : "Buzzsprout-12096595.argument",
+        "question" : "Who won the argument?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-12096601",
+        "kind" : "recommend",
+        "options" : [
+          {
+            "id" : "yes",
+            "label" : "Yes"
+          },
+          {
+            "id" : "no",
+            "label" : "No"
+          }
+        ],
+        "pollId" : "Buzzsprout-12096601.recommend",
+        "question" : "Would you recommend it?"
+      }
+    ],
+    "hosts" : [
+      "Rachael",
+      "Karl",
+      "Matt"
+    ]
+  },
+  "description" : "CloudKit public-DB record naming and poll ids (SPEC §10). Record names must match byte-for-byte so a listener's vote/rating is overwritten, not duplicated.",
+  "pollOverrides" : {
+    "cases" : [
+      {
+        "episodeGuid" : "Buzzsprout-1",
+        "options" : [
+          {
+            "id" : "opt-1",
+            "label" : "Popcorn"
+          },
+          {
+            "id" : "opt-2",
+            "label" : "Nachos"
+          },
+          {
+            "id" : "opt-3",
+            "label" : "Candy"
+          }
+        ],
+        "pollId" : "Buzzsprout-1.snack",
+        "question" : "Best snack?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-2",
+        "options" : [
+          {
+            "id" : "opt-1",
+            "label" : "Yes"
+          },
+          {
+            "id" : "opt-2",
+            "label" : "No"
+          }
+        ],
+        "pollId" : "Buzzsprout-2.custom-52c34abe",
+        "question" : "Rewatch?"
+      },
+      {
+        "episodeGuid" : "Buzzsprout-3",
+        "options" : [
+          {
+            "id" : "host-1",
+            "label" : "Rachael"
+          },
+          {
+            "id" : "host-2",
+            "label" : "Karl"
+          },
+          {
+            "id" : "host-3",
+            "label" : "Matt"
+          },
+          {
+            "id" : "tie",
+            "label" : "Tie"
+          }
+        ],
+        "pollId" : "Buzzsprout-3.argument",
+        "question" : "Who won the argument?"
+      }
+    ],
+    "input" : {
+      "polls" : [
+        {
+          "episodeGuid" : "Buzzsprout-1",
+          "id" : "Buzzsprout-1.snack",
+          "options" : [
+            "Popcorn",
+            "Nachos",
+            "Candy"
+          ],
+          "question" : "Best snack?"
+        },
+        {
+          "episodeGuid" : "Buzzsprout-2",
+          "options" : [
+            "Yes",
+            "No"
+          ],
+          "question" : "Rewatch?"
+        },
+        {
+          "episodeGuid" : "Buzzsprout-3",
+          "options" : [
+            "A"
+          ],
+          "question" : "Only one"
+        }
+      ]
+    }
+  },
+  "ratingFields" : [
+    {
+      "halfStars" : 1,
+      "starsFieldWritten" : 1
+    },
+    {
+      "halfStars" : 2,
+      "starsFieldWritten" : 1
+    },
+    {
+      "halfStars" : 3,
+      "starsFieldWritten" : 2
+    },
+    {
+      "halfStars" : 4,
+      "starsFieldWritten" : 2
+    },
+    {
+      "halfStars" : 5,
+      "starsFieldWritten" : 3
+    },
+    {
+      "halfStars" : 6,
+      "starsFieldWritten" : 3
+    },
+    {
+      "halfStars" : 7,
+      "starsFieldWritten" : 4
+    },
+    {
+      "halfStars" : 8,
+      "starsFieldWritten" : 4
+    },
+    {
+      "halfStars" : 9,
+      "starsFieldWritten" : 5
+    },
+    {
+      "halfStars" : 10,
+      "starsFieldWritten" : 5
+    }
+  ],
+  "ratingRecordName" : [
+    {
+      "expected" : "rating-the-outsiders-1983-392b91ee7132127ad0ade770ab3a6b53a12000db2a18a712e8d0493f9d621fef",
+      "movieId" : "the-outsiders-1983",
+      "userRecordName" : "_2b5f6c0e9d8a7b6c5d4e3f2a1b0c9d8e"
+    },
+    {
+      "expected" : "rating-hc8687a08aa5d6ed2044328fa6a697ab8-4f865c8847763b71b8b69aef02823444ff33298a91a85dcf750e0ed9f1cd3cbb",
+      "movieId" : "a b",
+      "userRecordName" : "_2b5f6c0e9d8a7b6c5d4e3f2a1b0c9d8e"
+    },
+    {
+      "expected" : "rating-the-outsiders-1983-97b5f623e2b09da573d241c1d154c51c6c407f70a4ee730043bfd311ea6cd5ea",
+      "movieId" : "the-outsiders-1983",
+      "userRecordName" : "_abc"
+    },
+    {
+      "expected" : "rating-hc8687a08aa5d6ed2044328fa6a697ab8-143dcbd7b98c1ef5a301a89d167cc035bd107fb0e660ab7a5eb8971b48e6ca81",
+      "movieId" : "a b",
+      "userRecordName" : "_abc"
+    },
+    {
+      "expected" : "rating-the-outsiders-1983-940243027a3c65d431cbd694de382973a8fd91cbeb8fa77d5b087d0391862cbb",
+      "movieId" : "the-outsiders-1983",
+      "userRecordName" : ""
+    },
+    {
+      "expected" : "rating-hc8687a08aa5d6ed2044328fa6a697ab8-4d471aaabe85002bd081e2bcabb3b4e5d2d6c713d61f9c834fb46c5f94f1a563",
+      "movieId" : "a b",
+      "userRecordName" : ""
+    }
+  ],
+  "safeComponent" : [
+    {
+      "expected" : "Buzzsprout-19913482",
+      "input" : "Buzzsprout-19913482"
+    },
+    {
+      "expected" : "the-outsiders-1983",
+      "input" : "the-outsiders-1983"
+    },
+    {
+      "expected" : "hc8687a08aa5d6ed2044328fa6a697ab8",
+      "input" : "a b"
+    },
+    {
+      "expected" : "h08c705e5ab2aa89ac01dade0bd7d75af",
+      "input" : "émigré"
+    },
+    {
+      "expected" : "he3b0c44298fc1c149afbf4c8996fb924",
+      "input" : ""
+    },
+    {
+      "expected" : "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "input" : "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      "expected" : "h79072a47bfaa54e6057a9ee21e0dea64",
+      "input" : "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      "expected" : "_leading",
+      "input" : "_leading"
+    },
+    {
+      "expected" : "hc14cddc033f64b9dea80ea675cf280a0",
+      "input" : "a/b"
+    }
+  ],
+  "sha256" : [
+    {
+      "input" : "",
+      "sha256hex" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "input" : "abc",
+      "sha256hex" : "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+    },
+    {
+      "input" : "_abcBuzzsprout-19913482.good-bad",
+      "sha256hex" : "534fe94ce23925e0ab47bc5eddba186529942043233eda2bcc3460fc5fe4da8c"
+    },
+    {
+      "input" : "Matt’s pick 🎬",
+      "sha256hex" : "1554d74dee96b6beadeb5d45ac8dd3a806028503d9b4b02e844b67be87bd20d9"
+    }
+  ],
+  "suggestionRecord" : {
+    "appVersionFormat" : "<CFBundleShortVersionString> (<CFBundleVersion>), e.g. 1.0 (10)",
+    "fields" : [
+      "title",
+      "category",
+      "note",
+      "creditName",
+      "appVersion"
+    ],
+    "recordNameFormat" : "suggestion-<UUID uppercase, from UUID().uuidString>",
+    "recordType" : "Suggestion"
+  },
+  "voteRecordName" : [
+    {
+      "expected" : "vote-Buzzsprout-19913482.good-bad-32697f2f32c6f533f0ce25a493a82ea3c24e74c63d9d2f04dee108d31356c72c",
+      "pollId" : "Buzzsprout-19913482.good-bad",
+      "userRecordName" : "_2b5f6c0e9d8a7b6c5d4e3f2a1b0c9d8e"
+    },
+    {
+      "expected" : "vote-Buzzsprout-19877460.argument-09157e58f542fab89e2a0d0f1135ad14a6c188562396cae3301f328fcfa28519",
+      "pollId" : "Buzzsprout-19877460.argument",
+      "userRecordName" : "_2b5f6c0e9d8a7b6c5d4e3f2a1b0c9d8e"
+    },
+    {
+      "expected" : "vote-hd766b6193b93d9f47b84fbdc4ee89c12-e8ecd19eb736cbecc8ea490070e20c8e9ae3795ea52dac57b9b2dad28241b4e2",
+      "pollId" : "weird id/with space",
+      "userRecordName" : "_2b5f6c0e9d8a7b6c5d4e3f2a1b0c9d8e"
+    },
+    {
+      "expected" : "vote-Buzzsprout-19913482.good-bad-534fe94ce23925e0ab47bc5eddba186529942043233eda2bcc3460fc5fe4da8c",
+      "pollId" : "Buzzsprout-19913482.good-bad",
+      "userRecordName" : "_abc"
+    },
+    {
+      "expected" : "vote-Buzzsprout-19877460.argument-982486d0a41c41f6adbba47766993e3843b4581d5e9d1742efd1e034c900fbac",
+      "pollId" : "Buzzsprout-19877460.argument",
+      "userRecordName" : "_abc"
+    },
+    {
+      "expected" : "vote-hd766b6193b93d9f47b84fbdc4ee89c12-05d39e09ae4eb3738b54c9476c788013e0385477cd97ac798223e90e9ec6ddf1",
+      "pollId" : "weird id/with space",
+      "userRecordName" : "_abc"
+    },
+    {
+      "expected" : "vote-Buzzsprout-19913482.good-bad-b83f3df870e101b51cce766cae7aae9ce76b21c36d902b002b729a5c18301d02",
+      "pollId" : "Buzzsprout-19913482.good-bad",
+      "userRecordName" : ""
+    },
+    {
+      "expected" : "vote-Buzzsprout-19877460.argument-6b5158d67e76ee6f2e2b883928ba2937f607acc69bc47c9ba6862d0568f6b0e4",
+      "pollId" : "Buzzsprout-19877460.argument",
+      "userRecordName" : ""
+    },
+    {
+      "expected" : "vote-hd766b6193b93d9f47b84fbdc4ee89c12-d766b6193b93d9f47b84fbdc4ee89c12697d30518c82bffecfd962ab4e14a975",
+      "pollId" : "weird id/with space",
+      "userRecordName" : ""
+    }
+  ]
+}

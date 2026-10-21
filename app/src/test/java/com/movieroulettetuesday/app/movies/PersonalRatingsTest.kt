@@ -91,7 +91,7 @@ class PersonalRatingsTest {
         val recovered = PersonalRatingsStore(file) { 99 }
         assertTrue(recovered.ratings.value.entries.isEmpty())
         assertNotNull(recovered.lastError)
-        assertEquals("{broken", File(dir, "${PersonalRatingsStore.FILE_NAME}.corrupt-99").readText())
+        assertEquals("{broken", File(dir, "personal-ratings.corrupt-19700101-000000.json").readText())
     }
 
     @Test

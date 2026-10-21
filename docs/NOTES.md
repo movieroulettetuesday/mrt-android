@@ -52,3 +52,10 @@ Branch per change (`setup/…`, `feature/…`, `fix/…`) → gate (tests + lint
 - Robolectric runs SDK 36 on JDK 21 (an Android 15+ runtime requirement) with `--add-exports java.base/jdk.internal.access`. The app itself compiles for Java 17.
 - Under Robolectric the app is offline and bundled-only (`MrtApplication.isUnderTest`), like iOS's `bundledOnly`.
 - Backend: see `backend-options.md` (recommendation: CloudKit bridge; ship 1.0 read-only/without voting until approved). No backend has been built.
+
+## Shared contract and the spin sound (feature/shared-contract)
+- `repo/shared/` is a pinned copy of `/workspace/mrt-shared/{data,test-vectors}` with `shared/SHA256SUMS`. Refresh with `scripts/sync-shared.sh` (reads `MRT_SHARED_DIR`, default `/workspace/mrt-shared`), then rerun the tests. `:app:verifySharedContract` fails the build when a pinned file doesn't match its hash, or when the external mrt-shared checkout exists and differs (so there is one source).
+- `:app:generateSharedContract` turns `shared/data/*.json` into `SharedContract.kt` (`SharedPalette`, `SharedShow`, `SharedSpinTrack`), so constants are never hand-copied.
+- `wheel-spin.m4a` (Matthew's recording; OK to reuse) is **not committed**. `:app:copySpinSound` copies it from `$MRT_IOS_CHECKOUT/MovieRouletteTuesday/Resources/wheel-spin.m4a` (default `../ios-ref`) into generated assets after checking sha256 `f9b6db796152c10493ee5c434fc4ef5f68ceaddc5f25a0b40e2491f623a666fd`. Release builds fail without it; debug builds warn and play nothing (haptics still work).
+- Vector tests: `./gradlew :app:testDebugUnitTest --tests '*VectorsTest*'`. Seeded cases use `SwiftCompatRandom` (D1); production spins use `Random.Default`.
+- D11 decision: a broken feed throws `malformed` (one of the vector's `acceptable` outcomes) so a bad download never replaces the cached episode list.

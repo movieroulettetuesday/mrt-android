@@ -1,0 +1,67 @@
+{
+  "_generated" : {
+    "from" : "iOS RouletteCore at b673df1 via tools/vector-gen",
+    "note" : "Single source for both ports. Do not edit by hand; change iOS first, then regenerate."
+  },
+  "cleanPro" : {
+    "backgroundDark" : [
+      "#0E1214",
+      "#101A1C"
+    ],
+    "backgroundLight" : [
+      "#F8F8F8",
+      "#EAF3F4"
+    ],
+    "headingDark" : "#F7C08A",
+    "headingLight" : "#24646B",
+    "hubDiscDark" : "#1C2427",
+    "hubDiscLight" : "#FFFFFF",
+    "hubTealDark" : "#3FA9B3",
+    "hubTealLight" : "#3A9CA6",
+    "peach" : "#F7C08A",
+    "pointerDark" : "#5BB8C2",
+    "pointerLight" : "#2E8691",
+    "rimDark" : [
+      "#2A3236",
+      "#3A4448",
+      "#2A3236"
+    ],
+    "rimLight" : [
+      "#FFFFFF",
+      "#F1F3F4",
+      "#FFFFFF"
+    ],
+    "spinGradient" : [
+      "#3A9CA6",
+      "#2E8691",
+      "#E39B5E"
+    ],
+    "spinLabelStop" : "#2E8691"
+  },
+  "fallbackOrder" : [
+    "#C25B5E",
+    "#8670AE",
+    "#CFAE63",
+    "#C66E8E",
+    "#4D97C2",
+    "#D4884F",
+    "#4A988B",
+    "#5E7DC0",
+    "#9086A1",
+    "#977758"
+  ],
+  "knownCategoryColors" : {
+    "cat-action" : "#D4884F",
+    "cat-criterion" : "#CFAE63",
+    "cat-cult" : "#8670AE",
+    "cat-dark-comedy" : "#4A988B",
+    "cat-escape" : "#977758",
+    "cat-horror" : "#C25B5E",
+    "cat-listener" : "#5E7DC0",
+    "cat-love" : "#C66E8E",
+    "cat-prestige" : "#9086A1",
+    "cat-scifi" : "#4D97C2"
+  },
+  "mutedRule" : "unknown id with valid catalog hex: HSB(h, min(s*0.7, 0.5), clamp(b, 0.58, 0.8)); no usable hex: fallbackOrder[fnv1a64(id) % 10]",
+  "source" : "RouletteCore/CategoryPalette.swift"
+}

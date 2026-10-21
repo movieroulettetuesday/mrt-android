@@ -23,12 +23,18 @@ object SpinShare {
     }
 }
 
-/** "Discussed on …" line (RouletteCore/EpisodeLabel.swift, catalog-only until the Episodes feed is ported). */
+/** "Discussed on …" line (RouletteCore/EpisodeLabel.swift, feed titles and SxEy once the feed is loaded). */
 object EpisodeLabel {
     /** Resolve a Buzzsprout guid to a human title: feed title, else the catalog's episodeTitle, else the id. */
+    const val SAMPLE_PREFIX = "sample-ep-"
+
+    /** `sample-ep-6` -> 6 (placeholder ids in the bundled sample data). */
+    fun sampleEpisodeNumber(id: String): Int? = if (id.startsWith(SAMPLE_PREFIX)) id.removePrefix(SAMPLE_PREFIX).toIntOrNull() else null
+
     fun title(id: String, movie: Movie? = null, episodesByGUID: Map<String, PodcastEpisode> = emptyMap()): String {
         episodesByGUID[id]?.let { return it.title }
         if (movie != null && movie.episodeTitle != null && id in movie.episodeIds) return movie.episodeTitle
+        sampleEpisodeNumber(id)?.let { return "Episode $it" }
         return id
     }
 
@@ -36,6 +42,14 @@ object EpisodeLabel {
     fun discussedText(movie: Movie, episodesByGUID: Map<String, PodcastEpisode> = emptyMap()): String {
         val ids = movie.episodeIds
         if (ids.isEmpty()) return "Not discussed on the show yet"
+        val numbers = ids.mapNotNull(::sampleEpisodeNumber)
+        if (numbers.size == ids.size) {
+            return when (numbers.size) {
+                1 -> "Discussed on Episode ${numbers[0]} (sample)"
+                2 -> "Discussed on Episodes ${numbers[0]} & ${numbers[1]} (sample)"
+                else -> "Discussed on Episode ${numbers[0]} + ${numbers.size - 1} more (sample)"
+            }
+        }
         fun label(id: String): String {
             val t = title(id, movie, episodesByGUID)
             return episodesByGUID[id]?.seasonEpisodeLabel?.let { "$t ($it)" } ?: t

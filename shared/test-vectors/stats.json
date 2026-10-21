@@ -1,0 +1,1577 @@
+{
+  "_generated" : {
+    "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
+    "iosCommit" : "b673df1",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+  },
+  "catalogForGenres" : {
+    "categories" : [
+      {
+        "colorHex" : "#C1121F",
+        "fullName" : "Category A",
+        "id" : "a",
+        "movieIds" : [
+          "a-1",
+          "a-2"
+        ],
+        "name" : "A",
+        "weight" : null
+      },
+      {
+        "colorHex" : "#7B2CBF",
+        "fullName" : "Category B",
+        "id" : "b",
+        "movieIds" : [
+          "b-1",
+          "b-2"
+        ],
+        "name" : "B",
+        "weight" : null
+      },
+      {
+        "colorHex" : "#E9C46A",
+        "fullName" : "Category C",
+        "id" : "c",
+        "movieIds" : [
+          "c-1",
+          "c-2"
+        ],
+        "name" : "C",
+        "weight" : null
+      },
+      {
+        "colorHex" : "#2A9D8F",
+        "fullName" : "Category D",
+        "id" : "d",
+        "movieIds" : [
+          "d-1",
+          "d-2"
+        ],
+        "name" : "D",
+        "weight" : null
+      }
+    ],
+    "movies" : [
+      {
+        "categories" : [
+          "a"
+        ],
+        "episodeIds" : [
+          "Buzzsprout-1"
+        ],
+        "episodeTitle" : "Ep a",
+        "genre" : "Horror",
+        "id" : "a-1",
+        "isInfamous" : false,
+        "title" : "Movie a 1",
+        "year" : 2001
+      },
+      {
+        "categories" : [
+          "a"
+        ],
+        "episodeIds" : [
+
+        ],
+        "episodeTitle" : null,
+        "genre" : "Horror",
+        "id" : "a-2",
+        "isInfamous" : false,
+        "title" : "Movie a 2",
+        "year" : 2002
+      },
+      {
+        "categories" : [
+          "b"
+        ],
+        "episodeIds" : [
+          "Buzzsprout-1"
+        ],
+        "episodeTitle" : "Ep b",
+        "genre" : "Comedy",
+        "id" : "b-1",
+        "isInfamous" : false,
+        "title" : "Movie b 1",
+        "year" : 2001
+      },
+      {
+        "categories" : [
+          "b"
+        ],
+        "episodeIds" : [
+
+        ],
+        "episodeTitle" : null,
+        "genre" : "Comedy",
+        "id" : "b-2",
+        "isInfamous" : false,
+        "title" : "Movie b 2",
+        "year" : 2002
+      },
+      {
+        "categories" : [
+          "c"
+        ],
+        "episodeIds" : [
+          "Buzzsprout-1"
+        ],
+        "episodeTitle" : "Ep c",
+        "genre" : "Drama",
+        "id" : "c-1",
+        "isInfamous" : false,
+        "title" : "Movie c 1",
+        "year" : 2001
+      },
+      {
+        "categories" : [
+          "c"
+        ],
+        "episodeIds" : [
+
+        ],
+        "episodeTitle" : null,
+        "genre" : "Drama",
+        "id" : "c-2",
+        "isInfamous" : false,
+        "title" : "Movie c 2",
+        "year" : 2002
+      },
+      {
+        "categories" : [
+          "d"
+        ],
+        "episodeIds" : [
+          "Buzzsprout-1"
+        ],
+        "episodeTitle" : "Ep d",
+        "genre" : "Drama",
+        "id" : "d-1",
+        "isInfamous" : false,
+        "title" : "Movie d 1",
+        "year" : 2001
+      },
+      {
+        "categories" : [
+          "d"
+        ],
+        "episodeIds" : [
+
+        ],
+        "episodeTitle" : null,
+        "genre" : "Drama",
+        "id" : "d-2",
+        "isInfamous" : false,
+        "title" : "Movie d 2",
+        "year" : 2002
+      }
+    ],
+    "schemaVersion" : 2
+  },
+  "description" : "Stats formulas and other pure local logic (SPEC §2.4-2.5, §5, §7-§9). Ties in counts are avoided on purpose (see SPEC OPEN QUESTION Q6).",
+  "emailSuggestion" : {
+    "address" : "theMrtPodcast@gmail.com",
+    "cases" : [
+      {
+        "body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors (1990)\nWhy: Worms!\nCategory: Horror\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+        "category" : "Horror",
+        "isValid" : true,
+        "mailto" : "mailto:theMrtPodcast@gmail.com?subject=Movie%20suggestion:%20Tremors%20(1990)&body=Hi%20MRT%20Crew,%0A%0AI%E2%80%99d%20love%20to%20hear%20you%20cover:%0A%0AMovie:%20Tremors%20(1990)%0AWhy:%20Worms!%0ACategory:%20Horror%0A%0AThanks%20for%20the%20show!%0A%0ASent%20from%20the%20Movie%20Roulette%20Tuesday%20app",
+        "subject" : "Movie suggestion: Tremors (1990)",
+        "title" : "  Tremors (1990) ",
+        "why" : "Worms!"
+      },
+      {
+        "body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: A+B & C?\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+        "category" : null,
+        "isValid" : true,
+        "mailto" : "mailto:theMrtPodcast@gmail.com?subject=Movie%20suggestion:%20A%2BB%20%26%20C?&body=Hi%20MRT%20Crew,%0A%0AI%E2%80%99d%20love%20to%20hear%20you%20cover:%0A%0AMovie:%20A%2BB%20%26%20C?%0A%0AThanks%20for%20the%20show!%0A%0ASent%20from%20the%20Movie%20Roulette%20Tuesday%20app",
+        "subject" : "Movie suggestion: A+B & C?",
+        "title" : "A+B & C?",
+        "why" : ""
+      },
+      {
+        "body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: \n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+        "category" : null,
+        "isValid" : false,
+        "mailto" : "mailto:theMrtPodcast@gmail.com?subject=Movie%20suggestion:%20&body=Hi%20MRT%20Crew,%0A%0AI%E2%80%99d%20love%20to%20hear%20you%20cover:%0A%0AMovie:%20%0A%0AThanks%20for%20the%20show!%0A%0ASent%20from%20the%20Movie%20Roulette%20Tuesday%20app",
+        "subject" : "Movie suggestion: ",
+        "title" : "   ",
+        "why" : ""
+      }
+    ]
+  },
+  "episodeBadge" : {
+    "count" : [
+      {
+        "expected" : 0,
+        "lastViewed" : null
+      },
+      {
+        "expected" : 1,
+        "lastViewed" : "2026-09-30T00:00:00Z"
+      },
+      {
+        "expected" : 0,
+        "lastViewed" : "2026-10-06T04:00:00Z"
+      },
+      {
+        "expected" : 3,
+        "lastViewed" : "2026-01-01T00:00:00Z"
+      }
+    ],
+    "episodes" : [
+      {
+        "guid" : "e0",
+        "pubDate" : "2026-10-06T04:00:00Z"
+      },
+      {
+        "guid" : "e1",
+        "pubDate" : "2026-09-29T04:00:00Z"
+      },
+      {
+        "guid" : "e2",
+        "pubDate" : "2026-09-22T04:00:00Z"
+      },
+      {
+        "guid" : "undated",
+        "pubDate" : null
+      }
+    ],
+    "initialBaseline" : "2026-10-06T04:00:00Z",
+    "viewedTimestamp" : [
+      {
+        "expected" : "2026-10-06T04:00:00Z",
+        "now" : "2026-10-01T12:00:00Z"
+      },
+      {
+        "expected" : "2026-10-10T00:00:00Z",
+        "now" : "2026-10-10T00:00:00Z"
+      }
+    ]
+  },
+  "episodeGrouping" : {
+    "all" : [
+      {
+        "guids" : [
+          "e5",
+          "b1",
+          "e4",
+          "e3",
+          "e1",
+          "x"
+        ],
+        "id" : "all",
+        "title" : "All Episodes"
+      }
+    ],
+    "calendarTimeZone" : "UTC",
+    "episodes" : [
+      {
+        "guid" : "e5",
+        "pubDate" : "2026-10-06T04:00:00Z",
+        "season" : 3
+      },
+      {
+        "guid" : "b1",
+        "pubDate" : "2026-06-01T04:00:00Z",
+        "season" : null
+      },
+      {
+        "guid" : "e4",
+        "pubDate" : "2026-01-02T04:00:00Z",
+        "season" : 3
+      },
+      {
+        "guid" : "e3",
+        "pubDate" : "2025-05-01T04:00:00Z",
+        "season" : 2
+      },
+      {
+        "guid" : "e1",
+        "pubDate" : "2024-02-01T04:00:00Z",
+        "season" : 1
+      },
+      {
+        "guid" : "x",
+        "pubDate" : null,
+        "season" : null
+      }
+    ],
+    "expansionSerialized" : "season-1:1,season-3:0",
+    "season" : [
+      {
+        "guids" : [
+          "e5",
+          "e4"
+        ],
+        "id" : "season-3",
+        "title" : "Season 3"
+      },
+      {
+        "guids" : [
+          "e3"
+        ],
+        "id" : "season-2",
+        "title" : "Season 2"
+      },
+      {
+        "guids" : [
+          "e1"
+        ],
+        "id" : "season-1",
+        "title" : "Season 1"
+      },
+      {
+        "guids" : [
+          "b1",
+          "x"
+        ],
+        "id" : "bonus",
+        "title" : "Bonus"
+      }
+    ],
+    "year" : [
+      {
+        "guids" : [
+          "e5",
+          "b1",
+          "e4"
+        ],
+        "id" : "year-2026",
+        "title" : "2026"
+      },
+      {
+        "guids" : [
+          "e3"
+        ],
+        "id" : "year-2025",
+        "title" : "2025"
+      },
+      {
+        "guids" : [
+          "e1"
+        ],
+        "id" : "year-2024",
+        "title" : "2024"
+      },
+      {
+        "guids" : [
+          "x"
+        ],
+        "id" : "undated",
+        "title" : "Undated"
+      }
+    ]
+  },
+  "halfStars" : {
+    "adjusted" : [
+      {
+        "expected" : 1,
+        "halfStars" : null,
+        "increment" : true
+      },
+      {
+        "expected" : null,
+        "halfStars" : 1,
+        "increment" : false
+      },
+      {
+        "expected" : 1,
+        "halfStars" : 2,
+        "increment" : false
+      },
+      {
+        "expected" : 10,
+        "halfStars" : 10,
+        "increment" : true
+      },
+      {
+        "expected" : 6,
+        "halfStars" : 5,
+        "increment" : true
+      }
+    ],
+    "clamped" : [
+      {
+        "expected" : null,
+        "input" : null
+      },
+      {
+        "expected" : null,
+        "input" : -1
+      },
+      {
+        "expected" : null,
+        "input" : 0
+      },
+      {
+        "expected" : 1,
+        "input" : 1
+      },
+      {
+        "expected" : 10,
+        "input" : 10
+      },
+      {
+        "expected" : 10,
+        "input" : 11
+      }
+    ],
+    "fromLocation" : [
+      {
+        "expected" : 1,
+        "width" : 100,
+        "x" : 0
+      },
+      {
+        "expected" : 1,
+        "width" : 100,
+        "x" : 5
+      },
+      {
+        "expected" : 1,
+        "width" : 100,
+        "x" : 10
+      },
+      {
+        "expected" : 2,
+        "width" : 100,
+        "x" : 10.01
+      },
+      {
+        "expected" : 6,
+        "width" : 100,
+        "x" : 55
+      },
+      {
+        "expected" : 10,
+        "width" : 100,
+        "x" : 100
+      },
+      {
+        "expected" : 10,
+        "width" : 100,
+        "x" : 150
+      },
+      {
+        "expected" : 1,
+        "width" : 0,
+        "x" : 50
+      }
+    ],
+    "label" : [
+      {
+        "expected" : "0.5",
+        "halfStars" : 1
+      },
+      {
+        "expected" : "1",
+        "halfStars" : 2
+      },
+      {
+        "expected" : "1.5",
+        "halfStars" : 3
+      },
+      {
+        "expected" : "2",
+        "halfStars" : 4
+      },
+      {
+        "expected" : "2.5",
+        "halfStars" : 5
+      },
+      {
+        "expected" : "3",
+        "halfStars" : 6
+      },
+      {
+        "expected" : "3.5",
+        "halfStars" : 7
+      },
+      {
+        "expected" : "4",
+        "halfStars" : 8
+      },
+      {
+        "expected" : "4.5",
+        "halfStars" : 9
+      },
+      {
+        "expected" : "5",
+        "halfStars" : 10
+      }
+    ],
+    "resolved" : [
+      {
+        "expected" : 8,
+        "halfStars" : null,
+        "legacyStars" : 4
+      },
+      {
+        "expected" : 7,
+        "halfStars" : 7,
+        "legacyStars" : 4
+      },
+      {
+        "expected" : null,
+        "halfStars" : null,
+        "legacyStars" : null
+      },
+      {
+        "expected" : 6,
+        "halfStars" : 0,
+        "legacyStars" : 3
+      },
+      {
+        "expected" : 10,
+        "halfStars" : null,
+        "legacyStars" : 9
+      }
+    ],
+    "roundedStars" : [
+      {
+        "expected" : 1,
+        "halfStars" : 1
+      },
+      {
+        "expected" : 1,
+        "halfStars" : 2
+      },
+      {
+        "expected" : 2,
+        "halfStars" : 3
+      },
+      {
+        "expected" : 2,
+        "halfStars" : 4
+      },
+      {
+        "expected" : 3,
+        "halfStars" : 5
+      },
+      {
+        "expected" : 3,
+        "halfStars" : 6
+      },
+      {
+        "expected" : 4,
+        "halfStars" : 7
+      },
+      {
+        "expected" : 4,
+        "halfStars" : 8
+      },
+      {
+        "expected" : 5,
+        "halfStars" : 9
+      },
+      {
+        "expected" : 5,
+        "halfStars" : 10
+      }
+    ],
+    "roundedToHalf" : [
+      {
+        "expected" : 4.5,
+        "stars" : 4.26
+      },
+      {
+        "expected" : 4.5,
+        "stars" : 4.25
+      },
+      {
+        "expected" : 4,
+        "stars" : 4.24
+      },
+      {
+        "expected" : 4,
+        "stars" : 3.75
+      },
+      {
+        "expected" : 0,
+        "stars" : 0.2
+      },
+      {
+        "expected" : 5,
+        "stars" : 5
+      }
+    ]
+  },
+  "halfStarsAndroidCrossCheck" : {
+    "adjusted" : [
+      {
+        "agrees" : true,
+        "androidExpected" : 1,
+        "expected" : 1,
+        "input" : {
+          "halfStars" : null,
+          "increment" : true
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 10,
+        "expected" : 10,
+        "input" : {
+          "halfStars" : 10,
+          "increment" : true
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 6,
+        "expected" : 6,
+        "input" : {
+          "halfStars" : 7,
+          "increment" : false
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : {
+          "halfStars" : 1,
+          "increment" : false
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      }
+    ],
+    "clamped" : [
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : 0,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 10,
+        "expected" : 10,
+        "input" : 14,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      }
+    ],
+    "description" : "Android main PersonalRatingsTest.halfStarMapping re-run on iOS.",
+    "fromLegacyStars" : [
+      {
+        "agrees" : true,
+        "androidExpected" : 6,
+        "expected" : 6,
+        "input" : 3,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 10,
+        "expected" : 10,
+        "input" : 9,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      }
+    ],
+    "fromLocation" : [
+      {
+        "agrees" : true,
+        "androidExpected" : 1,
+        "expected" : 1,
+        "input" : {
+          "width" : 100,
+          "x" : 0
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 1,
+        "expected" : 1,
+        "input" : {
+          "width" : 100,
+          "x" : 5
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 2,
+        "expected" : 2,
+        "input" : {
+          "width" : 100,
+          "x" : 15
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 7,
+        "expected" : 7,
+        "input" : {
+          "width" : 100,
+          "x" : 65
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 8,
+        "expected" : 8,
+        "input" : {
+          "width" : 100,
+          "x" : 75
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 10,
+        "expected" : 10,
+        "input" : {
+          "width" : 100,
+          "x" : 250
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 1,
+        "expected" : 1,
+        "input" : {
+          "width" : 100,
+          "x" : -30
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 1,
+        "expected" : 1,
+        "input" : {
+          "width" : 0,
+          "x" : 50
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      }
+    ],
+    "labelStars" : [
+      {
+        "agrees" : true,
+        "androidExpected" : "4.5",
+        "expected" : "4.5",
+        "input" : 4.26,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "4",
+        "expected" : "4",
+        "input" : 4.24,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      }
+    ],
+    "resolved" : [
+      {
+        "agrees" : true,
+        "androidExpected" : 7,
+        "expected" : 7,
+        "input" : {
+          "halfStars" : 7,
+          "legacyStars" : 4
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 8,
+        "expected" : 8,
+        "input" : {
+          "halfStars" : null,
+          "legacyStars" : 4
+        },
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      }
+    ],
+    "roundedToHalf" : [
+      {
+        "agrees" : true,
+        "androidExpected" : 3.5,
+        "expected" : 3.5,
+        "input" : 3.74,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : 4,
+        "expected" : 4,
+        "input" : 3.75,
+        "source" : "android-main:PersonalRatingsTest.halfStarMapping"
+      }
+    ]
+  },
+  "historyCompaction" : {
+    "appendedMovieIds" : [
+      "old",
+      "old",
+      "m2",
+      "m3",
+      "m4"
+    ],
+    "detailLimit" : 3,
+    "expected" : {
+      "archive" : {
+        "categoryCounts" : {
+          "a" : 2
+        },
+        "movieCounts" : {
+          "old" : 2
+        },
+        "totalSpins" : 2
+      },
+      "defaultDetailLimit" : 500,
+      "detailedMovieIds" : [
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "spinCountOld" : 2,
+      "totalSpins" : 5
+    },
+    "source" : "android-main:SpinMotionAndHistoryTest.historyPersistsAndCompacts"
+  },
+  "inAppSuggestion" : {
+    "cases" : [
+      {
+        "category" : " Horror ",
+        "creditName" : " Laura from Ohio ",
+        "expected" : {
+          "asEmail" : {
+            "body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: Worms\nFrom: Laura from Ohio\nCategory: Horror\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+            "subject" : "Movie suggestion: Tremors"
+          },
+          "isValid" : true,
+          "noteCharactersLeft" : 275,
+          "problems" : [
+
+          ],
+          "recordFields" : {
+            "category" : "Horror",
+            "creditName" : "Laura from Ohio",
+            "note" : "Worms",
+            "title" : "Tremors"
+          }
+        },
+        "note" : " Worms ",
+        "title" : " Tremors "
+      },
+      {
+        "category" : null,
+        "creditName" : "",
+        "expected" : {
+          "asEmail" : {
+            "body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: \n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+            "subject" : "Movie suggestion: "
+          },
+          "isValid" : false,
+          "noteCharactersLeft" : 280,
+          "problems" : [
+            "missingTitle"
+          ],
+          "recordFields" : {
+            "category" : "",
+            "creditName" : "",
+            "note" : "",
+            "title" : ""
+          }
+        },
+        "note" : "",
+        "title" : ""
+      },
+      {
+        "category" : null,
+        "creditName" : "ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "expected" : {
+          "asEmail" : {
+            "body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nWhy: nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\nFrom: ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+            "subject" : "Movie suggestion: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          },
+          "isValid" : false,
+          "noteCharactersLeft" : -1,
+          "problems" : [
+            "titleTooLong",
+            "noteTooLong",
+            "nameTooLong"
+          ],
+          "recordFields" : {
+            "category" : "",
+            "creditName" : "ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "note" : "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+            "title" : "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          }
+        },
+        "note" : "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "title" : "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      {
+        "category" : "",
+        "creditName" : "",
+        "expected" : {
+          "asEmail" : {
+            "body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: T\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+            "subject" : "Movie suggestion: T"
+          },
+          "isValid" : true,
+          "noteCharactersLeft" : 280,
+          "problems" : [
+
+          ],
+          "recordFields" : {
+            "category" : "",
+            "creditName" : "",
+            "note" : "",
+            "title" : "T"
+          }
+        },
+        "note" : "",
+        "title" : "T"
+      }
+    ],
+    "limits" : {
+      "creditName" : 60,
+      "note" : 280,
+      "title" : 120
+    }
+  },
+  "newEpisodeAlerts" : {
+    "baselineFeedGuids" : [
+      "e1",
+      "e2",
+      "undated"
+    ],
+    "cases" : [
+      {
+        "feedGuids" : [
+          "e0",
+          "e1",
+          "e2",
+          "undated"
+        ],
+        "new" : [
+          "e0"
+        ],
+        "text" : {
+          "body" : "E0",
+          "title" : "New episode of Movie Roulette Tuesday"
+        }
+      },
+      {
+        "feedGuids" : [
+          "n2",
+          "e0",
+          "e1",
+          "e2",
+          "undated"
+        ],
+        "new" : [
+          "n2",
+          "e0"
+        ],
+        "text" : {
+          "body" : "Latest: Newer",
+          "title" : "2 new episodes of Movie Roulette Tuesday"
+        }
+      },
+      {
+        "feedGuids" : [
+          "e0",
+          "e1",
+          "e2",
+          "undated"
+        ],
+        "new" : [
+
+        ],
+        "text" : null,
+        "watermark" : null
+      }
+    ],
+    "description" : "New-episode alert diff (SPEC §7).",
+    "guidLimit" : 50,
+    "watermark" : {
+      "latestDate" : "2026-09-29T04:00:00Z",
+      "seenGUIDs" : [
+        "e1",
+        "e2",
+        "undated"
+      ]
+    }
+  },
+  "personalRatingsSummary" : {
+    "catalog" : "fixture (titles 'Movie a 1' etc.)",
+    "expected" : {
+      "averageStars" : 3.5,
+      "ratedCount" : 4,
+      "topRated" : [
+        {
+          "halfStars" : 9,
+          "movieId" : "a-1",
+          "title" : "Movie a 1"
+        },
+        {
+          "halfStars" : 9,
+          "movieId" : "b-2",
+          "title" : "Movie b 2"
+        },
+        {
+          "halfStars" : 6,
+          "movieId" : "c-1",
+          "title" : "Movie c 1"
+        }
+      ],
+      "watchedCount" : 4,
+      "watchlistCount" : 1
+    },
+    "input" : {
+      "halfStars" : {
+        "a-1" : 9,
+        "b-2" : 9,
+        "c-1" : 6,
+        "gone" : 4
+      },
+      "status" : {
+        "a-1" : "watched",
+        "d-1" : "wantToWatch"
+      }
+    }
+  },
+  "pollTally" : [
+    {
+      "expected" : {
+        "leaders" : [
+          "bad"
+        ],
+        "rows" : [
+          {
+            "count" : 1,
+            "fraction" : 0.3333333333333333,
+            "option" : "good"
+          },
+          {
+            "count" : 2,
+            "fraction" : 0.6666666666666666,
+            "option" : "bad"
+          }
+        ],
+        "total" : 3
+      },
+      "options" : [
+        "good",
+        "bad"
+      ],
+      "votes" : [
+        "g",
+        "good",
+        "bad",
+        "bad",
+        "x"
+      ]
+    },
+    {
+      "expected" : {
+        "leaders" : [
+
+        ],
+        "rows" : [
+          {
+            "count" : 0,
+            "fraction" : 0,
+            "option" : "good"
+          },
+          {
+            "count" : 0,
+            "fraction" : 0,
+            "option" : "bad"
+          }
+        ],
+        "total" : 0
+      },
+      "options" : [
+        "good",
+        "bad"
+      ],
+      "votes" : [
+        "yes"
+      ]
+    },
+    {
+      "expected" : {
+        "leaders" : [
+
+        ],
+        "rows" : [
+          {
+            "count" : 0,
+            "fraction" : 0,
+            "option" : "good"
+          },
+          {
+            "count" : 0,
+            "fraction" : 0,
+            "option" : "bad"
+          }
+        ],
+        "total" : 0
+      },
+      "options" : [
+        "good",
+        "bad"
+      ],
+      "votes" : [
+
+      ]
+    }
+  ],
+  "ratingAggregate" : [
+    {
+      "expected" : {
+        "average" : 3.75,
+        "averageHalfStars" : 8,
+        "averageToHalf" : 4,
+        "count" : 4,
+        "histogram" : [
+          0,
+          1,
+          0,
+          1,
+          2
+        ]
+      },
+      "halfStars" : [
+        8,
+        9,
+        10,
+        3
+      ]
+    },
+    {
+      "expected" : {
+        "average" : 0.5,
+        "averageHalfStars" : 1,
+        "averageToHalf" : 0.5,
+        "count" : 1,
+        "histogram" : [
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "halfStars" : [
+        1
+      ]
+    },
+    {
+      "expected" : {
+        "average" : null,
+        "averageHalfStars" : null,
+        "averageToHalf" : null,
+        "count" : 0,
+        "histogram" : [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "halfStars" : [
+
+      ]
+    },
+    {
+      "expected" : {
+        "average" : 3.5,
+        "averageHalfStars" : 7,
+        "averageToHalf" : 3.5,
+        "count" : 1,
+        "histogram" : [
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      "halfStars" : [
+        0,
+        11,
+        7
+      ]
+    },
+    {
+      "expected" : {
+        "average" : 3,
+        "averageHalfStars" : 6,
+        "averageToHalf" : 3,
+        "count" : 5,
+        "histogram" : [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "halfStars" : [
+        2,
+        4,
+        6,
+        8,
+        10
+      ]
+    }
+  ],
+  "snapshots" : [
+    {
+      "archive" : {
+        "categoryCounts" : {
+
+        },
+        "movieCounts" : {
+
+        },
+        "totalSpins" : 0
+      },
+      "expected" : {
+        "categoryBreakdown" : [
+          {
+            "count" : 4,
+            "id" : "a"
+          },
+          {
+            "count" : 1,
+            "id" : "zzz"
+          },
+          {
+            "count" : 1,
+            "id" : "b"
+          },
+          {
+            "count" : 1,
+            "id" : "c"
+          }
+        ],
+        "distinctMovies" : 5,
+        "genreBreakdown" : [
+          {
+            "count" : 4,
+            "genre" : "Horror"
+          },
+          {
+            "count" : 1,
+            "genre" : "Drama"
+          },
+          {
+            "count" : 1,
+            "genre" : "Comedy"
+          }
+        ],
+        "mostSpunCategory" : {
+          "count" : 4,
+          "id" : "a"
+        },
+        "mostSpunMovie" : {
+          "count" : 3,
+          "id" : "a-1"
+        },
+        "recentMovieIds" : [
+          "ghost",
+          "c-1",
+          "a-1"
+        ],
+        "tieOrderUnspecified" : "entries with equal counts may appear in any order (iOS sorts a Dictionary; see SPEC Q6); compare equal-count groups as sets",
+        "totalSpins" : 7
+      },
+      "history" : [
+        {
+          "categoryId" : "a",
+          "movieId" : "a-1",
+          "timestamp" : "2026-10-01T12:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-1",
+          "timestamp" : "2026-10-01T13:00:00Z"
+        },
+        {
+          "categoryId" : "b",
+          "movieId" : "b-1",
+          "timestamp" : "2026-10-01T14:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-2",
+          "timestamp" : "2026-10-01T15:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-1",
+          "timestamp" : "2026-10-01T16:00:00Z"
+        },
+        {
+          "categoryId" : "c",
+          "movieId" : "c-1",
+          "timestamp" : "2026-10-01T17:00:00Z"
+        },
+        {
+          "categoryId" : "zzz",
+          "movieId" : "ghost",
+          "timestamp" : "2026-10-01T18:00:00Z"
+        }
+      ],
+      "name" : "history-only"
+    },
+    {
+      "archive" : {
+        "categoryCounts" : {
+          "a" : 1,
+          "d" : 6
+        },
+        "movieCounts" : {
+          "a-2" : 1,
+          "d-1" : 6
+        },
+        "totalSpins" : 7
+      },
+      "expected" : {
+        "categoryBreakdown" : [
+          {
+            "count" : 6,
+            "id" : "d"
+          },
+          {
+            "count" : 5,
+            "id" : "a"
+          },
+          {
+            "count" : 1,
+            "id" : "b"
+          },
+          {
+            "count" : 1,
+            "id" : "zzz"
+          },
+          {
+            "count" : 1,
+            "id" : "c"
+          }
+        ],
+        "distinctMovies" : 6,
+        "genreBreakdown" : [
+          {
+            "count" : 7,
+            "genre" : "Drama"
+          },
+          {
+            "count" : 5,
+            "genre" : "Horror"
+          },
+          {
+            "count" : 1,
+            "genre" : "Comedy"
+          }
+        ],
+        "mostSpunCategory" : {
+          "count" : 6,
+          "id" : "d"
+        },
+        "mostSpunMovie" : {
+          "count" : 6,
+          "id" : "d-1"
+        },
+        "recentMovieIds" : [
+          "ghost",
+          "c-1",
+          "a-1"
+        ],
+        "tieOrderUnspecified" : "entries with equal counts may appear in any order (iOS sorts a Dictionary; see SPEC Q6); compare equal-count groups as sets",
+        "totalSpins" : 14
+      },
+      "history" : [
+        {
+          "categoryId" : "a",
+          "movieId" : "a-1",
+          "timestamp" : "2026-10-01T12:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-1",
+          "timestamp" : "2026-10-01T13:00:00Z"
+        },
+        {
+          "categoryId" : "b",
+          "movieId" : "b-1",
+          "timestamp" : "2026-10-01T14:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-2",
+          "timestamp" : "2026-10-01T15:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-1",
+          "timestamp" : "2026-10-01T16:00:00Z"
+        },
+        {
+          "categoryId" : "c",
+          "movieId" : "c-1",
+          "timestamp" : "2026-10-01T17:00:00Z"
+        },
+        {
+          "categoryId" : "zzz",
+          "movieId" : "ghost",
+          "timestamp" : "2026-10-01T18:00:00Z"
+        }
+      ],
+      "name" : "with-archive (archived movie counted in genre too)"
+    },
+    {
+      "archive" : {
+        "categoryCounts" : {
+
+        },
+        "movieCounts" : {
+
+        },
+        "totalSpins" : 0
+      },
+      "expected" : {
+        "categoryBreakdown" : [
+
+        ],
+        "distinctMovies" : 0,
+        "genreBreakdown" : [
+
+        ],
+        "mostSpunCategory" : null,
+        "mostSpunMovie" : null,
+        "recentMovieIds" : [
+
+        ],
+        "tieOrderUnspecified" : "entries with equal counts may appear in any order (iOS sorts a Dictionary; see SPEC Q6); compare equal-count groups as sets",
+        "totalSpins" : 0
+      },
+      "history" : [
+
+      ],
+      "name" : "empty"
+    }
+  ],
+  "spinOfTheDay" : {
+    "cases" : [
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-horror",
+        "dayKey" : "2026-10-20",
+        "movieId" : "leviathan-1989"
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-cult",
+        "dayKey" : "2026-10-21",
+        "movieId" : "the-split-1968"
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-escape",
+        "dayKey" : "2026-10-27",
+        "movieId" : "kon-tiki-2012"
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-escape",
+        "dayKey" : "2026-12-25",
+        "movieId" : "no-country-for-old-men-2007"
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-dark-comedy",
+        "dayKey" : "2027-01-01",
+        "movieId" : "cocaine-bear-2023"
+      }
+    ],
+    "description" : "SpinOfTheDay.pick for the dayKey (local calendar day; vectors use UTC noon).",
+    "stableHash" : [
+      {
+        "fnv1a64" : "14695981039346656037",
+        "input" : ""
+      },
+      {
+        "fnv1a64" : "12638187200555641996",
+        "input" : "a"
+      },
+      {
+        "fnv1a64" : "15507952191410403791",
+        "input" : "category:2026-10-21"
+      },
+      {
+        "fnv1a64" : "2854586200962070520",
+        "input" : "poll:Buzzsprout-19913482"
+      },
+      {
+        "fnv1a64" : "9625390261332436968",
+        "input" : "foobar"
+      }
+    ]
+  },
+  "suggestionRateLimit" : {
+    "cases" : [
+      {
+        "canSend" : true,
+        "lastSentOffset" : null,
+        "message" : null,
+        "nowOffset" : 0,
+        "secondsRemaining" : null
+      },
+      {
+        "canSend" : false,
+        "lastSentOffset" : 0,
+        "message" : "You just sent one. Try again in 10 min.",
+        "nowOffset" : 1,
+        "secondsRemaining" : 599
+      },
+      {
+        "canSend" : false,
+        "lastSentOffset" : 0,
+        "message" : "You just sent one. Try again in 1 min.",
+        "nowOffset" : 599.2,
+        "secondsRemaining" : 1
+      },
+      {
+        "canSend" : true,
+        "lastSentOffset" : 0,
+        "message" : null,
+        "nowOffset" : 600,
+        "secondsRemaining" : null
+      },
+      {
+        "canSend" : true,
+        "lastSentOffset" : 100,
+        "message" : null,
+        "nowOffset" : 50,
+        "secondsRemaining" : null
+      },
+      {
+        "canSend" : false,
+        "lastSentOffset" : 0,
+        "message" : "You just sent one. Try again in 10 min.",
+        "nowOffset" : 30,
+        "secondsRemaining" : 570
+      }
+    ],
+    "intervalSeconds" : 600
+  }
+}

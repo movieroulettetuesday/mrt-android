@@ -31,6 +31,8 @@ fun RouletteRoute(
                     history = app.spinHistory,
                     scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
                     // System "Remove animations" ≈ iOS Reduce Motion: same timeline, only 1–2 turns.
+                    feedback = app.spinSound,
+                    soundEnabled = { app.preferences.tickSound.value },
                     reduceMotion = {
                         Settings.Global.getFloat(app.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
                     },
@@ -38,6 +40,7 @@ fun RouletteRoute(
             }
         },
     )
+    androidx.compose.runtime.DisposableEffect(vm) { onDispose { vm.stopFeedback() } }
     LaunchedEffect(Unit) {
         app.catalogRepository.load()
         app.catalogRepository.refresh()

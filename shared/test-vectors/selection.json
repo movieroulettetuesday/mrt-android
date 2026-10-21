@@ -1,0 +1,2447 @@
+{
+  "_generated" : {
+    "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
+    "iosCommit" : "b673df1",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+  },
+  "appSpinSequence" : {
+    "cases" : [
+      {
+        "catalog" : "bundled",
+        "reduceMotion" : false,
+        "seed" : 2026,
+        "startRotation" : 0,
+        "steps" : [
+          {
+            "categoryId" : "cat-cult",
+            "landed" : "cat-cult",
+            "movieId" : "shimmer-lake-2017",
+            "outcome" : "normal",
+            "rotation" : 3201,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-scifi",
+            "landed" : "cat-scifi",
+            "movieId" : "mirrormask-2005",
+            "outcome" : "normal",
+            "rotation" : 6324.300727123617,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-criterion",
+            "landed" : "cat-criterion",
+            "movieId" : "saturday-night-fever-1977",
+            "outcome" : "normal",
+            "rotation" : 8545.867608971448,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-scifi",
+            "landed" : "cat-scifi",
+            "movieId" : "the-fall-2008",
+            "outcome" : "normal",
+            "rotation" : 11013,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-cult",
+            "landed" : "cat-cult",
+            "movieId" : "possession-1981",
+            "outcome" : "normal",
+            "rotation" : 12898.022461730758,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-criterion",
+            "landed" : "cat-criterion",
+            "movieId" : "the-phantom-carriage-1921",
+            "outcome" : "normal",
+            "rotation" : 15741.1216636295,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-prestige",
+            "landed" : "cat-prestige",
+            "movieId" : "rebecca-2020",
+            "outcome" : "normal",
+            "rotation" : 18051.128564867606,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-horror",
+            "landed" : "cat-horror",
+            "movieId" : "fright-night-1985",
+            "outcome" : "normal",
+            "rotation" : 21224.503931765503,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-listener",
+            "landed" : "cat-listener",
+            "movieId" : "the-ugly-stepsister-2025",
+            "outcome" : "normal",
+            "rotation" : 23475.04901638203,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-scifi",
+            "landed" : "cat-scifi",
+            "movieId" : "snowpiercer-2013",
+            "outcome" : "normal",
+            "rotation" : 26475.201873648002,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-love",
+            "landed" : "cat-love",
+            "movieId" : "romeo-plus-juliet-1996",
+            "outcome" : "normal",
+            "rotation" : 28680.38087172524,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-cult",
+            "landed" : "cat-cult",
+            "movieId" : "enter-the-void-2009",
+            "outcome" : "normal",
+            "rotation" : 30892.291577054493,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-listener",
+            "landed" : "cat-listener",
+            "movieId" : "the-pirates-of-penzance-1983",
+            "outcome" : "normal",
+            "rotation" : 33920.11731725013,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-prestige",
+            "landed" : "cat-prestige",
+            "movieId" : "the-count-of-monte-cristo-2002",
+            "outcome" : "normal",
+            "rotation" : 36784.49201424495,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-scifi",
+            "landed" : "cat-scifi",
+            "movieId" : "project-hail-mary-2026",
+            "outcome" : "normal",
+            "rotation" : 38703,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-scifi",
+            "landed" : "cat-scifi",
+            "movieId" : "the-thing-1982",
+            "outcome" : "normal",
+            "rotation" : 41241.72258249854,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-action",
+            "landed" : "cat-action",
+            "movieId" : "judge-dredd-1995",
+            "outcome" : "normal",
+            "rotation" : 43713.7844619802,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-dark-comedy",
+            "landed" : "cat-dark-comedy",
+            "movieId" : "cocaine-bear-2023",
+            "outcome" : "normal",
+            "rotation" : 45853.2665368272,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-criterion",
+            "landed" : "cat-criterion",
+            "movieId" : "harvey-1950",
+            "outcome" : "normal",
+            "rotation" : 48497.56972954705,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-escape",
+            "landed" : "cat-escape",
+            "movieId" : "master-and-commander-the-far-side-of-the-world-2003",
+            "outcome" : "normal",
+            "rotation" : 51130.02019290483,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-criterion",
+            "landed" : "cat-criterion",
+            "movieId" : "the-great-escape-1963",
+            "outcome" : "normal",
+            "rotation" : 53561.06157754586,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-action",
+            "landed" : "cat-action",
+            "movieId" : "the-card-counter-2021",
+            "outcome" : "normal",
+            "rotation" : 56675.755487659,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-love",
+            "landed" : "cat-love",
+            "movieId" : "high-fidelity-2000",
+            "outcome" : "normal",
+            "rotation" : 59649,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-horror",
+            "landed" : "cat-horror",
+            "movieId" : "drive-in-massacre-1976",
+            "outcome" : "normal",
+            "rotation" : 61917,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-horror",
+            "landed" : "cat-horror",
+            "movieId" : "what-ever-happened-to-baby-jane-1962",
+            "outcome" : "normal",
+            "rotation" : 63717,
+            "wasForcedRespin" : false
+          }
+        ]
+      },
+      {
+        "catalog" : "bundled",
+        "reduceMotion" : true,
+        "seed" : 7,
+        "startRotation" : 0,
+        "steps" : [
+          {
+            "categoryId" : "cat-dark-comedy",
+            "landed" : "cat-dark-comedy",
+            "movieId" : "defending-your-life-1991",
+            "outcome" : "normal",
+            "rotation" : 497.6737897190003,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-listener",
+            "landed" : "cat-listener",
+            "movieId" : "the-ugly-stepsister-2025",
+            "outcome" : "normal",
+            "rotation" : 1158.546538340035,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-dark-comedy",
+            "landed" : "cat-dark-comedy",
+            "movieId" : "what-we-do-in-the-shadows-2014",
+            "outcome" : "normal",
+            "rotation" : 1559.4360265204161,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-cult",
+            "landed" : "cat-cult",
+            "movieId" : "harlequin-1980",
+            "outcome" : "normal",
+            "rotation" : 2454.915948446148,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-listener",
+            "landed" : "cat-listener",
+            "movieId" : "the-ugly-stepsister-2025",
+            "outcome" : "normal",
+            "rotation" : 3315,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-criterion",
+            "landed" : "cat-criterion",
+            "movieId" : "taxi-driver-1976",
+            "outcome" : "normal",
+            "rotation" : 4218.593589448366,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-action",
+            "landed" : "cat-action",
+            "movieId" : "red-dawn-1984",
+            "outcome" : "normal",
+            "rotation" : 5209.964687841224,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-action",
+            "landed" : "cat-action",
+            "movieId" : "thirteen-lives-2022",
+            "outcome" : "normal",
+            "rotation" : 6284.327669418299,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-prestige",
+            "landed" : "cat-prestige",
+            "movieId" : "rebecca-2020",
+            "outcome" : "normal",
+            "rotation" : 6909,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "cat-action",
+            "landed" : "cat-action",
+            "movieId" : "the-manchurian-candidate-1962",
+            "outcome" : "normal",
+            "rotation" : 7361.867824839985,
+            "wasForcedRespin" : false
+          }
+        ]
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "reduceMotion" : false,
+        "seed" : 20,
+        "startRotation" : 0,
+        "steps" : [
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-1",
+            "outcome" : "normal",
+            "rotation" : 2061.0517483881367,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "c",
+            "landed" : "c",
+            "movieId" : "c-2",
+            "outcome" : "normal",
+            "rotation" : 4063.0343187043813,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-2",
+            "outcome" : "normal",
+            "rotation" : 6014.429234308745,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "c",
+            "landed" : "c",
+            "movieId" : "c-1",
+            "outcome" : "normal",
+            "rotation" : 8422.939298874153,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-1",
+            "outcome" : "normal",
+            "rotation" : 10296.030894652173,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 12264.156223366459,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-2",
+            "outcome" : "normal",
+            "rotation" : 15346.0394872052,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 17995.0187427854,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 20467.94417639838,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 23328.55906156849,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "c",
+            "landed" : "c",
+            "movieId" : "c-2",
+            "outcome" : "normal",
+            "rotation" : 26097,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 28073.465047631395,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "a",
+            "movieId" : "b-1",
+            "outcome" : "infamousJackpot",
+            "rotation" : 30154.002294623428,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 32846.27607094139,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-2",
+            "outcome" : "normal",
+            "rotation" : 35483.47319881086,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 38571.98109275209,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 41120.04409955014,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 44297.78991500412,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-2",
+            "outcome" : "normal",
+            "rotation" : 47350.13149384903,
+            "wasForcedRespin" : false
+          },
+          {
+            "landed" : "b",
+            "outcome" : "forcedRespin",
+            "rotation" : 50243.011701084986
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-1",
+            "outcome" : "normal",
+            "rotation" : 52743,
+            "wasForcedRespin" : true
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 55053.2150005872,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 57684.48960340075,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 60531.16373624627,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-2",
+            "outcome" : "normal",
+            "rotation" : 62903.36138653936,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 65107.017830886856,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 67665.58930839977,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 70482.72529671832,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 72654.02793436153,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "c",
+            "landed" : "c",
+            "movieId" : "c-1",
+            "outcome" : "normal",
+            "rotation" : 75406.95568585023,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "c",
+            "landed" : "c",
+            "movieId" : "c-1",
+            "outcome" : "normal",
+            "rotation" : 77528.83380614354,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 80663.22368906441,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 82871.92495593545,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 85040.22166471135,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 87866.18056573908,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 91096.36504679237,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 93953.54068146371,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-1",
+            "outcome" : "normal",
+            "rotation" : 95968.5190756657,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 98681.37283231702,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 101607,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 103635.27899109879,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 106191.511260252,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 108757.38350356548,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 110940.49201326555,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 112980.45005970226,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 115253.50548249646,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 117274.81610775788,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "c",
+            "landed" : "c",
+            "movieId" : "c-2",
+            "outcome" : "normal",
+            "rotation" : 119658.22428191378,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-1",
+            "outcome" : "normal",
+            "rotation" : 121880.75257196785,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 124944.77579528726,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 127430.70075508549,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-1",
+            "outcome" : "normal",
+            "rotation" : 129487.4190387446,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 131333.97988036336,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 134350.46752146693,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-2",
+            "outcome" : "normal",
+            "rotation" : 136517.40814437185,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "b",
+            "landed" : "b",
+            "movieId" : "b-1",
+            "outcome" : "normal",
+            "rotation" : 138497.07304287894,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "d",
+            "landed" : "d",
+            "movieId" : "d-1",
+            "outcome" : "normal",
+            "rotation" : 141540.74473993728,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 144710.60053350378,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-2",
+            "outcome" : "normal",
+            "rotation" : 147590.9905678388,
+            "wasForcedRespin" : false
+          },
+          {
+            "categoryId" : "a",
+            "landed" : "a",
+            "movieId" : "a-1",
+            "outcome" : "normal",
+            "rotation" : 150780.21214819967,
+            "wasForcedRespin" : false
+          }
+        ]
+      }
+    ],
+    "description" : "RouletteViewModel order per spin: randomTargetRotation(from: current rotation, 5...8 or 1...2 with reduce motion) -> landed = segmentIndex -> roll(allowRespin: !lastWasForced) -> forced: next step is the automatic re-spin; jackpot: jackpotPick; else selectMovie(history so far). History accumulates."
+  },
+  "bundledHorrorWeights" : {
+    "candidateCount" : 38,
+    "catalog" : "bundled",
+    "categoryId" : "cat-horror",
+    "historyMovieIds" : [
+      "what-ever-happened-to-baby-jane-1962",
+      "the-vanishing-1988",
+      "deadly-games-1989",
+      "x",
+      "x"
+    ],
+    "otherProbability" : 0.027085590465872156,
+    "otherWeight" : 1,
+    "weights" : [
+      {
+        "movieId" : "deadly-games-1989",
+        "probability" : 0.012459371614301194,
+        "weight" : 0.4600000000000001
+      },
+      {
+        "movieId" : "the-vanishing-1988",
+        "probability" : 0.01733477789815818,
+        "weight" : 0.64
+      },
+      {
+        "movieId" : "what-ever-happened-to-baby-jane-1962",
+        "probability" : 0.022210184182015168,
+        "weight" : 0.8200000000000001
+      }
+    ]
+  },
+  "candidates" : {
+    "categoryMovieIds" : [
+      "a-1",
+      "a-1",
+      "ghost"
+    ],
+    "expected" : [
+      "a-1",
+      "a-2",
+      "tagged"
+    ],
+    "extraMovie" : {
+      "categories" : [
+        "a"
+      ],
+      "id" : "tagged"
+    },
+    "source" : "android-main:MovieSelectorTest.candidatesUnionCategoryListAndMovieTagsWithoutDuplicates"
+  },
+  "description" : "Randomness, movie selection, rare outcomes, full spins (SPEC §3.3-3.5). Seeded cases use SplitMix64 (SPEC §4.1) AND the iOS mapping from 64-bit outputs to doubles/ints; an Android port must implement that mapping (see DISCREPANCIES.md D1) to reproduce seeded cases.",
+  "fixtures" : {
+    "bundled" : "the bundled movies.json at the iOS commit in _generated (sha256 in catalog.json bundled.sha256)",
+    "fixture" : {
+      "categories" : [
+        {
+          "colorHex" : "#C1121F",
+          "fullName" : "Category A",
+          "id" : "a",
+          "movieIds" : [
+            "a-1",
+            "a-2"
+          ],
+          "name" : "A",
+          "weight" : null
+        },
+        {
+          "colorHex" : "#7B2CBF",
+          "fullName" : "Category B",
+          "id" : "b",
+          "movieIds" : [
+            "b-1",
+            "b-2"
+          ],
+          "name" : "B",
+          "weight" : null
+        },
+        {
+          "colorHex" : "#E9C46A",
+          "fullName" : "Category C",
+          "id" : "c",
+          "movieIds" : [
+            "c-1",
+            "c-2"
+          ],
+          "name" : "C",
+          "weight" : null
+        },
+        {
+          "colorHex" : "#2A9D8F",
+          "fullName" : "Category D",
+          "id" : "d",
+          "movieIds" : [
+            "d-1",
+            "d-2"
+          ],
+          "name" : "D",
+          "weight" : null
+        }
+      ],
+      "movies" : [
+        {
+          "categories" : [
+            "a"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep a",
+          "genre" : "Drama",
+          "id" : "a-1",
+          "isInfamous" : false,
+          "title" : "Movie a 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "a"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "a-2",
+          "isInfamous" : false,
+          "title" : "Movie a 2",
+          "year" : 2002
+        },
+        {
+          "categories" : [
+            "b"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep b",
+          "genre" : "Drama",
+          "id" : "b-1",
+          "isInfamous" : false,
+          "title" : "Movie b 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "b"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "b-2",
+          "isInfamous" : false,
+          "title" : "Movie b 2",
+          "year" : 2002
+        },
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep c",
+          "genre" : "Drama",
+          "id" : "c-1",
+          "isInfamous" : false,
+          "title" : "Movie c 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "c-2",
+          "isInfamous" : false,
+          "title" : "Movie c 2",
+          "year" : 2002
+        },
+        {
+          "categories" : [
+            "d"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep d",
+          "genre" : "Drama",
+          "id" : "d-1",
+          "isInfamous" : false,
+          "title" : "Movie d 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "d"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "d-2",
+          "isInfamous" : false,
+          "title" : "Movie d 2",
+          "year" : 2002
+        }
+      ],
+      "schemaVersion" : 2
+    },
+    "fixtureInfamous" : {
+      "categories" : [
+        {
+          "colorHex" : "#C1121F",
+          "fullName" : "Category A",
+          "id" : "a",
+          "movieIds" : [
+            "a-1",
+            "a-2"
+          ],
+          "name" : "A",
+          "weight" : null
+        },
+        {
+          "colorHex" : "#7B2CBF",
+          "fullName" : "Category B",
+          "id" : "b",
+          "movieIds" : [
+            "b-1",
+            "b-2"
+          ],
+          "name" : "B",
+          "weight" : null
+        },
+        {
+          "colorHex" : "#E9C46A",
+          "fullName" : "Category C",
+          "id" : "c",
+          "movieIds" : [
+            "c-1",
+            "c-2"
+          ],
+          "name" : "C",
+          "weight" : null
+        },
+        {
+          "colorHex" : "#2A9D8F",
+          "fullName" : "Category D",
+          "id" : "d",
+          "movieIds" : [
+            "d-1",
+            "d-2"
+          ],
+          "name" : "D",
+          "weight" : null
+        }
+      ],
+      "movies" : [
+        {
+          "categories" : [
+            "a"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep a",
+          "genre" : "Drama",
+          "id" : "a-1",
+          "isInfamous" : false,
+          "title" : "Movie a 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "a"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "a-2",
+          "isInfamous" : false,
+          "title" : "Movie a 2",
+          "year" : 2002
+        },
+        {
+          "categories" : [
+            "b"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep b",
+          "genre" : "Drama",
+          "id" : "b-1",
+          "isInfamous" : true,
+          "title" : "Movie b 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "b"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "b-2",
+          "isInfamous" : false,
+          "title" : "Movie b 2",
+          "year" : 2002
+        },
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep c",
+          "genre" : "Drama",
+          "id" : "c-1",
+          "isInfamous" : false,
+          "title" : "Movie c 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "c-2",
+          "isInfamous" : false,
+          "title" : "Movie c 2",
+          "year" : 2002
+        },
+        {
+          "categories" : [
+            "d"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1"
+          ],
+          "episodeTitle" : "Ep d",
+          "genre" : "Drama",
+          "id" : "d-1",
+          "isInfamous" : false,
+          "title" : "Movie d 1",
+          "year" : 2001
+        },
+        {
+          "categories" : [
+            "d"
+          ],
+          "episodeIds" : [
+
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "d-2",
+          "isInfamous" : true,
+          "title" : "Movie d 2",
+          "year" : 2002
+        }
+      ],
+      "schemaVersion" : 2
+    }
+  },
+  "pickIndex" : [
+    {
+      "expected" : 0,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 0,
+      "weights" : [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "expected" : 0,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 0.2499,
+      "weights" : [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "expected" : 1,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 0.25,
+      "weights" : [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "expected" : 2,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 0.75,
+      "weights" : [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "expected" : 2,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 1,
+      "weights" : [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "expected" : null,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 0.5,
+      "weights" : [
+
+      ]
+    },
+    {
+      "expected" : 1,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 0.99,
+      "weights" : [
+        0,
+        1,
+        -1,
+        "NaN"
+      ]
+    },
+    {
+      "expected" : 2,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : 0.9,
+      "weights" : [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "expected" : 0,
+      "source" : "android-main:MovieSelectorTest.pickIndexExactIntervalsAndEdgeCases",
+      "unitValue" : "NaN",
+      "weights" : [
+        1,
+        1
+      ]
+    },
+    {
+      "expected" : 0,
+      "source" : "ios",
+      "unitValue" : -5,
+      "weights" : [
+        1,
+        1
+      ]
+    },
+    {
+      "expected" : 1,
+      "source" : "ios",
+      "unitValue" : 0.5,
+      "weights" : [
+        1,
+        1
+      ]
+    },
+    {
+      "expected" : 0,
+      "source" : "ios",
+      "unitValue" : 0.0476,
+      "weights" : [
+        0.1,
+        1,
+        1
+      ]
+    },
+    {
+      "expected" : 1,
+      "source" : "ios",
+      "unitValue" : 0.1,
+      "weights" : [
+        "Infinity",
+        1
+      ]
+    },
+    {
+      "expected" : 0,
+      "source" : "ios",
+      "unitValue" : 0.999,
+      "weights" : [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "quickSpin" : {
+    "cases" : [
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-dark-comedy",
+        "isJackpot" : false,
+        "landed" : "cat-dark-comedy",
+        "movieId" : "the-banshees-of-inisherin-2022",
+        "seed" : 1,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-listener",
+        "isJackpot" : false,
+        "landed" : "cat-listener",
+        "movieId" : "runaway-train-1985",
+        "seed" : 2,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-listener",
+        "isJackpot" : false,
+        "landed" : "cat-listener",
+        "movieId" : "taxi-driver-1976",
+        "seed" : 3,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-love",
+        "isJackpot" : false,
+        "landed" : "cat-love",
+        "movieId" : "forgetting-sarah-marshall-2008",
+        "seed" : 4,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-criterion",
+        "isJackpot" : false,
+        "landed" : "cat-criterion",
+        "movieId" : "the-man-who-shot-liberty-valance-1962",
+        "seed" : 5,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-escape",
+        "isJackpot" : false,
+        "landed" : "cat-escape",
+        "movieId" : "come-and-see-1985",
+        "seed" : 6,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-dark-comedy",
+        "isJackpot" : false,
+        "landed" : "cat-dark-comedy",
+        "movieId" : "defending-your-life-1991",
+        "seed" : 7,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "bundled",
+        "categoryId" : "cat-listener",
+        "isJackpot" : false,
+        "landed" : "cat-listener",
+        "movieId" : "the-ugly-stepsister-2025",
+        "seed" : 8,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "c",
+        "isJackpot" : false,
+        "landed" : "c",
+        "movieId" : "c-1",
+        "seed" : 1,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "c",
+        "isJackpot" : false,
+        "landed" : "c",
+        "movieId" : "c-2",
+        "seed" : 2,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "d",
+        "isJackpot" : false,
+        "landed" : "d",
+        "movieId" : "d-1",
+        "seed" : 3,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "isJackpot" : false,
+        "landed" : "b",
+        "movieId" : "b-1",
+        "seed" : 4,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "isJackpot" : false,
+        "landed" : "b",
+        "movieId" : "b-1",
+        "seed" : 5,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "d",
+        "isJackpot" : false,
+        "landed" : "d",
+        "movieId" : "d-1",
+        "seed" : 6,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "c",
+        "isJackpot" : false,
+        "landed" : "c",
+        "movieId" : "c-2",
+        "seed" : 7,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "c",
+        "isJackpot" : false,
+        "landed" : "c",
+        "movieId" : "c-2",
+        "seed" : 8,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "d",
+        "isJackpot" : true,
+        "landed" : "d",
+        "movieId" : "d-2",
+        "seed" : 121,
+        "wasForcedRespin" : false
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "d",
+        "isJackpot" : false,
+        "landed" : "d",
+        "movieId" : "d-2",
+        "seed" : 125,
+        "wasForcedRespin" : true
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "isJackpot" : false,
+        "landed" : "b",
+        "movieId" : "b-1",
+        "seed" : 139,
+        "wasForcedRespin" : true
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "a",
+        "isJackpot" : false,
+        "landed" : "a",
+        "movieId" : "a-1",
+        "seed" : 140,
+        "wasForcedRespin" : true
+      }
+    ],
+    "description" : "QuickSpin.resolve(catalog, history: [], default policy) (Siri/Shortcuts path): per attempt randomTargetRotation(from: 0, fullTurns: 1...1) then roll, then jackpotPick or selectMovie."
+  },
+  "rareOutcome" : {
+    "cases" : [
+      {
+        "allowRespin" : true,
+        "expected" : "forcedRespin",
+        "infamousAvailable" : true,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : 0
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "forcedRespin",
+        "infamousAvailable" : true,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : 0.0099
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "infamousJackpot",
+        "infamousAvailable" : true,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : 0.01
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "infamousJackpot",
+        "infamousAvailable" : true,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : 0.0199
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "normal",
+        "infamousAvailable" : true,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : 0.02
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "normal",
+        "infamousAvailable" : false,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : 0.015
+      },
+      {
+        "allowRespin" : false,
+        "expected" : "normal",
+        "infamousAvailable" : true,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : 0.005
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "normal",
+        "infamousAvailable" : true,
+        "source" : "android-main:RareOutcomeTest",
+        "unitValue" : "NaN"
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "forcedRespin",
+        "infamousAvailable" : true,
+        "source" : "ios",
+        "unitValue" : -1
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "normal",
+        "infamousAvailable" : true,
+        "source" : "ios",
+        "unitValue" : 0.5
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "normal",
+        "infamousAvailable" : true,
+        "source" : "ios",
+        "unitValue" : 0.999
+      },
+      {
+        "allowRespin" : true,
+        "expected" : "normal",
+        "infamousAvailable" : true,
+        "policy" : "disabled",
+        "source" : "android-main:RareOutcomeTest.disabledAndBadInput",
+        "unitValue" : 0
+      }
+    ],
+    "jackpotPick" : [
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "d",
+        "landed" : "a",
+        "movieId" : "d-2",
+        "seed" : 1
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "d",
+        "landed" : "a",
+        "movieId" : "d-2",
+        "seed" : 2
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "landed" : "d",
+        "movieId" : "b-1",
+        "seed" : 3
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "landed" : "b",
+        "movieId" : "b-1",
+        "seed" : 4
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "landed" : "c",
+        "movieId" : "b-1",
+        "seed" : 5
+      }
+    ],
+    "policy" : {
+      "forcedRespinChance" : 0.01,
+      "infamousJackpotChance" : 0.01
+    },
+    "policyClamping" : [
+      {
+        "effective" : {
+          "forcedRespin" : 0.8,
+          "infamousJackpot" : 0.19999999999999996
+        },
+        "forcedRespinChance" : 0.8,
+        "infamousJackpotChance" : 0.8
+      },
+      {
+        "effective" : {
+          "forcedRespin" : 0,
+          "infamousJackpot" : 1
+        },
+        "forcedRespinChance" : -1,
+        "infamousJackpotChance" : 2
+      },
+      {
+        "effective" : {
+          "forcedRespin" : 0,
+          "infamousJackpot" : 0.5
+        },
+        "forcedRespinChance" : "NaN",
+        "infamousJackpotChance" : 0.5
+      },
+      {
+        "effective" : {
+          "forcedRespin" : 0.01,
+          "infamousJackpot" : 0.01
+        },
+        "forcedRespinChance" : 0.01,
+        "infamousJackpotChance" : 0.01
+      }
+    ]
+  },
+  "recencyMultiplier" : [
+    {
+      "expected" : 1,
+      "spinsAgo" : null
+    },
+    {
+      "expected" : 1,
+      "spinsAgo" : 0
+    },
+    {
+      "expected" : 0.1,
+      "spinsAgo" : 1
+    },
+    {
+      "expected" : 0.28,
+      "spinsAgo" : 2
+    },
+    {
+      "expected" : 0.4600000000000001,
+      "spinsAgo" : 3
+    },
+    {
+      "expected" : 0.64,
+      "spinsAgo" : 4
+    },
+    {
+      "expected" : 0.8200000000000001,
+      "spinsAgo" : 5
+    },
+    {
+      "expected" : 1,
+      "spinsAgo" : 6
+    },
+    {
+      "expected" : 1,
+      "spinsAgo" : 100
+    }
+  ],
+  "rng" : [
+    {
+      "doubleIn0until360" : [
+        7.39267975447905,
+        276.96166392549185,
+        49.091119790518604,
+        131.8648532546846
+      ],
+      "intIn0until3" : [
+        2,
+        1,
+        0,
+        2
+      ],
+      "intIn5through8" : [
+        8,
+        6,
+        5,
+        8
+      ],
+      "nextUInt64Hex" : [
+        "e220a8397b1dcdaf",
+        "6e789e6aa1b965f4",
+        "06c45d188009454f",
+        "f88bb8a8724c81ec"
+      ],
+      "seed" : 0,
+      "unitDoubles" : [
+        0.020535221540219584,
+        0.7693379553485884,
+        0.13636422164032946,
+        0.3662912590407905
+      ]
+    },
+    {
+      "doubleIn0until360" : [
+        114.51814301930743,
+        129.97399464433286,
+        220.91016447317122,
+        17.163550879651424
+      ],
+      "intIn0until3" : [
+        1,
+        2,
+        2,
+        1
+      ],
+      "intIn5through8" : [
+        7,
+        7,
+        8,
+        6
+      ],
+      "nextUInt64Hex" : [
+        "910a2dec89025cc1",
+        "beeb8da1658eec67",
+        "f893a2eefb32555e",
+        "71c18690ee42c90b"
+      ],
+      "seed" : 1,
+      "unitDoubles" : [
+        0.3181059528314095,
+        0.3610388740120357,
+        0.613639345758809,
+        0.047676530221253954
+      ]
+    },
+    {
+      "doubleIn0until360" : [
+        260.9538208899576,
+        178.73446029566492,
+        207.04131450870804,
+        324.93147854751464
+      ],
+      "intIn0until3" : [
+        2,
+        0,
+        0,
+        1
+      ],
+      "intIn5through8" : [
+        7,
+        5,
+        6,
+        6
+      ],
+      "nextUInt64Hex" : [
+        "bdd732262feb6e95",
+        "28efe333b266f103",
+        "47526757130f9f52",
+        "581ce1ff0e4ae394"
+      ],
+      "seed" : 42,
+      "unitDoubles" : [
+        0.7248717246943267,
+        0.49648461193240256,
+        0.575114762524189,
+        0.9025874404097629
+      ]
+    },
+    {
+      "doubleIn0until360" : [
+        318.7615417109808,
+        321.43763235753823,
+        260.0885818131758,
+        6.483793456914677
+      ],
+      "intIn0until3" : [
+        2,
+        1,
+        2,
+        1
+      ],
+      "intIn5through8" : [
+        8,
+        6,
+        7,
+        6
+      ],
+      "nextUInt64Hex" : [
+        "db9c559891948d23",
+        "78bc927ded35455d",
+        "aad71e75cde2b88e",
+        "6280938ad5a104f2"
+      ],
+      "seed" : 2026,
+      "unitDoubles" : [
+        0.8854487269749466,
+        0.8928823121042729,
+        0.7224682828143771,
+        0.018010537380318548
+      ]
+    },
+    {
+      "doubleIn0until360" : [
+        286.23626638627354,
+        359.6662661184667,
+        179.66160342288413,
+        334.13488693232625
+      ],
+      "intIn0until3" : [
+        2,
+        2,
+        0,
+        1
+      ],
+      "intIn5through8" : [
+        8,
+        8,
+        5,
+        6
+      ],
+      "nextUInt64Hex" : [
+        "e4d971771b652c20",
+        "e99ff867dbf682c9",
+        "382ff84cb27281e9",
+        "6d1db36ccba982d2"
+      ],
+      "seed" : 18446744073709551615,
+      "unitDoubles" : [
+        0.795100739961871,
+        0.9990729614401853,
+        0.49906000950801144,
+        0.9281524637009062
+      ]
+    }
+  ],
+  "seededSelectMovie" : [
+    {
+      "catalog" : "fixture",
+      "categoryId" : "a",
+      "historyMovieIds" : [
+
+      ],
+      "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
+      "picks" : [
+        "a-1",
+        "a-1",
+        "a-2",
+        "a-1",
+        "a-2",
+        "a-1",
+        "a-2",
+        "a-1",
+        "a-2",
+        "a-1",
+        "a-2",
+        "a-2"
+      ],
+      "seed" : 1
+    },
+    {
+      "catalog" : "fixture",
+      "categoryId" : "a",
+      "historyMovieIds" : [
+        "a-1"
+      ],
+      "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
+      "picks" : [
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2",
+        "a-2"
+      ],
+      "seed" : 3
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "categoryId" : "b",
+      "historyMovieIds" : [
+        "b-2"
+      ],
+      "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
+      "picks" : [
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1",
+        "b-1"
+      ],
+      "seed" : 42
+    },
+    {
+      "catalog" : "bundled",
+      "categoryId" : "cat-horror",
+      "historyMovieIds" : [
+        "deadly-games-1989",
+        "the-vanishing-1988",
+        "what-ever-happened-to-baby-jane-1962"
+      ],
+      "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
+      "picks" : [
+        "race-with-the-devil-1975",
+        "return-of-the-living-dead-3-1993",
+        "night-of-the-living-dead-1990",
+        "the-vanishing-1988",
+        "talk-to-me-2022",
+        "fright-night-1985",
+        "leviathan-1989",
+        "weapons-2025",
+        "leviathan-1989",
+        "martin-1977",
+        "diabolique-1955",
+        "the-grave-1996"
+      ],
+      "seed" : 2026
+    },
+    {
+      "catalog" : "bundled",
+      "categoryId" : "cat-listener",
+      "historyMovieIds" : [
+
+      ],
+      "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
+      "picks" : [
+        "the-thing-1982",
+        "the-thing-1982",
+        "the-pirates-of-penzance-1983",
+        "the-ugly-stepsister-2025",
+        "runaway-train-1985",
+        "the-ugly-stepsister-2025",
+        "the-thing-1982",
+        "the-ugly-stepsister-2025",
+        "the-ugly-stepsister-2025",
+        "strawberry-mansion-2021",
+        "strawberry-mansion-2021",
+        "the-pirates-of-penzance-1983"
+      ],
+      "seed" : 7
+    }
+  ],
+  "weights" : [
+    {
+      "catalog" : "fixture",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+
+      ],
+      "name" : "none"
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5555555555555556,
+          "weight" : 1.25
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.4444444444444444,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+
+      ],
+      "name" : "none"
+    },
+    {
+      "catalog" : "fixture",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.09090909090909091,
+          "weight" : 0.1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.9090909090909091,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1"
+      ],
+      "name" : "a-1 last"
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.09090909090909091,
+          "weight" : 0.1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.9090909090909091,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5555555555555556,
+          "weight" : 1.25
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.4444444444444444,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1"
+      ],
+      "name" : "a-1 last"
+    },
+    {
+      "catalog" : "fixture",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.21875000000000003,
+          "weight" : 0.28
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.78125,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.09090909090909091,
+          "weight" : 0.1
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.9090909090909091,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "b-1"
+      ],
+      "name" : "a-1 two ago"
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.21875000000000003,
+          "weight" : 0.28
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.78125,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.1111111111111111,
+          "weight" : 0.125
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.8888888888888888,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "b-1"
+      ],
+      "name" : "a-1 two ago"
+    },
+    {
+      "catalog" : "fixture",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.45054945054945056,
+          "weight" : 0.8200000000000001
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.5494505494505494,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "x",
+        "x",
+        "x",
+        "x"
+      ],
+      "name" : "a-1 five ago"
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.45054945054945056,
+          "weight" : 0.8200000000000001
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.5494505494505494,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5555555555555556,
+          "weight" : 1.25
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.4444444444444444,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "x",
+        "x",
+        "x",
+        "x"
+      ],
+      "name" : "a-1 five ago"
+    },
+    {
+      "catalog" : "fixture",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x"
+      ],
+      "name" : "a-1 six ago"
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5555555555555556,
+          "weight" : 1.25
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.4444444444444444,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "x",
+        "x",
+        "x",
+        "x",
+        "x"
+      ],
+      "name" : "a-1 six ago"
+    },
+    {
+      "catalog" : "fixture",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.2631578947368421,
+          "weight" : 0.1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.736842105263158,
+          "weight" : 0.28
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-2",
+        "a-1"
+      ],
+      "name" : "both recent"
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.2631578947368421,
+          "weight" : 0.1
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.736842105263158,
+          "weight" : 0.28
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5555555555555556,
+          "weight" : 1.25
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.4444444444444444,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-2",
+        "a-1"
+      ],
+      "name" : "both recent"
+    },
+    {
+      "catalog" : "fixture",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.21875000000000003,
+          "weight" : 0.28
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.78125,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5,
+          "weight" : 1
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.5,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "x",
+        "a-1",
+        "x"
+      ],
+      "name" : "a-1 twice, most recent counts"
+    },
+    {
+      "catalog" : "fixtureInfamous",
+      "category_a" : [
+        {
+          "movieId" : "a-1",
+          "probability" : 0.21875000000000003,
+          "weight" : 0.28
+        },
+        {
+          "movieId" : "a-2",
+          "probability" : 0.78125,
+          "weight" : 1
+        }
+      ],
+      "category_b" : [
+        {
+          "movieId" : "b-1",
+          "probability" : 0.5555555555555556,
+          "weight" : 1.25
+        },
+        {
+          "movieId" : "b-2",
+          "probability" : 0.4444444444444444,
+          "weight" : 1
+        }
+      ],
+      "historyMovieIds" : [
+        "a-1",
+        "x",
+        "a-1",
+        "x"
+      ],
+      "name" : "a-1 twice, most recent counts"
+    }
+  ]
+}

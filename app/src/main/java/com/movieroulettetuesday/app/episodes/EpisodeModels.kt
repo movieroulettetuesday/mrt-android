@@ -58,7 +58,11 @@ data class CachedEpisodeFeed(
 )
 
 object ShowNotes {
-    private val fanMailPrefix = Regex("""^send us fan ?mail[\s.:!\-–—|]*""", RegexOption.IGNORE_CASE)
+    // UNICODE_CHARACTER_CLASS: `\s` covers U+00A0 etc., like NSRegularExpression on iOS.
+    private val fanMailPrefix = java.util.regex.Pattern.compile(
+        """^send us fan ?mail[\s.:!\-–—|]*""",
+        java.util.regex.Pattern.CASE_INSENSITIVE or java.util.regex.Pattern.UNICODE_CASE or java.util.regex.Pattern.UNICODE_CHARACTER_CLASS,
+    ).toRegex()
     private val anchor = Regex("""<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>\s*([^<]*)</a>""", RegexOption.IGNORE_CASE)
     private val fanMailLabel = Regex("""fan ?mail""", RegexOption.IGNORE_CASE)
 
@@ -81,7 +85,7 @@ object ShowNotes {
     }
 
     private val tag = Regex("<[^>]+>")
-    private val spaces = Regex("""\s+""")
+    private val spaces = java.util.regex.Pattern.compile("""\s+""", java.util.regex.Pattern.UNICODE_CHARACTER_CLASS).toRegex()
     private val entities = listOf(
         "&amp;" to "&", "&lt;" to "<", "&gt;" to ">", "&quot;" to "\"",
         "&#39;" to "'", "&apos;" to "'", "&nbsp;" to " ",

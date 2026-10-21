@@ -1,0 +1,81 @@
+{
+  "_generated" : {
+    "from" : "iOS RouletteCore at b673df1 via tools/vector-gen",
+    "note" : "Single source for both ports. Do not edit by hand; change iOS first, then regenerate."
+  },
+  "appGroup" : "group.com.movieroulettetuesday.app",
+  "appleLookupURL" : "https://itunes.apple.com/lookup?id=1666123849&entity=podcastEpisode&limit=200",
+  "applePodcastID" : "1666123849",
+  "applePodcastsURL" : "https://podcasts.apple.com/us/podcast/movie-roulette-tuesday-the-podcast/id1666123849",
+  "buzzsproutShowID" : "2117292",
+  "buzzsproutURL" : "https://www.buzzsprout.com/2117292",
+  "cloudKitContainer" : "iCloud.com.movieroulettetuesday.app",
+  "feedTimeoutSeconds" : 20,
+  "followTheShow" : [
+    {
+      "iosSymbol" : "apple.logo",
+      "tileHex" : "#9B4DE0",
+      "title" : "Apple Podcasts",
+      "url" : "https://podcasts.apple.com/us/podcast/movie-roulette-tuesday-the-podcast/id1666123849"
+    },
+    {
+      "iosSymbol" : "waveform",
+      "tileHex" : "#1DB954",
+      "title" : "Spotify",
+      "url" : "https://open.spotify.com/show/0jJt5G1XRlbLYWJuyIQnj1"
+    },
+    {
+      "iosSymbol" : "dot.radiowaves.left.and.right",
+      "tileHex" : "#FC7E0F",
+      "title" : "Overcast",
+      "url" : "https://overcast.fm/itunes1666123849"
+    },
+    {
+      "iosSymbol" : "globe",
+      "tileHex" : "#3A9CA6",
+      "title" : "Buzzsprout (podcast page)",
+      "url" : "https://www.buzzsprout.com/2117292"
+    },
+    {
+      "iosSymbol" : "play.rectangle.fill",
+      "tileHex" : "#FF0000",
+      "title" : "YouTube  @theMrtPodcast",
+      "url" : "https://www.youtube.com/@theMrtPodcast"
+    },
+    {
+      "iosSymbol" : "camera",
+      "tileHex" : "#C13584",
+      "title" : "Instagram  @themrtpodcast",
+      "url" : "https://www.instagram.com/themrtpodcast"
+    },
+    {
+      "iosSymbol" : "at",
+      "tileHex" : "#3C3C43",
+      "title" : "X  @TheMRTPodcast",
+      "url" : "https://x.com/TheMRTPodcast"
+    },
+    {
+      "iosSymbol" : "person.2",
+      "tileHex" : "#1877F2",
+      "title" : "Facebook",
+      "url" : "https://www.facebook.com/people/The-Movie-Roulette-Tuesday-Podcast/100092512094792/"
+    }
+  ],
+  "hosts" : [
+    "Rachael",
+    "Karl",
+    "Matt"
+  ],
+  "name" : "Movie Roulette Tuesday: The Podcast",
+  "overcastURL" : "https://overcast.fm/itunes1666123849",
+  "remoteCatalogTimeoutSeconds" : 8,
+  "remoteCatalogURL" : "https://raw.githubusercontent.com/movieroulettetuesday/movie-roulette-tuesday/main/MovieRouletteTuesday/Resources/movies.json",
+  "rssURL" : "https://rss.buzzsprout.com/2117292.rss",
+  "source" : "RouletteCore/Models.swift ShowInfo.mrt, ShowLinks.swift, EpisodeStoreCore.swift, RemoteCatalog.swift",
+  "spotifyShowID" : "0jJt5G1XRlbLYWJuyIQnj1",
+  "spotifyURL" : "https://open.spotify.com/show/0jJt5G1XRlbLYWJuyIQnj1",
+  "streamingAttribution" : "Streaming data by JustWatch via TMDB",
+  "suggestionEmail" : "theMrtPodcast@gmail.com",
+  "tmdbNotice" : "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+  "whereToWatchEmpty" : "No streaming sources found."
+}

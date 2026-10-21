@@ -92,6 +92,10 @@ class WheelGeometry private constructor(val segments: List<Segment>, val isUnifo
             return WheelGeometry(segments, uniform)
         }
 
+        /** One segment per category, sized by its weight (as the Roulette tab draws it). */
+        fun forCatalog(catalog: com.movieroulettetuesday.app.catalog.MovieCatalog): WheelGeometry =
+            fromWeights(catalog.categories.map { it.weight })
+
         fun uniform(segmentCount: Int): WheelGeometry = fromWeights(List(segmentCount.coerceAtLeast(0)) { 1.0 })
     }
 }

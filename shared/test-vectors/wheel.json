@@ -1,0 +1,1641 @@
+{
+  "_generated" : {
+    "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
+    "iosCommit" : "b673df1",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+  },
+  "boundaryRotations" : [
+    {
+      "expected" : [
+        90,
+        180,
+        270,
+        360,
+        450,
+        540,
+        630,
+        720
+      ],
+      "from" : 0,
+      "segmentCount" : 4,
+      "to" : 720
+    },
+    {
+      "expected" : [
+        90
+      ],
+      "from" : 10,
+      "segmentCount" : 4,
+      "to" : 100
+    },
+    {
+      "expected" : [
+
+      ],
+      "from" : 0,
+      "segmentCount" : 1,
+      "to" : 360
+    }
+  ],
+  "deepLinks" : [
+    {
+      "id" : "the-outsiders-1983",
+      "kind" : "movie",
+      "roundTrip" : "mrt://movie/the-outsiders-1983",
+      "url" : "mrt://movie/the-outsiders-1983"
+    },
+    {
+      "id" : "abc",
+      "kind" : "movie",
+      "roundTrip" : "mrt://movie/abc",
+      "url" : "mrt:///movie/abc"
+    },
+    {
+      "id" : "X",
+      "kind" : "movie",
+      "roundTrip" : "mrt://movie/X",
+      "url" : "MRT://Movie/X"
+    },
+    {
+      "id" : "Buzzsprout-19913482",
+      "kind" : "episode",
+      "roundTrip" : "mrt://episode/Buzzsprout-19913482",
+      "url" : "mrt://episode/Buzzsprout-19913482"
+    },
+    {
+      "id" : "a/b",
+      "kind" : "movie",
+      "roundTrip" : "mrt://movie/a%2Fb",
+      "url" : "mrt://movie/a%2Fb"
+    },
+    {
+      "id" : null,
+      "kind" : null,
+      "roundTrip" : null,
+      "url" : "mrt://movie/"
+    },
+    {
+      "id" : null,
+      "kind" : null,
+      "roundTrip" : null,
+      "url" : "mrt://other/x"
+    },
+    {
+      "id" : null,
+      "kind" : null,
+      "roundTrip" : null,
+      "url" : "https://movie/x"
+    },
+    {
+      "id" : null,
+      "kind" : null,
+      "roundTrip" : null,
+      "url" : "mrt://movie/a/b"
+    }
+  ],
+  "description" : "Wheel geometry, slice mapping, spin targets, motion timing, layout (SPEC §3.1-3.2, §3.5, §8 deep links, §11). Angles in degrees, clockwise from 12 o'clock; positive rotation = clockwise; pointer fixed at 12 o'clock.",
+  "geometries" : [
+    {
+      "isUniform" : true,
+      "name" : "uniform-10 (bundled wheel)",
+      "probes" : [
+        {
+          "pointerAngle" : 0,
+          "rotation" : 0,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 0.0001,
+          "rotation" : -0.0001,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 89.9999,
+          "rotation" : -89.9999,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 90,
+          "rotation" : -90,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 100,
+          "rotation" : -100,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : -270,
+          "segmentIndex" : 7
+        },
+        {
+          "pointerAngle" : 359.999,
+          "rotation" : -359.999,
+          "segmentIndex" : 9
+        },
+        {
+          "pointerAngle" : 350,
+          "rotation" : 10,
+          "segmentIndex" : 9
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : 90,
+          "segmentIndex" : 7
+        },
+        {
+          "pointerAngle" : 180,
+          "rotation" : 180,
+          "segmentIndex" : 5
+        },
+        {
+          "pointerAngle" : 315,
+          "rotation" : 3645,
+          "segmentIndex" : 8
+        },
+        {
+          "pointerAngle" : 36,
+          "rotation" : -36,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 35.999,
+          "rotation" : -35.999,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 359,
+          "rotation" : 1,
+          "segmentIndex" : 9
+        },
+        {
+          "pointerAngle" : 324,
+          "rotation" : 36,
+          "segmentIndex" : 9
+        },
+        {
+          "pointerAngle" : 323.5,
+          "rotation" : 36.5,
+          "segmentIndex" : 8
+        }
+      ],
+      "segments" : [
+        {
+          "end" : 36,
+          "index" : 0,
+          "mid" : 18,
+          "start" : 0
+        },
+        {
+          "end" : 72,
+          "index" : 1,
+          "mid" : 54,
+          "start" : 36
+        },
+        {
+          "end" : 108,
+          "index" : 2,
+          "mid" : 90,
+          "start" : 72
+        },
+        {
+          "end" : 144,
+          "index" : 3,
+          "mid" : 126,
+          "start" : 108
+        },
+        {
+          "end" : 180,
+          "index" : 4,
+          "mid" : 162,
+          "start" : 144
+        },
+        {
+          "end" : 216,
+          "index" : 5,
+          "mid" : 198,
+          "start" : 180
+        },
+        {
+          "end" : 252,
+          "index" : 6,
+          "mid" : 234,
+          "start" : 216
+        },
+        {
+          "end" : 288,
+          "index" : 7,
+          "mid" : 270,
+          "start" : 252
+        },
+        {
+          "end" : 324,
+          "index" : 8,
+          "mid" : 306,
+          "start" : 288
+        },
+        {
+          "end" : 360,
+          "index" : 9,
+          "mid" : 342,
+          "start" : 324
+        }
+      ],
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "isUniform" : false,
+      "name" : "weighted-1-2-1",
+      "probes" : [
+        {
+          "pointerAngle" : 0,
+          "rotation" : 0,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 0.0001,
+          "rotation" : -0.0001,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 89.9999,
+          "rotation" : -89.9999,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 90,
+          "rotation" : -90,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 100,
+          "rotation" : -100,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : -270,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 359.999,
+          "rotation" : -359.999,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 350,
+          "rotation" : 10,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : 90,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 180,
+          "rotation" : 180,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 315,
+          "rotation" : 3645,
+          "segmentIndex" : 2
+        }
+      ],
+      "segments" : [
+        {
+          "end" : 90,
+          "index" : 0,
+          "mid" : 45,
+          "start" : 0
+        },
+        {
+          "end" : 270,
+          "index" : 1,
+          "mid" : 180,
+          "start" : 90
+        },
+        {
+          "end" : 360,
+          "index" : 2,
+          "mid" : 315,
+          "start" : 270
+        }
+      ],
+      "weights" : [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "isUniform" : true,
+      "name" : "invalid-weights-count-as-1",
+      "probes" : [
+        {
+          "pointerAngle" : 0,
+          "rotation" : 0,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 0.0001,
+          "rotation" : -0.0001,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 89.9999,
+          "rotation" : -89.9999,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 90,
+          "rotation" : -90,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 100,
+          "rotation" : -100,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : -270,
+          "segmentIndex" : 3
+        },
+        {
+          "pointerAngle" : 359.999,
+          "rotation" : -359.999,
+          "segmentIndex" : 3
+        },
+        {
+          "pointerAngle" : 350,
+          "rotation" : 10,
+          "segmentIndex" : 3
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : 90,
+          "segmentIndex" : 3
+        },
+        {
+          "pointerAngle" : 180,
+          "rotation" : 180,
+          "segmentIndex" : 2
+        },
+        {
+          "pointerAngle" : 315,
+          "rotation" : 3645,
+          "segmentIndex" : 3
+        }
+      ],
+      "segments" : [
+        {
+          "end" : 90,
+          "index" : 0,
+          "mid" : 45,
+          "start" : 0
+        },
+        {
+          "end" : 180,
+          "index" : 1,
+          "mid" : 135,
+          "start" : 90
+        },
+        {
+          "end" : 270,
+          "index" : 2,
+          "mid" : 225,
+          "start" : 180
+        },
+        {
+          "end" : 360,
+          "index" : 3,
+          "mid" : 315,
+          "start" : 270
+        }
+      ],
+      "weights" : [
+        null,
+        -1,
+        "NaN",
+        0
+      ]
+    },
+    {
+      "isUniform" : true,
+      "name" : "empty-is-one-segment",
+      "probes" : [
+        {
+          "pointerAngle" : 0,
+          "rotation" : 0,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 237,
+          "rotation" : 123,
+          "segmentIndex" : 0
+        }
+      ],
+      "segments" : [
+        {
+          "end" : 360,
+          "index" : 0,
+          "mid" : 180,
+          "start" : 0
+        }
+      ],
+      "weights" : [
+
+      ]
+    },
+    {
+      "isUniform" : false,
+      "name" : "weighted-3-1",
+      "probes" : [
+        {
+          "pointerAngle" : 0,
+          "rotation" : 0,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 0.0001,
+          "rotation" : -0.0001,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 89.9999,
+          "rotation" : -89.9999,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 90,
+          "rotation" : -90,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 100,
+          "rotation" : -100,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : -270,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 359.999,
+          "rotation" : -359.999,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 350,
+          "rotation" : 10,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 270,
+          "rotation" : 90,
+          "segmentIndex" : 1
+        },
+        {
+          "pointerAngle" : 180,
+          "rotation" : 180,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 315,
+          "rotation" : 3645,
+          "segmentIndex" : 1
+        }
+      ],
+      "segments" : [
+        {
+          "end" : 270,
+          "index" : 0,
+          "mid" : 135,
+          "start" : 0
+        },
+        {
+          "end" : 360,
+          "index" : 1,
+          "mid" : 315,
+          "start" : 270
+        }
+      ],
+      "weights" : [
+        3,
+        1
+      ]
+    },
+    {
+      "isUniform" : true,
+      "name" : "single",
+      "probes" : [
+        {
+          "pointerAngle" : 0,
+          "rotation" : 0,
+          "segmentIndex" : 0
+        },
+        {
+          "pointerAngle" : 283,
+          "rotation" : 77,
+          "segmentIndex" : 0
+        }
+      ],
+      "segments" : [
+        {
+          "end" : 360,
+          "index" : 0,
+          "mid" : 180,
+          "start" : 0
+        }
+      ],
+      "weights" : [
+        1
+      ]
+    }
+  ],
+  "layout" : {
+    "confetti" : [
+      {
+        "particles" : 60,
+        "pieceScale" : 1,
+        "width" : 430
+      },
+      {
+        "particles" : 143,
+        "pieceScale" : 1.6,
+        "width" : 1024
+      },
+      {
+        "particles" : 60,
+        "pieceScale" : 1,
+        "width" : 200
+      }
+    ],
+    "roulette" : [
+      {
+        "arrangement" : "stacked",
+        "controlsWidth" : 240,
+        "height" : 700,
+        "hintHeight" : 40,
+        "isRegularWidth" : false,
+        "pointerSize" : [
+          31.705000000000002,
+          38.49892857142857
+        ],
+        "slotWidthUsed" : 393,
+        "wheelDiameter" : 373,
+        "width" : 393
+      },
+      {
+        "arrangement" : "stacked",
+        "controlsWidth" : 307.2,
+        "height" : 1366,
+        "hintHeight" : 40,
+        "isRegularWidth" : true,
+        "pointerSize" : [
+          56,
+          68
+        ],
+        "slotWidthUsed" : 1024,
+        "wheelDiameter" : 820,
+        "width" : 1024
+      },
+      {
+        "arrangement" : "sideBySide",
+        "controlsWidth" : 360,
+        "height" : 1024,
+        "hintHeight" : 40,
+        "isRegularWidth" : true,
+        "pointerSize" : [
+          56,
+          68
+        ],
+        "slotWidthUsed" : 1006,
+        "wheelDiameter" : 860,
+        "width" : 1366
+      },
+      {
+        "arrangement" : "sideBySide",
+        "controlsWidth" : 360,
+        "height" : 1080,
+        "hintHeight" : 0,
+        "isRegularWidth" : true,
+        "pointerSize" : [
+          56,
+          68
+        ],
+        "slotWidthUsed" : 1560,
+        "wheelDiameter" : 860,
+        "width" : 1920
+      },
+      {
+        "arrangement" : "stacked",
+        "controlsWidth" : 240,
+        "height" : 480,
+        "hintHeight" : 40,
+        "isRegularWidth" : false,
+        "pointerSize" : [
+          28,
+          34
+        ],
+        "slotWidthUsed" : 320,
+        "wheelDiameter" : 300,
+        "width" : 320
+      },
+      {
+        "arrangement" : "stacked",
+        "controlsWidth" : 240,
+        "height" : 700,
+        "hintHeight" : 40,
+        "isRegularWidth" : true,
+        "pointerSize" : [
+          49.1375225,
+          59.66699160714286
+        ],
+        "slotWidthUsed" : 690,
+        "wheelDiameter" : 578.0885,
+        "width" : 690
+      }
+    ],
+    "statsColumns" : [
+      {
+        "columns" : 1,
+        "isRegularWidth" : false,
+        "width" : 500
+      },
+      {
+        "columns" : 1,
+        "isRegularWidth" : true,
+        "width" : 500
+      },
+      {
+        "columns" : 2,
+        "isRegularWidth" : true,
+        "width" : 640
+      },
+      {
+        "columns" : 2,
+        "isRegularWidth" : true,
+        "width" : 1099
+      },
+      {
+        "columns" : 3,
+        "isRegularWidth" : true,
+        "width" : 1100
+      }
+    ]
+  },
+  "pointer" : [
+    {
+      "pointerAngle" : 0,
+      "rotation" : 0,
+      "segmentIndex7" : 0,
+      "segmentIndex10" : 0
+    },
+    {
+      "pointerAngle" : 359,
+      "rotation" : 1,
+      "segmentIndex7" : 6,
+      "segmentIndex10" : 9
+    },
+    {
+      "pointerAngle" : 324,
+      "rotation" : 36,
+      "segmentIndex7" : 6,
+      "segmentIndex10" : 9
+    },
+    {
+      "pointerAngle" : 323.5,
+      "rotation" : 36.5,
+      "segmentIndex7" : 6,
+      "segmentIndex10" : 8
+    },
+    {
+      "pointerAngle" : 36,
+      "rotation" : -36,
+      "segmentIndex7" : 0,
+      "segmentIndex10" : 1
+    },
+    {
+      "pointerAngle" : 36,
+      "rotation" : 324,
+      "segmentIndex7" : 0,
+      "segmentIndex10" : 1
+    },
+    {
+      "pointerAngle" : 0,
+      "rotation" : 360,
+      "segmentIndex7" : 0,
+      "segmentIndex10" : 0
+    },
+    {
+      "pointerAngle" : 359.75,
+      "rotation" : 720.25,
+      "segmentIndex7" : 6,
+      "segmentIndex10" : 9
+    },
+    {
+      "pointerAngle" : 280,
+      "rotation" : -1000000000,
+      "segmentIndex7" : 5,
+      "segmentIndex10" : 7
+    },
+    {
+      "pointerAngle" : 0,
+      "rotation" : -0,
+      "segmentIndex7" : 0,
+      "segmentIndex10" : 0
+    },
+    {
+      "pointerAngle" : 359.999999999999,
+      "rotation" : 1e-12,
+      "segmentIndex7" : 6,
+      "segmentIndex10" : 9
+    },
+    {
+      "pointerAngle" : 80,
+      "rotation" : 1000000000000,
+      "segmentIndex7" : 1,
+      "segmentIndex10" : 2
+    },
+    {
+      "pointerAngle" : 347.70000000001164,
+      "rotation" : 360012.3,
+      "segmentIndex7" : 6,
+      "segmentIndex10" : 9
+    },
+    {
+      "pointerAngle" : 0,
+      "rotation" : "NaN",
+      "segmentIndex7" : 0,
+      "segmentIndex10" : 0
+    },
+    {
+      "pointerAngle" : 0,
+      "rotation" : "Infinity",
+      "segmentIndex7" : 0,
+      "segmentIndex10" : 0
+    }
+  ],
+  "randomTargets" : [
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 83.03833607450815,
+      "seed" : 0,
+      "segmentIndex" : 2,
+      "target" : 3156.961663925492,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 230.02600535566717,
+      "seed" : 1,
+      "segmentIndex" : 6,
+      "target" : 2649.973994644333,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 266.9210735065094,
+      "seed" : 2,
+      "segmentIndex" : 7,
+      "target" : 2613.0789264934906,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 285,
+      "seed" : 3,
+      "segmentIndex" : 7,
+      "target" : 1875,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 126.28058132768092,
+      "seed" : 4,
+      "segmentIndex" : 3,
+      "target" : 2393.719418672319,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 99.08336279420973,
+      "seed" : 5,
+      "segmentIndex" : 2,
+      "target" : 2420.9166372057903,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 1234.5,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 26.76553970433497,
+      "seed" : 42,
+      "segmentIndex" : 0,
+      "target" : 3933.234460295665,
+      "weights" : [
+        1,
+        2,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        1,
+        2
+      ],
+      "pointerAngle" : 207.6693197202287,
+      "seed" : 9,
+      "segmentIndex" : 5,
+      "target" : 872.3306802797713,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        5,
+        8
+      ],
+      "pointerAngle" : 245.25,
+      "seed" : 11,
+      "segmentIndex" : 27,
+      "target" : 2274.75,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "edgePadding" : 3,
+      "from" : 0,
+      "fullTurns" : [
+        0,
+        0
+      ],
+      "pointerAngle" : 304.98618774708575,
+      "seed" : 13,
+      "segmentIndex" : 169,
+      "target" : 55.01381225291422,
+      "weights" : [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "spinMotion" : {
+    "baseProgress" : [
+      {
+        "baseProgress" : 0,
+        "t" : 0
+      },
+      {
+        "baseProgress" : 0.004304476507147827,
+        "t" : 0.1
+      },
+      {
+        "baseProgress" : 0.04902017379505839,
+        "t" : 0.45
+      },
+      {
+        "baseProgress" : 0.1473195896752222,
+        "t" : 1
+      },
+      {
+        "baseProgress" : 0.3212774973156813,
+        "t" : 2
+      },
+      {
+        "baseProgress" : 0.4894313102659636,
+        "t" : 3
+      },
+      {
+        "baseProgress" : 0.652155862369522,
+        "t" : 4
+      },
+      {
+        "baseProgress" : 0.8097908097377604,
+        "t" : 5
+      },
+      {
+        "baseProgress" : 0.962644899404887,
+        "t" : 6
+      },
+      {
+        "baseProgress" : 0.9932658540159413,
+        "t" : 6.204
+      },
+      {
+        "baseProgress" : 0.9983904559722052,
+        "t" : 6.25
+      },
+      {
+        "baseProgress" : 1,
+        "t" : 6.294
+      },
+      {
+        "baseProgress" : 1,
+        "t" : 7
+      }
+    ],
+    "baseTimeAtProgress" : [
+      {
+        "baseTime" : 0,
+        "p" : 0
+      },
+      {
+        "baseTime" : 0.18060237083491276,
+        "p" : 0.01
+      },
+      {
+        "baseTime" : 0.7339006909593622,
+        "p" : 0.1
+      },
+      {
+        "baseTime" : 3.0639726145701,
+        "p" : 0.5
+      },
+      {
+        "baseTime" : 5.586494587768984,
+        "p" : 0.9
+      },
+      {
+        "baseTime" : 6.182183452778885,
+        "p" : 0.99
+      },
+      {
+        "baseTime" : 6.294,
+        "p" : 1
+      }
+    ],
+    "plan" : {
+      "crossingCount" : 88,
+      "crossingTimes" : [
+        0.188,
+        0.2901518440586718,
+        0.3697,
+        0.429,
+        0.4919,
+        0.5605,
+        0.6182,
+        0.6741,
+        0.7316,
+        0.808,
+        0.8658,
+        0.930243003103305,
+        1.0005,
+        1.0581,
+        1.1164,
+        1.1944,
+        1.2537,
+        1.3119,
+        1.3701,
+        1.4486,
+        1.5076,
+        1.5676,
+        1.6465,
+        1.7051,
+        1.7643,
+        1.8234,
+        1.9038,
+        1.9634,
+        2.0237,
+        2.0841,
+        2.1653,
+        2.2269,
+        2.2872,
+        2.3499,
+        2.432,
+        2.4932,
+        2.5555,
+        2.6379,
+        2.7004,
+        2.7623,
+        2.8245,
+        2.8873,
+        2.9702,
+        3.0333,
+        3.0957,
+        3.1799,
+        3.2429,
+        3.3057,
+        3.3693,
+        3.4539,
+        3.5185,
+        3.5827,
+        3.6467,
+        3.7114,
+        3.7973,
+        3.8627,
+        3.9265,
+        3.9916,
+        4.0782,
+        4.1433,
+        4.209,
+        4.2736,
+        4.3614,
+        4.4266,
+        4.492,
+        4.5589,
+        4.6463,
+        4.7107,
+        4.7777,
+        4.8657,
+        4.9324,
+        4.9985,
+        5.0658,
+        5.1532,
+        5.2205,
+        5.288,
+        5.3548,
+        5.4442,
+        5.5107,
+        5.5781,
+        5.6688,
+        5.7362,
+        5.8025,
+        5.881055538267403,
+        5.9622,
+        6.0277,
+        6.0985,
+        6.1893
+      ],
+      "duration" : 6.294,
+      "from" : 0,
+      "note" : "Full click-locked plan (SpinMotion.plan). Android main implements only the base curve (DISCREPANCIES.md D4).",
+      "progressSamples" : [
+        {
+          "progress" : 0,
+          "t" : 0
+        },
+        {
+          "progress" : 0.05759358914363706,
+          "t" : 0.5
+        },
+        {
+          "progress" : 0.1461164961035618,
+          "t" : 1
+        },
+        {
+          "progress" : 0.32173532228734625,
+          "t" : 2
+        },
+        {
+          "progress" : 0.48870223373718963,
+          "t" : 3
+        },
+        {
+          "progress" : 0.6534996890555037,
+          "t" : 4
+        },
+        {
+          "progress" : 0.8100004868836238,
+          "t" : 5
+        },
+        {
+          "progress" : 0.9623793913843054,
+          "t" : 6
+        },
+        {
+          "progress" : 0.9912413987342373,
+          "t" : 6.2
+        },
+        {
+          "progress" : 0.9999839097982287,
+          "t" : 6.29
+        },
+        {
+          "progress" : 1,
+          "t" : 6.3
+        }
+      ],
+      "segmentCount" : 10,
+      "snapOffsets" : [
+        -0.006264209616657579,
+        0,
+        0.00657739103610866,
+        0.0013870472921321264,
+        0.0019099750148896533,
+        0.008036906843548852,
+        0.003124294087854751,
+        -0.003728186902805186,
+        -0.009120843841078696,
+        0.00424601123001922,
+        -0.001127935025119875,
+        0,
+        0.006800497529592664,
+        0.000802249818609102,
+        -0.0046380603593993985,
+        0.009479242997757042,
+        0.00475384651137345,
+        -0.001214570862882569,
+        -0.00732632894184948,
+        0.006718258596916327,
+        0.0011188609977479391,
+        -0.0036248346122529362,
+        0.010386845585319326,
+        0.003953576865349806,
+        -0.002024964050520328,
+        -0.008249099003546867,
+        0.006680847536262968,
+        0.000664543760379388,
+        -0.004798332813355621,
+        -0.010308109101548446,
+        0.00483488540027599,
+        0.0002303226640978373,
+        -0.005822124623546809,
+        -0.009622796877342132,
+        0.00582798760894887,
+        0.00022989148895291578,
+        -0.004417420579442055,
+        0.01088572257150311,
+        0.006138981090476392,
+        0.0006420266030602306,
+        -0.004705477327018315,
+        -0.009603868316948372,
+        0.00544651346315872,
+        0.00054533472966245,
+        -0.005207743065130721,
+        0.010686936084590037,
+        0.005229035644354507,
+        -0.0005817845610307515,
+        -0.005745865019577412,
+        0.009936447203760856,
+        0.005464811302611228,
+        0.00043888093156541075,
+        -0.0049416840167522125,
+        -0.00977722899609379,
+        0.006431897001788922,
+        0.001985345927191684,
+        -0.004217226590026435,
+        -0.009276169040296267,
+        0.007008165555317802,
+        0.0016354290194238175,
+        -0.0032947278641621836,
+        -0.009482656216074581,
+        0.007371288359498074,
+        0.0014667518447160077,
+        -0.004396618202519242,
+        -0.008919172659058283,
+        0.006898726658886467,
+        -0.0004432705131511838,
+        -0.005345525221689407,
+        0.010591603098330182,
+        0.005067756612790575,
+        -0.001217420922286827,
+        -0.006464292290956131,
+        0.008226783937041127,
+        0.002655439115920366,
+        -0.0028786833757514785,
+        -0.009275948966480208,
+        0.006763274511457418,
+        -0.00026136911578866773,
+        -0.006550257799586845,
+        0.01029625017782898,
+        0.00367778492534665,
+        -0.004206021799688209,
+        0,
+        0.006628858454871711,
+        -0.0025531936978513414,
+        -0.0066020696498307885,
+        0.009181855691863916
+      ],
+      "snappedCount" : 85,
+      "to" : 3201
+    },
+    "spinDuration" : 6.294,
+    "stopPlan" : {
+      "currentAngle" : 1029.8747666417953,
+      "displayedAngleAtEnd" : 1410.7914038475856,
+      "elapsed" : 2,
+      "landedIndex" : 0,
+      "newTarget" : 1410.7914038475856,
+      "oldTarget" : 3201,
+      "seed" : 5,
+      "start" : 0,
+      "tooLateReturnsNil" : true
+    }
+  },
+  "timingCurves" : {
+    "easeOut" : [
+      0,
+      0,
+      0.58,
+      1
+    ],
+    "samples" : [
+      {
+        "easeOutProgress" : 5.64237288394698e-37,
+        "spinCurveProgress" : 1.0408340855860844e-18,
+        "spinCurveTimeAtProgress" : 1.5612511283791263e-19,
+        "t" : 0
+      },
+      {
+        "easeOutProgress" : 0.16057215423753346,
+        "spinCurveProgress" : 0.5132782363225359,
+        "spinCurveTimeAtProgress" : 0.015333725225164206,
+        "t" : 0.1
+      },
+      {
+        "easeOutProgress" : 0.37813813082510966,
+        "spinCurveProgress" : 0.8054679062001184,
+        "spinCurveTimeAtProgress" : 0.04046202345828005,
+        "t" : 0.25
+      },
+      {
+        "easeOutProgress" : 0.6846431874274606,
+        "spinCurveProgress" : 0.9499810572914313,
+        "spinCurveTimeAtProgress" : 0.09614482033349679,
+        "t" : 0.5
+      },
+      {
+        "easeOutProgress" : 0.9065353492811752,
+        "spinCurveProgress" : 0.9913439476484017,
+        "spinCurveTimeAtProgress" : 0.20560102702705896,
+        "t" : 0.75
+      },
+      {
+        "easeOutProgress" : 0.982973390348437,
+        "spinCurveProgress" : 0.998840928124926,
+        "spinCurveTimeAtProgress" : 0.3736551984286995,
+        "t" : 0.9
+      },
+      {
+        "easeOutProgress" : 1,
+        "spinCurveProgress" : 1,
+        "spinCurveTimeAtProgress" : 0.9999999836765956,
+        "t" : 1
+      }
+    ],
+    "spin" : [
+      0.12,
+      0.8,
+      0.2,
+      1
+    ]
+  }
+}

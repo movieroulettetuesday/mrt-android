@@ -22,7 +22,54 @@ data class HexColor(val red: Double, val green: Double, val blue: Double, val al
             return (b(alpha) shl 24) or (b(red) shl 16) or (b(green) shl 8) or b(blue)
         }
 
+    /** Hue (0..<1), saturation, brightness, exactly like iOS `HexColor.hsb`. */
+    val hsb: Triple<Double, Double, Double>
+        get() {
+            val maxC = maxOf(red, green, blue)
+            val minC = minOf(red, green, blue)
+            val delta = maxC - minC
+            var hue = 0.0
+            if (delta > 0) {
+                hue = when (maxC) {
+                    red -> ((green - blue) / delta) % 6 // truncatingRemainder
+                    green -> (blue - red) / delta + 2
+                    else -> (red - green) / delta + 4
+                }
+                hue /= 6
+                if (hue < 0) hue += 1
+            }
+            return Triple(hue, if (maxC == 0.0) 0.0 else delta / maxC, maxC)
+        }
+
+    /** "#RRGGBB" upper-case, alpha dropped (iOS `hexString`). */
+    val hexString: String
+        get() {
+            fun byte(c: Double) = Math.round(c * 255).toInt()
+            return "#%02X%02X%02X".format(byte(red), byte(green), byte(blue))
+        }
+
     companion object {
+        /** iOS `HexColor(hue:saturation:brightness:)`. */
+        fun fromHsb(hue: Double, saturation: Double, brightness: Double, alpha: Double = 1.0): HexColor {
+            val h = (if (hue.isFinite()) hue - kotlin.math.floor(hue) else 0.0) * 6
+            val s = (if (saturation.isFinite()) saturation else 0.0).coerceIn(0.0, 1.0)
+            val v = (if (brightness.isFinite()) brightness else 0.0).coerceIn(0.0, 1.0)
+            val i = h.toInt() % 6
+            val f = h - kotlin.math.floor(h)
+            val p = v * (1 - s)
+            val q = v * (1 - s * f)
+            val t = v * (1 - s * (1 - f))
+            val (r, g, b) = when (i) {
+                0 -> Triple(v, t, p)
+                1 -> Triple(q, v, p)
+                2 -> Triple(p, v, t)
+                3 -> Triple(p, q, v)
+                4 -> Triple(t, p, v)
+                else -> Triple(v, p, q)
+            }
+            return HexColor(r, g, b, alpha)
+        }
+
         private val HEX = Regex("^[0-9A-Fa-f]+$")
 
         fun parse(hex: String): HexColor? {

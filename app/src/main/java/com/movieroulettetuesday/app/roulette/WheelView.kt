@@ -1,7 +1,6 @@
 package com.movieroulettetuesday.app.roulette
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
+import com.movieroulettetuesday.app.catalog.displayColor
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,11 +16,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.graphics.Brush
+import com.movieroulettetuesday.app.catalog.CategoryPalette
+import com.movieroulettetuesday.app.catalog.displayHex
 import androidx.compose.ui.platform.LocalView
 import android.view.HapticFeedbackConstants
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,25 +67,44 @@ fun RouletteWheel(
     onSpinFinished: (Int) -> Unit,
     modifier: Modifier = Modifier,
     haptics: Boolean = false,
+    /** Tap on the spinning wheel (or hub) = stop early. */
+    onStop: (() -> Unit)? = null,
 ) {
-    val angle = remember { Animatable(rotation.toFloat()) }
-    // A light tick each time the pointer crosses into another slice while spinning (iOS per-click haptics).
+    // Drawn angle (degrees). Driven by a frame loop that follows the click-locked SpinMotion (and a
+    // tap-to-stop plan when present); haptic ticks fire at the same crossing instants.
+    var angle by remember { mutableDoubleStateOf(rotation) }
+    val latestSpin by rememberUpdatedState(spin)
+    val latestHaptics by rememberUpdatedState(haptics)
     val view = LocalView.current
-    LaunchedEffect(spin?.token, haptics, geometry) {
-        if (spin == null || !haptics) return@LaunchedEffect
-        snapshotFlow { geometry.segmentIndex(angle.value.toDouble()) }
-            .distinctUntilChanged()
-            .drop(1)
-            .collect { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK) }
-    }
     LaunchedEffect(spin?.token) {
-        if (spin == null) {
-            angle.snapTo(rotation.toFloat())
+        val run = spin
+        if (run == null) {
+            angle = rotation
             return@LaunchedEffect
         }
-        angle.snapTo(spin.from.toFloat())
-        angle.animateTo(spin.to.toFloat(), tween(durationMillis = spin.durationMs, easing = SpinMotion.easing))
-        onSpinFinished(spin.token)
+        val t0 = withFrameNanos { it }
+        var tickIndex = 0
+        var ticksFor: SpinStopPlan? = null
+        var ticks = run.hapticTimes(geometry)
+        while (true) {
+            val now = withFrameNanos { it }
+            val current = latestSpin?.takeIf { it.token == run.token } ?: run
+            val t = (now - t0) / 1e9
+            if (current.stop != ticksFor) {
+                ticksFor = current.stop
+                ticks = current.hapticTimes(geometry)
+                tickIndex = ticks.indexOfFirst { it > t }.let { if (it < 0) ticks.size else it }
+            }
+            var crossed = false
+            while (tickIndex < ticks.size && ticks[tickIndex] <= t) { tickIndex++; crossed = true }
+            if (crossed && latestHaptics) view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+            if (t >= current.endTime) {
+                angle = current.finalRotation
+                break
+            }
+            angle = current.angleAt(t)
+        }
+        onSpinFinished(run.token)
     }
     val measurer = rememberTextMeasurer()
     val rim = BrandColors.WheelRimLight
@@ -100,21 +123,26 @@ fun RouletteWheel(
         Canvas(
             Modifier
                 .fillMaxSize()
-                .graphicsLayer { rotationZ = angle.value % 360f }
+                .graphicsLayer { rotationZ = (angle % 360.0).toFloat() }
                 .clip(CircleShape)
-                .clickable(enabled = canSpin, onClickLabel = "Spin", onClick = onSpin),
+                .clickable(
+                    enabled = canSpin || (spin != null && spin.stop == null && onStop != null),
+                    onClickLabel = if (spin != null) "Stop" else "Spin",
+                ) { if (spin != null) onStop?.invoke() else onSpin() },
         ) {
             val r = size.minDimension / 2
             val c = Offset(size.width / 2, size.height / 2)
             val tl = Offset(c.x - r, c.y - r)
             geometry.segments.forEachIndexed { i, seg ->
                 val cat = categories.getOrNull(i)
-                val color = cat?.let { HexColor.parse(it.colorHex) }?.let { Color(it.argb) } ?: Color.Gray
+                val stops = CategoryPalette.radialStops(cat?.displayHex ?: "#808080")
+                    .map { h -> HexColor.parse(h)?.let { Color(it.argb) } ?: Color.Gray }
+                val brush = Brush.radialGradient(stops, center = c, radius = r)
                 // Compose arcs start at 3 o'clock; wheel angles start at 12 o'clock.
-                drawArc(color, (seg.startAngle - 90).toFloat(), seg.sweep.toFloat(), true, tl, Size(2 * r, 2 * r))
+                drawArc(brush, (seg.startAngle - 90).toFloat(), seg.sweep.toFloat(), true, tl, Size(2 * r, 2 * r))
                 drawArc(Color.White.copy(alpha = 0.5f), (seg.startAngle - 90).toFloat(), seg.sweep.toFloat(), true, tl, Size(2 * r, 2 * r), style = Stroke(1.dp.toPx()))
                 if (cat != null) {
-                    val dark = HexColor.parse(cat.colorHex)?.prefersDarkText == true
+                    val dark = cat.displayColor.prefersDarkText
                     val text = measurer.measure(
                         cat.name,
                         TextStyle(
@@ -156,12 +184,15 @@ fun RouletteWheel(
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surface)
                 .border(4.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                .clickable(enabled = canSpin, onClickLabel = "Spin the wheel", onClick = onSpin)
+                .clickable(
+                    enabled = canSpin || (spin != null && spin.stop == null && onStop != null),
+                    onClickLabel = if (spin != null) "Stop the wheel" else "Spin the wheel",
+                ) { if (spin != null) onStop?.invoke() else onSpin() }
                 .testTag("spin-hub"),
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                if (spin != null) "…" else "SPIN",
+                if (spin != null) (if (spin.stop == null && onStop != null) "STOP" else "…") else "SPIN",
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Black,
                 fontSize = 20.sp,

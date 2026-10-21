@@ -1,6 +1,6 @@
 package com.movieroulettetuesday.app.suggest
 
-import java.net.URLEncoder
+import com.movieroulettetuesday.app.net.QueryEncoding
 
 /** The pre-filled email for "Suggest a movie" (iOS `MovieSuggestion`). The user sends it from their mail app. */
 data class MovieSuggestion(val title: String, val why: String = "", val category: String? = null) {
@@ -17,12 +17,12 @@ data class MovieSuggestion(val title: String, val why: String = "", val category
             return lines.joinToString("\n")
         }
 
-    /** `mailto:theMrtPodcast@gmail.com?subject=…&body=…` with %20 spaces and %2B for "+". */
+    /** `mailto:theMrtPodcast@gmail.com?subject=…&body=…`, encoded like iOS `mailtoURL` ("+" as %2B). */
     val mailtoUri: String get() = "mailto:$ADDRESS?subject=${enc(subject)}&body=${enc(body)}"
 
     companion object {
         const val ADDRESS = "theMrtPodcast@gmail.com"
-        private fun enc(s: String) = URLEncoder.encode(s, "UTF-8").replace("+", "%20")
+        private fun enc(s: String) = QueryEncoding.value(s).replace("+", "%2B")
     }
 }
 

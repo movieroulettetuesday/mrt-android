@@ -29,6 +29,13 @@ class RouletteViewModel(
     private val selector: MovieSelector = MovieSelector(),
     private val rarePolicy: RareOutcomePolicy = RareOutcomePolicy(),
     private val reduceMotion: () -> Boolean = { false },
+    /** Spin sound (wheel-spin.m4a); haptics are driven by the wheel's frame loop from [SpinRun]. */
+    private val feedback: SpinFeedback = SpinFeedback.None,
+    private val soundEnabled: () -> Boolean = { false },
+    /** Monotonic seconds, for tap-to-stop timing. */
+    private val now: () -> Double = { System.nanoTime() / 1e9 },
+    /** Which movie an Infamous Jackpot picks (iOS main: uniform over isInfamous). */
+    private val jackpot: JackpotSelector = FlaggedInfamousSelector,
 ) : ViewModel(scope) {
 
     data class Reveal(
@@ -40,8 +47,37 @@ class RouletteViewModel(
         val isJackpot: Boolean = false,
     )
 
-    /** One spin's animation: rotate from [from] to [to] degrees over [durationMs]. */
-    data class SpinRun(val token: Int, val from: Double, val to: Double, val durationMs: Int)
+    /**
+     * One spin's animation: rotate from [from] to [to] degrees following [motion] (click-locked to the
+     * spin sound). After a tap-to-stop, [stop] takes over from its start time and lands on its target.
+     */
+    data class SpinRun(
+        val token: Int,
+        val from: Double,
+        val to: Double,
+        val motion: SpinMotion,
+        val startedAt: Double = 0.0,
+        val stop: SpinStopPlan? = null,
+    ) {
+        val durationMs: Int get() = motion.durationMs
+        /** Animation-local seconds at which the wheel comes to rest. */
+        val endTime: Double get() = stop?.endTime ?: motion.duration
+        val finalRotation: Double get() = stop?.newTarget ?: to
+
+        /** Angle drawn at animation time [t] (seconds). */
+        fun angleAt(t: Double): Double {
+            val st = stop
+            return if (st != null && t >= st.startTime) st.displayedAngle(t) else from + (to - from) * motion.progress(t)
+        }
+
+        /** Haptic tick times (s from spin start): crossings thinned to >= 45 ms, re-planned after a stop. */
+        fun hapticTimes(geometry: WheelGeometry): List<Double> {
+            val st = stop ?: return SpinTicks.thinned(motion.crossingTimes, HAPTIC_MIN_INTERVAL)
+            val before = motion.crossingTimes.filter { it < st.startTime }
+            val after = st.crossingTimes(geometry).map { it + st.startTime }
+            return SpinTicks.thinned(before + after, HAPTIC_MIN_INTERVAL)
+        }
+    }
 
     data class RouletteState(
         val load: CatalogRepository.State = CatalogRepository.State.Loading,
@@ -57,6 +93,8 @@ class RouletteViewModel(
         val isAwaitingForcedRespin: Boolean = false,
     ) {
         val isSpinning: Boolean get() = spin != null
+        /** Tap-to-stop is available: spinning and not already stopping. */
+        val canStop: Boolean get() = spin != null && spin.stop == null
         val canSpin: Boolean get() = catalog != null && spin == null && reveal == null && !isAwaitingForcedRespin
     }
 
@@ -92,7 +130,7 @@ class RouletteViewModel(
             it.copy(
                 load = CatalogRepository.State.Loaded(catalog),
                 catalog = catalog,
-                geometry = WheelGeometry.fromWeights(catalog.categories.map { c -> c.weight }),
+                geometry = WheelGeometry.forCatalog(catalog),
             )
         }
     }
@@ -117,8 +155,14 @@ class RouletteViewModel(
         val start = ((s.rotation % 360.0) + 360.0) % 360.0
         val turns = if (reduceMotion()) REDUCED_MOTION_TURNS else FULL_TURNS
         val target = s.geometry.randomTargetRotation(start, random, fullTurns = turns)
-        val run = SpinRun(myToken, start, target, SpinMotion.spinDurationMs)
-        _state.update { it.copy(rotation = start, spin = run, notice = null) }
+        // Timing (not outcome) is locked to the recorded clip.
+        val motion = SpinMotion.plan(start, target, s.geometry)
+        val run = SpinRun(myToken, start, target, motion, startedAt = now())
+        feedback.stopClip(0.0) // a previous clip never overlaps a new spin
+        if (soundEnabled()) feedback.startClip()
+        _state.update {
+            it.copy(rotation = start, spin = run, notice = if (isForcedRespin) "Re-spin forced! Here we go again…" else null)
+        }
         watchdog?.cancel()
         watchdog = scope.launch {
             delay(run.durationMs + WATCHDOG_GRACE_MS)
@@ -126,6 +170,30 @@ class RouletteViewModel(
         }
         wasForced[myToken] = isForcedRespin
     }
+
+    /**
+     * Tap to stop (iOS `stopEarly`): a new random landing at least 120° ahead, reached over 0.8 s
+     * easeOut; the sound fades over the same time. The result is still recorded exactly once.
+     */
+    fun stopEarly() {
+        val s = _state.value
+        val run = s.spin ?: return
+        if (run.stop != null) return
+        val elapsed = maxOf(0.0, now() - run.startedAt - STOP_LEAD)
+        val plan = SpinStopPlan.make(run.motion, run.from, run.to, elapsed, s.geometry, random) ?: return
+        _state.update { it.copy(spin = run.copy(stop = plan)) }
+        feedback.stopClip(SpinStopPlan.DURATION)
+        val remainingMs = (maxOf(0.0, plan.endTime - (now() - run.startedAt)) * 1000).toLong()
+        val forced = wasForced[run.token] ?: false
+        watchdog?.cancel()
+        watchdog = scope.launch {
+            delay(remainingMs + WATCHDOG_GRACE_MS)
+            finishSpin(run.token, forced)
+        }
+    }
+
+    /** View gone / app backgrounded: stop the sound; the spin result is unaffected. */
+    fun stopFeedback() = feedback.stopClip(SpinStopPlan.DURATION)
 
     /** Called by the UI when the spin animation for [token] has finished. */
     fun spinAnimationEnded(token: Int) {
@@ -139,7 +207,7 @@ class RouletteViewModel(
         watchdog?.cancel()
         watchdog = null
         wasForced.remove(token)
-        val rotation = run.to
+        val rotation = run.finalRotation
         _state.update { it.copy(spin = null, rotation = rotation, rareBanner = null) }
         val catalog = s.catalog ?: return
         val index = s.geometry.segmentIndex(rotation)
@@ -148,7 +216,7 @@ class RouletteViewModel(
 
         val outcome = RareOutcomeRoller.roll(
             rarePolicy,
-            infamousAvailable = RareOutcomeRoller.infamousMovies(catalog).isNotEmpty(),
+            infamousAvailable = jackpot.isAvailable(catalog),
             allowRespin = !wasForcedRespin,
             random = random,
         )
@@ -172,7 +240,7 @@ class RouletteViewModel(
         var category = landed
         var isJackpot = false
         val movie: Movie
-        val jackpot = if (outcome == RareOutcome.InfamousJackpot) RareOutcomeRoller.jackpotPick(catalog, landed, random) else null
+        val jackpot = if (outcome == RareOutcome.InfamousJackpot) jackpot.pick(catalog, landed, random) else null
         if (jackpot != null) {
             movie = jackpot.first
             category = jackpot.second
@@ -216,5 +284,9 @@ class RouletteViewModel(
         val REDUCED_MOTION_TURNS = 1..2
         const val FORCED_RESPIN_DELAY_MS = 1_600L
         const val WATCHDOG_GRACE_MS = 1_500L
+        /** Lead so the next frame is past the stop plan's start (no one-frame jump). */
+        const val STOP_LEAD = 0.03
+        /** Selection haptics closer together than this are skipped. */
+        const val HAPTIC_MIN_INTERVAL = 0.045
     }
 }

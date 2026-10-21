@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.movies
 
+import com.movieroulettetuesday.app.catalog.displayColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -164,7 +165,7 @@ fun MovieDetailScreen(
                     movie.categories.forEach { id ->
                         val cat = catalog.category(id)
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            val c = cat?.colorHex?.let(HexColor::parse)?.let { Color(it.argb) } ?: MaterialTheme.colorScheme.outline
+                            val c = cat?.let { Color(it.displayColor.argb) } ?: MaterialTheme.colorScheme.outline
                             Box(Modifier.size(10.dp).background(c, CircleShape))
                             Spacer(Modifier.width(10.dp))
                             Text(cat?.displayName ?: id)

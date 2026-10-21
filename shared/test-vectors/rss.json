@@ -1,0 +1,1086 @@
+{
+  "_generated" : {
+    "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
+    "iosCommit" : "b673df1",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+  },
+  "androidCrossCheck" : {
+    "artworkUsableURL" : [
+      {
+        "agrees" : true,
+        "androidExpected" : "https://a.example/x.jpg",
+        "expected" : "https://a.example/x.jpg",
+        "input" : " https://a.example/x.jpg ",
+        "source" : "android-main:EpisodeModelsTest.artworkResolver"
+      },
+      {
+        "agrees" : false,
+        "androidExpected" : "https://a.example/x.jpg",
+        "expected" : "http://a.example/x.jpg",
+        "input" : "http://a.example/x.jpg",
+        "source" : "android-main:EpisodeModelsTest.artworkResolver"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "file:///etc/passwd",
+        "source" : "android-main:EpisodeModelsTest.artworkResolver"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "javascript:alert(1)",
+        "source" : "android-main:EpisodeModelsTest.artworkResolver"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "/relative.jpg",
+        "source" : "android-main:EpisodeModelsTest.artworkResolver"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "",
+        "source" : "android-main:EpisodeModelsTest.artworkResolver"
+      }
+    ],
+    "buzzsproutEpisode" : [
+      {
+        "agrees" : true,
+        "androidExpected" : "https://www.buzzsprout.com/2117292/episodes/19913482",
+        "expected" : "https://www.buzzsprout.com/2117292/episodes/19913482",
+        "input" : "Buzzsprout-19913482",
+        "source" : "android-main:PodcastLinksTest.showAndEpisodeLinks"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "https://example.com/ep",
+        "source" : "android-main:PodcastLinksTest.showAndEpisodeLinks"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "Buzzsprout-abc",
+        "source" : "android-main:PodcastLinksTest.showAndEpisodeLinks"
+      }
+    ],
+    "description" : "Cases copied from Android main unit tests (inputs + Android's asserted value) and re-run on iOS RouletteCore. `expected` is the iOS value and is authoritative; `agrees` false = see DISCREPANCIES.md.",
+    "fanMailURL" : [
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "<p>No link</p>",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "<a href=\"https://example.com/x\">Other</a>",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "https://www.buzzsprout.com/1/fan_mail/new",
+        "expected" : "https://www.buzzsprout.com/1/fan_mail/new",
+        "input" : "<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/1/fan_mail/new\">Send us Fan Mail</a></p>",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "<a href=\"javascript:alert(1)\">fan mail</a>",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      }
+    ],
+    "parseDate" : [
+      {
+        "agrees" : true,
+        "androidExpected" : "2026-10-06T04:00:00Z",
+        "expected" : "2026-10-06T04:00:00Z",
+        "input" : "Tue, 06 Oct 2026 00:00:00 -0400",
+        "source" : "android-main:RssFeedParserTest.dateVariants"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "2026-10-06T04:00:00Z",
+        "expected" : "2026-10-06T04:00:00Z",
+        "input" : "06 Oct 2026 04:00:00 GMT",
+        "source" : "android-main:RssFeedParserTest.dateVariants"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "2026-10-06T04:00:00Z",
+        "expected" : "2026-10-06T04:00:00Z",
+        "input" : " Tue, 06 Oct 2026 04:00 +0000 ",
+        "source" : "android-main:RssFeedParserTest.dateVariants"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "2026-10-06T04:00:00Z",
+        "expected" : "2026-10-06T04:00:00Z",
+        "input" : "Tue, 06 Oct 2026 00:00:00 EDT",
+        "source" : "android-main:RssFeedParserTest.dateVariants"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "",
+        "source" : "android-main:RssFeedParserTest.dateVariants"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : null,
+        "expected" : null,
+        "input" : "yesterday",
+        "source" : "android-main:RssFeedParserTest.dateVariants"
+      }
+    ],
+    "spotifySearchQuery" : [
+      {
+        "agrees" : true,
+        "androidExpected" : "The Outsiders Movie Roulette Tuesday",
+        "expected" : "The Outsiders Movie Roulette Tuesday",
+        "input" : "The Outsiders",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Palmer Rockey's SCARLET WARNING 666 Movie Roulette Tuesday",
+        "expected" : "Palmer Rockey's SCARLET WARNING 666 Movie Roulette Tuesday",
+        "input" : "Palmer Rockey's SCARLET WARNING 666",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Romeo Juliet Movie Roulette Tuesday",
+        "expected" : "Romeo Juliet Movie Roulette Tuesday",
+        "input" : "Romeo + Juliet",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Rock Rule Movie Roulette Tuesday",
+        "expected" : "Rock Rule Movie Roulette Tuesday",
+        "input" : "Rock & Rule",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Mad Max Fury Road Movie Roulette Tuesday",
+        "expected" : "Mad Max Fury Road Movie Roulette Tuesday",
+        "input" : "Mad Max: Fury Road",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "O Brother Where Art Thou Movie Roulette Tuesday",
+        "expected" : "O Brother Where Art Thou Movie Roulette Tuesday",
+        "input" : "O Brother, Where Art Thou?",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Kon-Tiki Movie Roulette Tuesday",
+        "expected" : "Kon-Tiki Movie Roulette Tuesday",
+        "input" : "Kon-Tiki",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Cry-Baby Movie Roulette Tuesday",
+        "expected" : "Cry-Baby Movie Roulette Tuesday",
+        "input" : "Cry-Baby",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "π Movie Roulette Tuesday",
+        "expected" : "π Movie Roulette Tuesday",
+        "input" : "π",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Season 3 Year In Review Movie Roulette Tuesday",
+        "expected" : "Season 3 Year In Review Movie Roulette Tuesday",
+        "input" : "Season 3: Year In Review",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "What is Movie Roulette Tuesday",
+        "expected" : "What is Movie Roulette Tuesday",
+        "input" : "What is Movie Roulette Tuesday?",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "The Outsiders Movie Roulette Tuesday",
+        "expected" : "The Outsiders Movie Roulette Tuesday",
+        "input" : "S4 · E34 – The Outsiders",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "The Outsiders Movie Roulette Tuesday",
+        "expected" : "The Outsiders Movie Roulette Tuesday",
+        "input" : "S4E34: The Outsiders 🎬",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Romeo Juliet Movie Roulette Tuesday",
+        "expected" : "Romeo Juliet Movie Roulette Tuesday",
+        "input" : "Ep. 11 - Romeo + Juliet",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "The Outsiders Movie Roulette Tuesday",
+        "expected" : "The Outsiders Movie Roulette Tuesday",
+        "input" : "Episode 34: The Outsiders",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Crash Movie Roulette Tuesday",
+        "expected" : "Crash Movie Roulette Tuesday",
+        "input" : "#29 | Crash",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Palmer Rockey's SCARLET WARNING 666 Movie Roulette Tuesday",
+        "expected" : "Palmer Rockey's SCARLET WARNING 666 Movie Roulette Tuesday",
+        "input" : "  Palmer Rockey’s SCARLET WARNING 666 🔥 ",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "12 Angry Men Movie Roulette Tuesday",
+        "expected" : "12 Angry Men Movie Roulette Tuesday",
+        "input" : "12 Angry Men",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "2001 A Space Odyssey Movie Roulette Tuesday",
+        "expected" : "2001 A Space Odyssey Movie Roulette Tuesday",
+        "input" : "2001: A Space Odyssey",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "E T the Extra-Terrestrial Movie Roulette Tuesday",
+        "expected" : "E T the Extra-Terrestrial Movie Roulette Tuesday",
+        "input" : "E.T. the Extra-Terrestrial",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Movie Roulette Tuesday",
+        "expected" : "Movie Roulette Tuesday",
+        "input" : "Episode 12",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Movie Roulette Tuesday",
+        "expected" : "Movie Roulette Tuesday",
+        "input" : "Buzzsprout-19913482",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Movie Roulette Tuesday",
+        "expected" : "Movie Roulette Tuesday",
+        "input" : "",
+        "source" : "android-main:PodcastLinksTest.spotifyQuery*"
+      }
+    ],
+    "spotifySearchURL" : [
+      {
+        "agrees" : true,
+        "androidExpected" : "https://open.spotify.com/search/Romeo%20Juliet%20Movie%20Roulette%20Tuesday",
+        "expected" : "https://open.spotify.com/search/Romeo%20Juliet%20Movie%20Roulette%20Tuesday",
+        "input" : "Romeo + Juliet",
+        "source" : "android-main:PodcastLinksTest.spotifySearchUrlEncodedOnce"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "https://open.spotify.com/search/Palmer%20Rockey%27s%20SCARLET%20WARNING%20666%20Movie%20Roulette%20Tuesday",
+        "expected" : "https://open.spotify.com/search/Palmer%20Rockey%27s%20SCARLET%20WARNING%20666%20Movie%20Roulette%20Tuesday",
+        "input" : "Palmer Rockey's SCARLET WARNING 666",
+        "source" : "android-main:PodcastLinksTest.spotifySearchUrlEncodedOnce"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "https://open.spotify.com/search/Kon-Tiki%20Movie%20Roulette%20Tuesday",
+        "expected" : "https://open.spotify.com/search/Kon-Tiki%20Movie%20Roulette%20Tuesday",
+        "input" : "Kon-Tiki",
+        "source" : "android-main:PodcastLinksTest.spotifySearchUrlEncodedOnce"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "https://open.spotify.com/search/%CF%80%20Movie%20Roulette%20Tuesday",
+        "expected" : "https://open.spotify.com/search/%CF%80%20Movie%20Roulette%20Tuesday",
+        "input" : "π",
+        "source" : "android-main:PodcastLinksTest.spotifySearchUrlEncodedOnce"
+      }
+    ],
+    "stripFanMail" : [
+      {
+        "agrees" : true,
+        "androidExpected" : "Hi there",
+        "expected" : "Hi there",
+        "input" : "Send us Fan Mail Hi there",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "Hi",
+        "expected" : "Hi",
+        "input" : "send us fanmail: Hi",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "We read fan mail today",
+        "expected" : "We read fan mail today",
+        "input" : "We read fan mail today",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      },
+      {
+        "agrees" : true,
+        "androidExpected" : "",
+        "expected" : "",
+        "input" : "Send us Fan Mail",
+        "source" : "android-main:RssFeedParserTest.showNotesHelpers"
+      }
+    ]
+  },
+  "description" : "Buzzsprout RSS parsing (SPEC §2). feeds[].input is the raw XML; expected.episodes is the parsed list in feed order after guid de-duplication. pubDate is ISO-8601 UTC. summary = longest of (description, content:encoded, itunes:summary) after HTML strip + fan-mail strip.",
+  "fanMailURL" : [
+    {
+      "expected" : null,
+      "input" : "<p>No link</p>"
+    },
+    {
+      "expected" : null,
+      "input" : "<a href=\"https://example.com/x\">Other</a>"
+    },
+    {
+      "expected" : "https://www.buzzsprout.com/2117292/fan_mail/new",
+      "input" : "<a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a>"
+    },
+    {
+      "expected" : null,
+      "input" : "<a href='javascript:alert(1)'>Fan Mail</a>"
+    },
+    {
+      "expected" : "https://example.com/fan_mail?x=1&y=2",
+      "input" : "<a href=\"https://example.com/fan_mail?x=1&amp;y=2\">write</a>"
+    }
+  ],
+  "feeds" : [
+    {
+      "expected" : {
+        "artworkURL" : "https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg",
+        "episodes" : [
+          {
+            "episode" : 34,
+            "episodeType" : "full",
+            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
+            "guid" : "Buzzsprout-19913482",
+            "imageURL" : "https://storage.buzzsprout.com/owoiwvlyear05oze07ippg1m06yb?.jpg",
+            "link" : null,
+            "pubDate" : "2026-10-06T04:00:00Z",
+            "season" : 4,
+            "seasonEpisodeLabel" : "S4E34",
+            "summary" : "Hi everyone, we have a new theme this week and that theme is: “before they were famous”. It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand. We are kicking things off with The Outsiders. This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.",
+            "title" : "The Outsiders"
+          },
+          {
+            "episode" : 33,
+            "episodeType" : "full",
+            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
+            "guid" : "Buzzsprout-19877460",
+            "imageURL" : "https://storage.buzzsprout.com/nwtsb7kutu2ctjeik3u8qmofhjkt?.jpg",
+            "link" : null,
+            "pubDate" : "2026-09-29T04:00:00Z",
+            "season" : 4,
+            "seasonEpisodeLabel" : "S4E33",
+            "summary" : "Once Upon a Time. . . this podcast occasionally has a Special Guest Host. And this week is one of those magical weeks! Matt's sister Kristen joins us for her listener pick: the 2025 Norwegian body horror film, \"The Ugly Stepsister.\" This is a twist on the Cinderella story by the Brothers Grimm that explores the lengths someone will go to to be seen as \"beautiful.\" It is visually stunning, darkly gothic and the soundtrack is fantastic. Think \"The Substance\" meets the directing style of Emerald Fennell. We also talk about the definition of body horror, a little bit about old school body modification and there is also a plug for King Richard's Faire! So try this episode on. . . we might be sole-mates!",
+            "title" : "The Ugly Stepsister"
+          }
+        ],
+        "ok" : true,
+        "title" : "Movie Roulette Tuesday: The Podcast"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<?xml-stylesheet href=\"https://rss.buzzsprout.com/styles.xsl\" type=\"text/xsl\"?>\n<rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:psc=\"http://podlove.org/simple-chapters\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n<channel>\n  <atom:link href=\"https://rss.buzzsprout.com/2117292.rss\" rel=\"self\" type=\"application/rss+xml\" />\n  <atom:link href=\"https://pubsubhubbub.appspot.com/\" rel=\"hub\" xmlns=\"http://www.w3.org/2005/Atom\" />\n  <title>Movie Roulette Tuesday: The Podcast</title>\n\n  <lastBuildDate>Tue, 06 Oct 2026 00:00:02 -0400</lastBuildDate>\n  <link>https://www.buzzsprout.com/2117292</link>\n  <language>en-us</language>\n  <copyright>© 2026 Movie Roulette Tuesday: The Podcast</copyright>\n  <podcast:locked>yes</podcast:locked>\n    <podcast:guid>793c389d-f31e-5f2f-a95c-8d7e46d695eb</podcast:guid>\n  <itunes:author>The MRT Crew</itunes:author>\n  <itunes:type>episodic</itunes:type>\n  <itunes:explicit>true</itunes:explicit>\n  <description><![CDATA[Three lifelong friends with a passion for cinema invite you to their weekly movie night where they get together for dinner, discussion and laughs.  Written, directed and hosted by Rachael, Karl and Matt.]]></description>\n  <generator>Buzzsprout (https://www.buzzsprout.com)</generator>\n  <itunes:keywords>movie, roulette, tuesday, film, friends, cinema, reviews, discussion, cinephile, </itunes:keywords>\n  <itunes:owner>\n    <itunes:name>The MRT Crew</itunes:name>\n  </itunes:owner>\n  <image>\n     <url>https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg</url>\n     <title>Movie Roulette Tuesday: The Podcast</title>\n     <link>https://www.buzzsprout.com/2117292</link>\n  </image>\n  <itunes:image href=\"https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg\" />\n  <itunes:category text=\"TV &amp; Film\">\n    <itunes:category text=\"Film Reviews\" />\n  </itunes:category>\n  <itunes:category text=\"TV &amp; Film\" />\n  <itunes:category text=\"Comedy\" />\n  <item>\n    <itunes:title>The Outsiders</itunes:title>\n    <title>The Outsiders</title>\n    <itunes:summary><![CDATA[Send us Fan Mail Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand. We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry b...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand.</p><p>We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.  </p><p><br/></p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand.</p><p>We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.  </p><p><br/></p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19913482-the-outsiders.mp3\" length=\"67349282\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/owoiwvlyear05oze07ippg1m06yb?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19913482</guid>\n    <pubDate>Tue, 06 Oct 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>5609</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>34</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n<item>\n    <itunes:title>The Ugly Stepsister</itunes:title>\n    <title>The Ugly Stepsister</title>\n    <itunes:summary><![CDATA[Send us Fan Mail Once Upon a Time. . .  this podcast occasionally has a Special Guest Host.  And this week is one of those magical weeks!  Matt's sister Kristen joins us for her listener pick:  the 2025 Norwegian body horror film, \"The Ugly Stepsister.\"  This is a twist on the Cinderella story by the Brothers Grimm that explores the lengths someone will go to to be seen as \"beautiful.\" It is visually stunning, darkly gothic and the soundtrack is fantastic.  Think...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Once Upon a Time. . .  this podcast occasionally has a Special Guest Host.  And this week is one of those magical weeks!  Matt&apos;s sister Kristen joins us for her listener pick:  the 2025 Norwegian body horror film, &quot;The Ugly Stepsister.&quot;  This is a twist on the Cinderella story by the Brothers Grimm that explores the lengths someone will go to to be seen as &quot;beautiful.&quot; It is visually stunning, darkly gothic and the soundtrack is fantastic.  Think &quot;The Substance&quot; meets the directing style of Emerald Fennell.</p><p>We also talk about the definition of body horror, a little bit about old school body modification and there is also a plug for King Richard&apos;s Faire!  So try this episode on. . . we might be sole-mates!</p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Once Upon a Time. . .  this podcast occasionally has a Special Guest Host.  And this week is one of those magical weeks!  Matt&apos;s sister Kristen joins us for her listener pick:  the 2025 Norwegian body horror film, &quot;The Ugly Stepsister.&quot;  This is a twist on the Cinderella story by the Brothers Grimm that explores the lengths someone will go to to be seen as &quot;beautiful.&quot; It is visually stunning, darkly gothic and the soundtrack is fantastic.  Think &quot;The Substance&quot; meets the directing style of Emerald Fennell.</p><p>We also talk about the definition of body horror, a little bit about old school body modification and there is also a plug for King Richard&apos;s Faire!  So try this episode on. . . we might be sole-mates!</p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19877460-the-ugly-stepsister.mp3\" length=\"65960117\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/nwtsb7kutu2ctjeik3u8qmofhjkt?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19877460</guid>\n    <pubDate>Tue, 29 Sep 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>5494</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>33</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n  </channel>\n</rss>\n",
+      "name" : "buzzsprout-fixture (MovieRouletteTuesdayTests/Fixtures/feed-snippet.xml)"
+    },
+    {
+      "expected" : {
+        "error" : "emptyDocument",
+        "ok" : false
+      },
+      "input" : "",
+      "name" : "empty-document"
+    },
+    {
+      "acceptable" : [
+        {
+          "error" : "malformed",
+          "ok" : false
+        },
+        {
+          "episodes" : [
+
+          ],
+          "ok" : true
+        }
+      ],
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+
+        ],
+        "ok" : true,
+        "title" : ""
+      },
+      "input" : "<html><body>oops",
+      "name" : "not-xml",
+      "platformNote" : "OPEN QUESTION Q2: swift-corelibs XMLParser (Linux, where this vector was generated) accepts this unterminated document and yields 0 episodes; Apple XMLParser on device may throw instead. Either way: no episodes. Do not treat this case as strict until confirmed on iOS."
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+
+        ],
+        "ok" : true,
+        "title" : "Empty"
+      },
+      "input" : "<?xml version=\"1.0\"?><rss><channel><title>Empty</title></channel></rss>",
+      "name" : "empty-channel"
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "https://example.com/a",
+            "imageURL" : null,
+            "link" : "https://example.com/a",
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "A"
+          },
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "g2",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "B"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>A</title><link>https://example.com/a</link></item><item><guid>g1</guid></item><item><title>B</title><guid>g2</guid></item><item><title>B again</title><guid>g2</guid></item></channel></rss>",
+      "name" : "guid-falls-back-to-link; untitled item dropped; duplicate guid keeps first"
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : "bonus",
+            "fanMailURL" : null,
+            "guid" : "g",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : 3,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "X"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>X</title><guid>g</guid><itunes:season>3</itunes:season><itunes:episode>12a</itunes:episode><itunes:episodeType>bonus</itunes:episodeType></item></channel></rss>",
+      "name" : "non-integer episode ignored; season parsed; type kept"
+    },
+    {
+      "expected" : {
+        "artworkURL" : "https://example.com/show.jpg",
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "g",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "X"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><image><url>https://example.com/show.jpg</url><title>ignored</title></image><item><title>X</title><guid>g</guid><itunes:image href=\"ftp://example.com/x.jpg\"/></item></channel></rss>",
+      "name" : "channel image fallback to <image><url>; item image non-http ignored"
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "g",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "Tom & Jerry \"rule\" ok",
+            "title" : "X"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>X</title><guid>g</guid><description><![CDATA[<p>Tom &amp; Jerry&nbsp;&quot;rule&quot;</p>   <p>ok</p>]]></description><itunes:summary>short</itunes:summary></item></channel></rss>",
+      "name" : "html entities, tags and whitespace collapsed; longest notes win"
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : "https://example.com/write?a=1&b=2",
+            "guid" : "g",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "Hello",
+            "title" : "X"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>X</title><guid>g</guid><description><![CDATA[<a href=\"https://example.com/write?a=1&amp;b=2\">Send us Fan Mail</a> Hello]]></description></item></channel></rss>",
+      "name" : "fan mail anchor without fan_mail href but label"
+    },
+    {
+      "acceptable" : [
+        {
+          "error" : "malformed",
+          "ok" : false
+        },
+        {
+          "episodes" : [
+
+          ],
+          "ok" : true
+        }
+      ],
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+
+        ],
+        "ok" : true,
+        "title" : ""
+      },
+      "input" : "<rss><channel><item>",
+      "name" : "truncated rss (android-main RssFeedParserTest.emptyAndBrokenInput)",
+      "platformNote" : "OPEN QUESTION Q2: swift-corelibs XMLParser (Linux) yields ok with 0 episodes; Android main throws RssFeedException; Apple XMLParser may throw. Either way: no episodes. See DISCREPANCIES D10.",
+      "source" : "android-main:RssFeedParserTest.emptyAndBrokenInput"
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "d1",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : "2026-10-06T04:00:00Z",
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "1"
+          },
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "d2",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : "2026-10-06T04:00:00Z",
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "2"
+          },
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "d3",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : "2026-10-06T04:00:00Z",
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "3"
+          },
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "d4",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "4"
+          },
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "d5",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : "2026-10-06T05:00:00Z",
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "5"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>1</title><guid>d1</guid><pubDate>Tue, 06 Oct 2026 00:00:00 -0400</pubDate></item><item><title>2</title><guid>d2</guid><pubDate>06 Oct 2026 04:00:00 GMT</pubDate></item><item><title>3</title><guid>d3</guid><pubDate>Tue, 06 Oct 2026 04:00 +0000</pubDate></item><item><title>4</title><guid>d4</guid><pubDate>2026-10-06</pubDate></item><item><title>5</title><guid>d5</guid><pubDate>Tue, 06 Oct 2026 00:00:00 EST</pubDate></item></channel></rss>",
+      "name" : "date variants"
+    },
+    {
+      "expected" : {
+        "artworkURL" : "https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg",
+        "episodes" : [
+          {
+            "episode" : 36,
+            "episodeType" : "full",
+            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
+            "guid" : "Buzzsprout-19980357",
+            "imageURL" : "https://storage.buzzsprout.com/ts10xban322i29sx0oznh8gwl95h?.jpg",
+            "link" : null,
+            "pubDate" : "2026-10-20T04:00:00Z",
+            "season" : 4,
+            "seasonEpisodeLabel" : "S4E36",
+            "summary" : "Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why? Tune in to find out! We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt), as well as make a very exciting announcement about something Matt is cooking up related to the podcast. So please join us as we watch a movie about killer piranhas that fly.",
+            "title" : "Piranha II:  The Spawning"
+          },
+          {
+            "episode" : 35,
+            "episodeType" : "full",
+            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
+            "guid" : "Buzzsprout-19950553",
+            "imageURL" : "https://storage.buzzsprout.com/7bxady8lbcznxdtl5hfhyvze1ykc?.jpg",
+            "link" : null,
+            "pubDate" : "2026-10-13T04:00:00Z",
+            "season" : 4,
+            "seasonEpisodeLabel" : "S4E35",
+            "summary" : "We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles. In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery. We also learn how this film became an inspiration for David Lynch and Mark Frost’s Twin Peaks, and get a mini-biography of Vincent Price. So line up your suspects, grab your favorite dame, take a belt or two of bourbon, and help us solve the mystery!",
+            "title" : "Laura"
+          },
+          {
+            "episode" : 34,
+            "episodeType" : "full",
+            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
+            "guid" : "Buzzsprout-19913482",
+            "imageURL" : "https://storage.buzzsprout.com/owoiwvlyear05oze07ippg1m06yb?.jpg",
+            "link" : null,
+            "pubDate" : "2026-10-06T04:00:00Z",
+            "season" : 4,
+            "seasonEpisodeLabel" : "S4E34",
+            "summary" : "Hi everyone, we have a new theme this week and that theme is: “before they were famous”. It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand. We are kicking things off with The Outsiders. This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.",
+            "title" : "The Outsiders"
+          },
+          {
+            "episode" : null,
+            "episodeType" : "bonus",
+            "fanMailURL" : null,
+            "guid" : "Buzzsprout-11111111",
+            "imageURL" : "http://storage.buzzsprout.com/bonus.jpg",
+            "link" : null,
+            "pubDate" : "2023-02-03T08:00:00Z",
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "A much longer summary that is still shorter? No, this summary is clearly longer than the description text above it.",
+            "title" : "Bonus: Listener Mailbag & Q&A"
+          },
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "https://www.buzzsprout.com/2117292/episodes/22222222",
+            "imageURL" : null,
+            "link" : "https://www.buzzsprout.com/2117292/episodes/22222222",
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "",
+            "title" : "No guid uses link"
+          }
+        ],
+        "ok" : true,
+        "title" : "Movie Roulette Tuesday: The Podcast"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<?xml-stylesheet href=\"https://rss.buzzsprout.com/styles.xsl\" type=\"text/xsl\"?>\n<rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:psc=\"http://podlove.org/simple-chapters\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n<channel>\n  <atom:link href=\"https://rss.buzzsprout.com/2117292.rss\" rel=\"self\" type=\"application/rss+xml\" />\n  <atom:link href=\"https://pubsubhubbub.appspot.com/\" rel=\"hub\" xmlns=\"http://www.w3.org/2005/Atom\" />\n  <title>Movie Roulette Tuesday: The Podcast</title>\n\n  <lastBuildDate>Tue, 20 Oct 2026 00:00:04 -0400</lastBuildDate>\n  <link>https://www.buzzsprout.com/2117292</link>\n  <language>en-us</language>\n  <copyright>© 2026 Movie Roulette Tuesday: The Podcast</copyright>\n  <podcast:locked>yes</podcast:locked>\n    <podcast:guid>793c389d-f31e-5f2f-a95c-8d7e46d695eb</podcast:guid>\n  <itunes:author>The MRT Crew</itunes:author>\n  <itunes:type>episodic</itunes:type>\n  <itunes:explicit>true</itunes:explicit>\n  <description><![CDATA[Three lifelong friends with a passion for cinema invite you to their weekly movie night where they get together for dinner, discussion and laughs.  Written, directed and hosted by Rachael, Karl and Matt.]]></description>\n  <generator>Buzzsprout (https://www.buzzsprout.com)</generator>\n  <itunes:keywords>movie, roulette, tuesday, film, friends, cinema, reviews, discussion, cinephile, </itunes:keywords>\n  <itunes:owner>\n    <itunes:name>The MRT Crew</itunes:name>\n    <itunes:email>owner@example.com</itunes:email>\n  </itunes:owner>\n  <image>\n     <url>https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg</url>\n     <title>Movie Roulette Tuesday: The Podcast</title>\n     <link>https://www.buzzsprout.com/2117292</link>\n  </image>\n  <itunes:image href=\"https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg\" />\n  <itunes:category text=\"TV &amp; Film\">\n    <itunes:category text=\"Film Reviews\" />\n  </itunes:category>\n  <itunes:category text=\"TV &amp; Film\" />\n  <itunes:category text=\"Comedy\" />\n  <item>\n    <itunes:title>Piranha II:  The Spawning</itunes:title>\n    <title>Piranha II:  The Spawning</title>\n    <itunes:summary><![CDATA[Send us Fan Mail Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why?  Tune in to find out! We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt),...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why?  Tune in to find out!</p><p>We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt), as well as make a very exciting announcement about something Matt is cooking up related to the podcast. So please join us as we watch a movie about killer piranhas that fly. </p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why?  Tune in to find out!</p><p>We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt), as well as make a very exciting announcement about something Matt is cooking up related to the podcast. So please join us as we watch a movie about killer piranhas that fly. </p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19980357-piranha-ii-the-spawning.mp3\" length=\"55528397\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/ts10xban322i29sx0oznh8gwl95h?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19980357</guid>\n    <pubDate>Tue, 20 Oct 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>4621</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>36</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n<item>\n    <itunes:title>Laura</itunes:title>\n    <title>Laura</title>\n    <itunes:summary><![CDATA[Send us Fan Mail We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles.   In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery.  We also learn how this film became an inspiration for David Lynch ...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles.   In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery. <br/>We also learn how this film became an inspiration for David Lynch and Mark Frost’s Twin Peaks, and get a mini-biography of Vincent Price. <br/>So line up your suspects, grab your favorite dame, take a belt or two of bourbon, and help us solve the mystery!</p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles.   In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery. <br/>We also learn how this film became an inspiration for David Lynch and Mark Frost’s Twin Peaks, and get a mini-biography of Vincent Price. <br/>So line up your suspects, grab your favorite dame, take a belt or two of bourbon, and help us solve the mystery!</p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19950553-laura.mp3\" length=\"52427206\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/7bxady8lbcznxdtl5hfhyvze1ykc?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19950553</guid>\n    <pubDate>Tue, 13 Oct 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>4361</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>35</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n<item>\n    <itunes:title>The Outsiders</itunes:title>\n    <title>The Outsiders</title>\n    <itunes:summary><![CDATA[Send us Fan Mail Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand. We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry b...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand.</p><p>We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.  </p><p><br/></p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand.</p><p>We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.  </p><p><br/></p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19913482-the-outsiders.mp3\" length=\"67349282\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/owoiwvlyear05oze07ippg1m06yb?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19913482</guid>\n    <pubDate>Tue, 06 Oct 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>5609</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>34</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n  <item>\n    <title>Bonus: Listener Mailbag &amp; Q&amp;A</title>\n    <guid isPermaLink=\"false\">Buzzsprout-11111111</guid>\n    <pubDate>Fri, 03 Feb 2023 08:00:00 GMT</pubDate>\n    <description><![CDATA[<p>Short <b>notes</b> &amp; more.</p>]]></description>\n    <itunes:summary>A much longer summary that is still shorter? No, this summary is clearly longer than the description text above it.</itunes:summary>\n    <itunes:image href=\"http://storage.buzzsprout.com/bonus.jpg\" />\n    <itunes:episodeType>bonus</itunes:episodeType>\n  </item>\n  <item>\n    <title>Duplicate guid should be dropped</title>\n    <guid isPermaLink=\"false\">Buzzsprout-11111111</guid>\n  </item>\n  <item>\n    <title>No guid uses link</title>\n    <link>https://www.buzzsprout.com/2117292/episodes/22222222</link>\n    <pubDate>not a date</pubDate>\n    <itunes:episode>x</itunes:episode>\n  </item>\n  <item>\n    <guid>Buzzsprout-33333333</guid>\n  </item>\n\n</channel>\n</rss>\n",
+      "name" : "android feed-sample.rss (Android main app/src/test/resources/episodes/feed-sample.rss)",
+      "source" : "android-main:RssFeedParserTest.parsesLiveFeedSampleWithEdgeCases"
+    }
+  ],
+  "feedURL" : "https://rss.buzzsprout.com/2117292.rss",
+  "links" : {
+    "appleSearch" : [
+      {
+        "episodeTitle" : "The Outsiders",
+        "url" : "https://podcasts.apple.com/us/search?term=Movie%20Roulette%20Tuesday%20The%20Outsiders%201666123849"
+      },
+      {
+        "episodeTitle" : "Romeo + Juliet",
+        "url" : "https://podcasts.apple.com/us/search?term=Movie%20Roulette%20Tuesday%20Romeo%20+%20Juliet%201666123849"
+      }
+    ],
+    "buzzsproutEpisode" : [
+      {
+        "guid" : "Buzzsprout-19913482",
+        "url" : "https://www.buzzsprout.com/2117292/episodes/19913482"
+      },
+      {
+        "guid" : "Buzzsprout-x",
+        "url" : null
+      },
+      {
+        "guid" : "other-1",
+        "url" : null
+      }
+    ],
+    "spotifySearch" : [
+      {
+        "input" : "S4 · E34 – Romeo + Juliet 🎬",
+        "query" : "Romeo Juliet Movie Roulette Tuesday",
+        "url" : "https://open.spotify.com/search/Romeo%20Juliet%20Movie%20Roulette%20Tuesday"
+      },
+      {
+        "input" : "The Outsiders",
+        "query" : "The Outsiders Movie Roulette Tuesday",
+        "url" : "https://open.spotify.com/search/The%20Outsiders%20Movie%20Roulette%20Tuesday"
+      },
+      {
+        "input" : "Episode 12: Movie Roulette Tuesday Special",
+        "query" : "Movie Roulette Tuesday Special",
+        "url" : "https://open.spotify.com/search/Movie%20Roulette%20Tuesday%20Special"
+      },
+      {
+        "input" : "Buzzsprout-123",
+        "query" : "Movie Roulette Tuesday",
+        "url" : "https://open.spotify.com/search/Movie%20Roulette%20Tuesday"
+      },
+      {
+        "input" : "#34 | Don’t Look Now",
+        "query" : "Don't Look Now Movie Roulette Tuesday",
+        "url" : "https://open.spotify.com/search/Don%27t%20Look%20Now%20Movie%20Roulette%20Tuesday"
+      },
+      {
+        "input" : "Ep. 7 - Jean-Claude's Picks?",
+        "query" : "Jean-Claude's Picks Movie Roulette Tuesday",
+        "url" : "https://open.spotify.com/search/Jean-Claude%27s%20Picks%20Movie%20Roulette%20Tuesday"
+      }
+    ]
+  },
+  "matching" : {
+    "cases" : [
+      {
+        "guid" : "Buzzsprout-19913482",
+        "movieId" : "m1"
+      },
+      {
+        "guid" : "Buzzsprout-19877460",
+        "movieId" : null
+      },
+      {
+        "guid" : "Buzzsprout-2",
+        "movieId" : "m2"
+      },
+      {
+        "guid" : "buzzsprout-19913482",
+        "movieId" : null
+      },
+      {
+        "guid" : " Buzzsprout-1",
+        "movieId" : null
+      },
+      {
+        "guid" : "sample-ep-6",
+        "movieId" : "m4"
+      }
+    ],
+    "catalog" : {
+      "categories" : [
+        {
+          "colorHex" : "#112233",
+          "fullName" : null,
+          "id" : "c",
+          "movieIds" : [
+            "m1",
+            "m2",
+            "m3",
+            "m4"
+          ],
+          "name" : "C",
+          "weight" : null
+        }
+      ],
+      "movies" : [
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-19913482"
+          ],
+          "episodeTitle" : "The Outsiders",
+          "genre" : "Drama",
+          "id" : "m1",
+          "isInfamous" : false,
+          "title" : "One",
+          "year" : 1983
+        },
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-1",
+            "Buzzsprout-2"
+          ],
+          "episodeTitle" : "Double Feature",
+          "genre" : "Drama",
+          "id" : "m2",
+          "isInfamous" : false,
+          "title" : "Two",
+          "year" : 1990
+        },
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+            "Buzzsprout-2",
+            "Buzzsprout-3",
+            "Buzzsprout-4"
+          ],
+          "episodeTitle" : "Triple",
+          "genre" : "Drama",
+          "id" : "m3",
+          "isInfamous" : false,
+          "title" : "Three",
+          "year" : 1991
+        },
+        {
+          "categories" : [
+            "c"
+          ],
+          "episodeIds" : [
+            "sample-ep-6",
+            "sample-ep-7"
+          ],
+          "episodeTitle" : null,
+          "genre" : "Drama",
+          "id" : "m4",
+          "isInfamous" : false,
+          "title" : "Four",
+          "year" : 1992
+        }
+      ],
+      "schemaVersion" : 1
+    },
+    "description" : "Episode -> movie: first catalog movie whose episodeIds contains the guid (exact, case-sensitive).",
+    "discussedText" : [
+      {
+        "expected" : "Discussed on The Outsiders",
+        "feedLoaded" : false,
+        "movieId" : "m1"
+      },
+      {
+        "expected" : "Discussed on The Outsiders (S4E34)",
+        "feedLoaded" : true,
+        "movieId" : "m1"
+      },
+      {
+        "expected" : "Discussed on Double Feature & Double Feature",
+        "feedLoaded" : false,
+        "movieId" : "m2"
+      },
+      {
+        "expected" : "Discussed on Double Feature & Second (S1E2)",
+        "feedLoaded" : true,
+        "movieId" : "m2"
+      },
+      {
+        "expected" : "Discussed on Triple + 2 more",
+        "feedLoaded" : false,
+        "movieId" : "m3"
+      },
+      {
+        "expected" : "Discussed on Second (S1E2) + 2 more",
+        "feedLoaded" : true,
+        "movieId" : "m3"
+      },
+      {
+        "expected" : "Discussed on Episodes 6 & 7 (sample)",
+        "feedLoaded" : false,
+        "movieId" : "m4"
+      },
+      {
+        "expected" : "Discussed on Episodes 6 & 7 (sample)",
+        "feedLoaded" : true,
+        "movieId" : "m4"
+      },
+      {
+        "expected" : "Not discussed on the show yet",
+        "feedLoaded" : false,
+        "movieId" : "no-episodes"
+      }
+    ],
+    "episodeTotals" : {
+      "catalogEpisodeCount" : 7,
+      "feedEpisodes" : 3,
+      "feedEpisodesWithFilm" : 2
+    },
+    "feedGuids" : [
+      "Buzzsprout-19913482",
+      "Buzzsprout-19877460",
+      "Buzzsprout-2"
+    ]
+  },
+  "parseDate" : [
+    {
+      "expected" : "2026-10-06T04:00:00Z",
+      "input" : "Tue, 06 Oct 2026 00:00:00 EDT"
+    },
+    {
+      "expected" : "2026-10-06T04:00:00Z",
+      "input" : " Tue, 06 Oct 2026 04:00 +0000 "
+    },
+    {
+      "expected" : "2026-10-06T04:00:00Z",
+      "input" : "Tue, 06 Oct 2026 00:00:00 -0400"
+    },
+    {
+      "expected" : "2026-10-06T04:00:00Z",
+      "input" : "06 Oct 2026 04:00:00 GMT"
+    },
+    {
+      "expected" : "2026-10-06T04:00:00Z",
+      "input" : "Tue, 06 Oct 2026 04:00 +0000"
+    },
+    {
+      "expected" : "2026-10-06T05:00:00Z",
+      "input" : "Tue, 06 Oct 2026 00:00:00 EST"
+    },
+    {
+      "expected" : "2026-10-05T23:59:59Z",
+      "input" : " Mon, 05 Oct 2026 23:59:59 +0000 "
+    },
+    {
+      "expected" : null,
+      "input" : "2026-10-06"
+    },
+    {
+      "expected" : null,
+      "input" : ""
+    },
+    {
+      "expected" : null,
+      "input" : "garbage"
+    }
+  ],
+  "stripFanMail" : [
+    {
+      "expected" : "Hi there",
+      "input" : "Send us Fan Mail Hi there"
+    },
+    {
+      "expected" : "Hi",
+      "input" : "send us fanmail: Hi"
+    },
+    {
+      "expected" : "We read fan mail today",
+      "input" : "We read fan mail today"
+    },
+    {
+      "expected" : "",
+      "input" : "Send us Fan Mail"
+    },
+    {
+      "expected" : "Hello",
+      "input" : "  SEND US FAN MAIL — | Hello  "
+    },
+    {
+      "expected" : "Hi",
+      "input" : "Send us fan mail!Hi"
+    }
+  ]
+}

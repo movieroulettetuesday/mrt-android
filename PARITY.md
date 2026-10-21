@@ -7,14 +7,14 @@ Android repo: https://github.com/movieroulettetuesday/mrt-android (public).
 Status: ✅ done · 🟡 partial · ⬜ not started · ⏸ blocked on a decision.
 Effort (Android work, rough): **S** ≤ ½ day · **M** 1–2 days · **L** 3–5 days · **XL** > 1 week.
 
-_Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix `c7b4e0d`, catalog `19192d5` and wheel `f4b1f37`._
+_Last updated 2026-10-21 (ET) after merging the shared contract (`feature/shared-contract`: mrt-shared vectors, D1–D5, D7–D9, D11)._
 
 ## 0. App shell
 | iOS (SwiftUI) | Android (Compose) | Effort | Status |
 |---|---|---|---|
 | `MovieRouletteTuesdayApp.swift`, `ContentView.swift` (TabView: Roulette, Episodes, Movies, Stats) | `MainActivity.kt`, `ui/MrtApp.kt` (single activity, `NavigationBar` + `NavHost`, same tab order) | S | ✅ |
 | Episodes tab badge (new since last viewed, `NewEpisodeBadge.swift`) | `NavigationBar` `BadgedBox` + `EpisodeRepository.markViewed` (SharedPreferences `episodes.lastViewedAt`, first-load baseline) | S | ✅ tested |
-| `Shared/Brand.swift`, `CleanPro.swift`, `Color+Hex.swift`, asset colors (BrandTeal/Peach, WheelRim, LaunchBackground) | `ui/theme/Theme.kt` (`BrandColors`, M3 light/dark schemes), `catalog/HexColor.kt` | S | 🟡 colors ported; CleanPro card styling not yet |
+| `Shared/Brand.swift`, `CleanPro.swift`, `Color+Hex.swift`, asset colors (BrandTeal/Peach, WheelRim, LaunchBackground) | `ui/theme/Theme.kt` (`BrandColors`, M3 light/dark; Ink #1D2B2E, launcher bg #F1F6F6 per D8), `catalog/HexColor.kt`, `catalog/CategoryPalette.kt` (muted display palette + radial slice stops from mrt-shared `data/palette.json`, D2) | S | 🟡 colors ✅ (shared vectors); CleanPro card styling not yet |
 | `AppearancePreference.swift`, `Appearance.swift` (System/Light/Dark) | `settings/AppPreferences.kt` (`settings.appearance` = system/light/dark, same raw values) → `MrtTheme(darkTheme = forcesDark ?: system)` in `MainActivity` | S | ✅ tests |
 | `LaunchSplash.swift`, `LaunchSplashView.swift` (cold-launch animation, skippable, Reduce Motion crossfade) | `androidx.core:core-splashscreen` + Compose intro | M | ⬜ |
 | App icon (`AppIcon.png`) | Adaptive icon built from the same artwork (`mipmap-*/ic_launcher_foreground.png`, monochrome layer), bg `#F5F5F5`; identical to Play 512 candidate | S | ✅ |
@@ -29,19 +29,19 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | `RouletteCore/WheelMath.swift` (pointer angle, uniform + weighted geometry, edge-padded random target) | `roulette/WheelMath.kt` (`WheelMath`, `WheelGeometry`) | S | ✅ 8 tests |
 | `RouletteCore/MovieSelector.swift` (category → movie, recency window 5, ×0.1 last spin, infamous ×1.25, `pickIndex`) | `roulette/MovieSelector.kt` | S | ✅ 6 tests |
 | `RouletteCore/RareOutcomes.swift` (1 % forced re-spin, 1 % Infamous jackpot, no chaining) | `roulette/RareOutcomes.kt` | S | ✅ 6 tests |
-| `RouletteCore/RandomGenerators.swift` (SplitMix64) | `SeededRandom` (same algorithm, reference values tested) | S | ✅ |
+| `RouletteCore/RandomGenerators.swift` (SplitMix64) | `roulette/RandomGenerators.kt` `SwiftCompatRandom` (SplitMix64 + Swift double/Int mapping, Lemire; D1). Production uses `Random.Default` | S | ✅ shared rng vectors |
 | `Roulette/RouletteViewModel.swift` (load, spin, watchdog, forced re-spin 1.6 s, deferred catalog swap, reveal, spin again) | `roulette/RouletteViewModel.kt` | M | ✅ 8 tests |
 | `Roulette/WheelView.swift`, `HubSpinButton.swift`, `RouletteView.swift` (slices, labels, pointer, glowing hub, tap wheel or hub to spin, Magic Tap) | `roulette/WheelView.kt`, `RouletteScreen.kt` (Canvas slices from the same geometry, readable labels, pointer, hub; tap wheel or hub) | M | 🟡 hub glow/visual polish, TalkBack custom action pending |
-| Animated spin timed to recording (`SpinMotion.swift`, `SpinSoundTrack.swift`, 6.294 s, wind-up + brake) | `roulette/SpinMotion.kt` (same speed curve as easing) | S | ✅ base curve; ⬜ per-click time warp |
-| Spin sound `wheel-spin.m4a` once per spin; haptic per slice crossing (`SpinFeedback.swift`, `SpinTicks.swift`) | Haptics ✅: `HapticFeedbackConstants.CLOCK_TICK` each time the pointer crosses a slice while spinning (`RouletteWheel`, toggle `settings.haptics`, default on). Sound: not shipped until Matthew OKs reusing `wheel-spin.m4a` | M | 🟡 haptics ✅, sound ⏸ |
-| Hub ■ stops a spin early (`SpinStopPlan`) | — | M | ⬜ |
+| Animated spin timed to recording (`SpinMotion.swift`, `SpinSoundTrack.swift`, 6.294 s, wind-up + brake) | `roulette/SpinMotion.kt` full port: per-click time warp (`plan`, smoothest-choice DP, snap ≤ MAX_SNAP), `TimingCurve`, `SpinTicks`; onsets from `data/spin-sound-track.json` (D4) | S | ✅ shared wheel vectors |
+| Spin sound `wheel-spin.m4a` once per spin; haptic per slice crossing (`SpinFeedback.swift`, `SpinTicks.swift`) | `roulette/SpinFeedback.kt` `SpinSoundPlayer` (MediaPlayer, fade-out on stop) + CLOCK_TICK haptics at the planned crossings (thinned to ≥45 ms). Sound file copied at build time from the iOS checkout, sha256-verified, not committed; Settings “Spin sound” (`settings.tickSound`) | M | ✅ |
+| Hub ■ stops a spin early (`SpinStopPlan`) | `SpinStopPlan` (0.8 s ease-out, ≥120° travel, same-RNG target); tap wheel or hub (“STOP”) while spinning | M | ✅ shared stopPlan vector |
 | Reduce Motion: same timeline, 1–2 turns | Remove-animations setting → 1–2 turns (`RouletteRoute.kt`) | S | ✅ |
 | `RevealSheet.swift` (category, then movie, year, "Discussed on…", spin count, Spin Again, jackpot styling) | `RevealSheet` in `RouletteScreen.kt` (ModalBottomSheet) | S | ✅ (jackpot styling basic) |
 | `ShareCard.swift` (1080×1350 branded image) + `ShareLink` text "Tonight’s Movie Roulette Tuesday spin: Title (Year)" | `roulette/Share.kt`: `ACTION_SEND` text/plain chooser, same text and subject | S / M | ✅ text · ⬜ image card (render composable → PNG → FileProvider) |
 | `ConfettiView.swift` | Compose particle effect | S | ⬜ |
 | `RouletteTaglines.swift`, header "Dinner, discussion, and the wheel" | Header in `RouletteScreen.kt` | S | 🟡 tagline only |
 | `RulesSheet.swift` | Bottom sheet | S | ⬜ |
-| `SpinHistoryView.swift`, `SpinHistoryStore.swift`, `SpinHistoryLog.swift`/`FileStore` (500 detailed + archive) | `roulette/SpinHistory.kt` (`SpinHistoryStore`, JSON file, 500 + archive counts) | S / M | 🟡 store ✅, history screen ⬜ |
+| `SpinHistoryView.swift`, `SpinHistoryStore.swift`, `SpinHistoryLog.swift`/`FileStore` (500 detailed + archive) | `roulette/SpinHistory.kt` (`SpinHistoryStore`, iOS v2 file format via `SpinHistoryCodec`, 500 + archive; unreadable file moved aside by `data/CorruptFileQuarantine.kt`, D3) | S / M | 🟡 store ✅, history screen ⬜ |
 | `MoviePageView.swift` (from reveal / movies) | `movies/MovieDetailScreen.kt` (header, spin count, Episodes → episode page, Where to Watch, Your Rating + status, Categories, Listen: Apple/Spotify search, Buzzsprout); reachable from Movies, Episodes and the reveal sheet ("Movie page") | M | ✅ |
 | `Intents/SpinMovieRouletteIntent.swift` (Siri/Shortcuts) | App Shortcut (`shortcuts.xml`) "Spin" → deep link | S | ⬜ |
 | `QuickSpin.swift` | Launcher shortcut | S | ⬜ |
@@ -101,6 +101,19 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | `Community.swift` (`PollFactory` default poll per episode via FNV-1a: good/bad, recommend, who won the argument; `polls.json` overrides; `PollResults`, `RatingAggregate`, `CommunityBackoff`, `TimedCache`) | Pure Kotlin port (no backend needed) | M | ⬜ |
 | `CloudKitCommunityStore.swift`, `CommunityService.swift`, `EpisodePollSection.swift`, `ListenerRatingSection.swift` (`PollVote`, `ListenerRating` stars + halfStars; record names hash iCloud user id) | `CommunityStore` interface + backend adapter | L | ⏸ see `backend-options.md` |
 | `-MRTMockCommunity` in-memory store | Fake store for tests/previews | S | ⬜ |
+
+## Shared contract (mrt-shared)
+| Item | Android | Status |
+|---|---|---|
+| Pinned copy of `mrt-shared` `data/` + `test-vectors/` | `shared/` + `shared/SHA256SUMS`; `scripts/sync-shared.sh` refreshes it; the build fails if a file doesn't match its hash or if `/workspace/mrt-shared` (or `MRT_SHARED_DIR`) differs | ✅ |
+| Constants from `data/*.json` (palette, show, spin-sound onsets) | Generated `SharedContract.kt` at build time (one source) | ✅ |
+| Vector tests | `app/src/test/.../shared/*VectorsTest.kt`: rng, wheel, selection (incl. the full app spin sequence through `RouletteViewModel`), catalog, rss, stats | ✅ |
+| D1 RNG mapping · D2 palette · D3 history file · D4 click-synced spin + tap-to-stop · D5 re-spin notice · D7 Discussed on · D8 brand colors · D9 empty posterURL rejected | Matched to iOS | ✅ |
+| D6 rotation normalised mod 360 | Kept (harmless; vectors compared mod 360) | ✅ by decision |
+| D10 http→https artwork upgrade | Kept (Android is HTTPS-only) | ✅ by decision |
+| D11 broken feed | Android throws `malformed` (listed in the vector's `acceptable`), so a bad download never replaces the cached feed | ✅ by decision |
+| New, found by vectors: nbsp in show notes; “sample-ep-N” labels; Apple search / mailto query encoding (Foundation rules) | Matched to iOS | ✅ |
+| Infamous jackpot selection | `JackpotSelector`: `FlaggedInfamousSelector` (default = iOS main), `RatingWeightedSelector` (infamous-selection.md, iOS 1.0.1 pending; V1–V5 + seed-42 vectors pass) | 🟡 swap when 1.0.1 lands on iOS main |
 
 ## Android-only items
 | Item | Status |

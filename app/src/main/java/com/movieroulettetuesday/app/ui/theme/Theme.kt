@@ -18,7 +18,7 @@ object BrandColors {
     val BackgroundDark = Color(0xFF0F1618)
     val WheelRimLight = Color(0xFF262626)
     val WheelRimDark = Color(0xFF3A3A3C)
-    val Ink = Color(0xFF14181A)
+    val Ink = Color(0xFF1D2B2E) // iOS Brand.ink (mrt-shared ASSETS.md)
 }
 
 private val LightColors = lightColorScheme(

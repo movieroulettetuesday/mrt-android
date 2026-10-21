@@ -20,9 +20,9 @@ class MovieSuggestionTest {
     }
 
     @Test
-    fun mailtoUsesPercentTwentyAndEncodesPlus() {
+    fun mailtoMatchesIosEncodingAndEncodesPlus() {
         val uri = MovieSuggestion("C++ & Me").mailtoUri
-        assertTrue(uri.startsWith("mailto:theMrtPodcast@gmail.com?subject=Movie%20suggestion%3A%20C%2B%2B%20%26%20Me&body="))
+        assertTrue(uri.startsWith("mailto:theMrtPodcast@gmail.com?subject=Movie%20suggestion:%20C%2B%2B%20%26%20Me&body="))
         assertFalse(uri.contains("+"))
         assertFalse(uri.contains(" "))
     }

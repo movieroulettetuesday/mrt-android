@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.movies
 
+import com.movieroulettetuesday.app.catalog.displayColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -210,7 +211,7 @@ private fun MovieRow(movie: Movie, catalog: MovieCatalog, inputs: MoviesInputs, 
             Text(movie.title, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 movie.categories.take(3).forEach { id ->
-                    val c = catalog.category(id)?.colorHex?.let(HexColor::parse)?.let { Color(it.argb) } ?: MaterialTheme.colorScheme.outline
+                    val c = catalog.category(id)?.let { Color(it.displayColor.argb) } ?: MaterialTheme.colorScheme.outline
                     Box(Modifier.padding(end = 3.dp).size(8.dp).background(c, CircleShape))
                 }
                 Text(catalog.subtitle(movie), style = MaterialTheme.typography.bodySmall,

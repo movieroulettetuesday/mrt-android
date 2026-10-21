@@ -199,6 +199,7 @@ private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtAppli
         val prefs = app.preferences
         val appearance by prefs.appearance.collectAsStateWithLifecycle()
         val haptics by prefs.haptics.collectAsStateWithLifecycle()
+        val tickSound by prefs.tickSound.collectAsStateWithLifecycle()
         val alerts by prefs.newEpisodeAlerts.collectAsStateWithLifecycle()
         val episodes by app.episodeRepository.state.collectAsStateWithLifecycle()
         var alertNote by remember { mutableStateOf<String?>(null) }
@@ -212,10 +213,11 @@ private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtAppli
             finish(granted && app.episodeNotifier.canPost())
         }
         SettingsScreen(
-            state = SettingsState(appearance, haptics, alerts, alertNote = alertNote),
+            state = SettingsState(appearance, haptics, alerts, alertNote = alertNote, tickSound = tickSound),
             actions = SettingsActions(
                 setAppearance = prefs::setAppearance,
                 setHaptics = prefs::setHaptics,
+                setTickSound = prefs::setTickSound,
                 setNewEpisodeAlerts = { on ->
                     alertNote = null
                     when {

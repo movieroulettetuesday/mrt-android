@@ -4,6 +4,7 @@ import com.movieroulettetuesday.app.catalog.Movie
 import com.movieroulettetuesday.app.catalog.MovieCatalog
 import com.movieroulettetuesday.app.data.AtomicFile
 import com.movieroulettetuesday.app.roulette.SpinStats
+import com.movieroulettetuesday.app.data.CorruptFileQuarantine
 import java.io.File
 import kotlin.math.floor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -172,7 +173,7 @@ data class PersonalRatingsSummary(
 
 /**
  * Local JSON store (filesDir/personal-ratings.json); never leaves the device. An unreadable file is
- * kept as a `.corrupt-<time>` backup, never silently overwritten (iOS CorruptFileQuarantine).
+ * kept as a `personal-ratings.corrupt-<UTC>.json` backup (newest 3), never silently overwritten (iOS CorruptFileQuarantine).
  */
 class PersonalRatingsStore(private val file: File?, private val clock: () -> Long = System::currentTimeMillis) {
     private val _ratings = MutableStateFlow(PersonalRatings())
@@ -185,8 +186,7 @@ class PersonalRatingsStore(private val file: File?, private val clock: () -> Lon
             try {
                 _ratings.value = PersonalRatings.decode(file.readText())
             } catch (_: Exception) {
-                val backup = File(file.path + ".corrupt-" + clock())
-                lastError = if (file.renameTo(backup)) {
+                lastError = if (CorruptFileQuarantine.quarantine(file, clock()) != null) {
                     "Your saved ratings couldn't be read. A backup was kept and ratings were reset."
                 } else {
                     "Your saved ratings couldn't be read, so they were reset."

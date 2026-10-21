@@ -98,6 +98,11 @@ class MrtApplication : Application() {
 
     val preferences: AppPreferences by lazy { AppPreferences(settings) }
 
+    /** wheel-spin.m4a player; silent under tests. */
+    val spinSound: com.movieroulettetuesday.app.roulette.SpinFeedback by lazy {
+        if (isUnderTest) com.movieroulettetuesday.app.roulette.SpinFeedback.None else com.movieroulettetuesday.app.roulette.SpinSoundPlayer(this)
+    }
+
     val spinHistory: SpinHistoryStore by lazy {
         SpinHistoryStore(if (isUnderTest) null else File(filesDir, SpinHistoryStore.FILE_NAME))
     }

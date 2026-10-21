@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Mail
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.SmartDisplay
@@ -75,11 +76,13 @@ data class SettingsState(
     /** Shown only when the community relay is configured in this build. */
     val autoShareRatings: Boolean? = null,
     val communityEnabled: Boolean = false,
+    val tickSound: Boolean = true,
 )
 
 class SettingsActions(
     val setAppearance: (AppearancePreference) -> Unit,
     val setHaptics: (Boolean) -> Unit,
+    val setTickSound: (Boolean) -> Unit = {},
     val setNewEpisodeAlerts: (Boolean) -> Unit,
     val setAutoShareRatings: (Boolean) -> Unit,
     val openMyServices: () -> Unit,
@@ -101,7 +104,8 @@ fun SettingsScreen(state: SettingsState, actions: SettingsActions, modifier: Mod
                 }
             }
         }
-        Section("Spin", "Spin sound comes later; haptics tick as the pointer crosses each slice.") {
+        Section("Spin", "Tap the spinning wheel to stop it early.") {
+            ToggleRow("Spin sound", Icons.Filled.MusicNote, state.tickSound, actions.setTickSound, "settings-tick-sound")
             ToggleRow("Haptics", Icons.Filled.Vibration, state.haptics, actions.setHaptics, "settings-haptics")
         }
         Section("Notifications", "Checks for new episodes in the background, so alerts can arrive late.") {

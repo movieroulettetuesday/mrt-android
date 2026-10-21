@@ -1,0 +1,1348 @@
+{
+  "_generated" : {
+    "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
+    "iosCommit" : "b673df1",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+  },
+  "bundled" : {
+    "candidateCounts" : {
+      "cat-action" : 28,
+      "cat-criterion" : 21,
+      "cat-cult" : 34,
+      "cat-dark-comedy" : 21,
+      "cat-escape" : 21,
+      "cat-horror" : 38,
+      "cat-listener" : 6,
+      "cat-love" : 12,
+      "cat-prestige" : 30,
+      "cat-scifi" : 30
+    },
+    "categoryIds" : [
+      "cat-horror",
+      "cat-cult",
+      "cat-criterion",
+      "cat-love",
+      "cat-scifi",
+      "cat-action",
+      "cat-dark-comedy",
+      "cat-listener",
+      "cat-prestige",
+      "cat-escape"
+    ],
+    "hosts" : [
+      "Rachael",
+      "Karl",
+      "Matt"
+    ],
+    "infamousCount" : 0,
+    "movieCount" : 180,
+    "path" : "MovieRouletteTuesday/Resources/movies.json",
+    "sha256" : "4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630",
+    "validationIssues" : [
+
+    ]
+  },
+  "cases" : [
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "minimal-defaults",
+      "source" : "android-main:CatalogJsonTest.decodesMinimalJsonWithDefaults"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 2,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"schemaVersion\":2,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "unknown-keys-ignored",
+      "source" : "android-main:CatalogJsonTest.ignoresUnknownKeysLikeNote"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 3,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "unsupportedSchema"
+      },
+      "input" : "{\"schemaVersion\":3,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "schema-3-unsupported",
+      "source" : "android-main:CatalogValidationTest.rejectsUnsupportedSchemaEmptyAndInconsistent"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 0,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "unsupportedSchema"
+      },
+      "input" : "{\"schemaVersion\":0,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "schema-0-unsupported",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"schemaVersion\":1,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "schema-1-ok",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+
+        ],
+        "categoryIds" : [
+
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+
+          ],
+          "firstMovieCategories" : [
+
+          ],
+          "movieIds" : [
+
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+
+        ],
+        "movies" : [
+
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "empty"
+      },
+      "input" : "{\"categories\":[],\"movies\":[]}",
+      "name" : "empty-lists",
+      "source" : "android-main:CatalogValidationTest.rejectsUnsupportedSchemaEmptyAndInconsistent"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 2,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+          "Category 'c1' has invalid colorHex '#12'"
+        ],
+        "validator" : "inconsistent"
+      },
+      "input" : "{\"schemaVersion\":2,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#12\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "bad-color-short",
+      "source" : "android-main:CatalogValidationTest.rejectsUnsupportedSchemaEmptyAndInconsistent"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 2,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"schemaVersion\":2,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#11223380\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "color-8-digit-ok",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 2,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"schemaVersion\":2,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "color-no-hash-ok",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 2,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+          "Category 'c1' has invalid colorHex 'red'"
+        ],
+        "validator" : "inconsistent"
+      },
+      "input" : "{\"schemaVersion\":2,\"_note\":\"ignored\",\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"red\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"Movie\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "color-named-bad",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "a",
+          "b",
+          "a"
+        ],
+        "categoryIds" : [
+          "a",
+          "b",
+          "a"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "a",
+            "b"
+          ],
+          "firstMovieCategories" : [
+            "a",
+            "nowhere"
+          ],
+          "movieIds" : [
+            "m1",
+            "m2"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1",
+          "m1",
+          "m2"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2000 · a",
+            "tmdbId" : null
+          },
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2000 · a",
+            "tmdbId" : null
+          },
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m2",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2000 · b",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+          "Category 'a' references unknown movie 'ghost'",
+          "Category 'b' has invalid colorHex 'red'",
+          "Category 'b' has no movies",
+          "Duplicate category id 'a'",
+          "Duplicate movie id 'm1'",
+          "Movie 'm1' references unknown category 'nowhere'",
+          "Movie 'm2' lists 'b' but that category doesn't list it"
+        ],
+        "validator" : "inconsistent"
+      },
+      "input" : "{\"categories\":[{\"id\":\"a\",\"name\":\"a\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\",\"ghost\"]},{\"id\":\"b\",\"name\":\"b\",\"colorHex\":\"red\",\"movieIds\":[]},{\"id\":\"a\",\"name\":\"a\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"m1\",\"year\":2000,\"genre\":\"Drama\",\"categories\":[\"a\",\"nowhere\"]},{\"id\":\"m1\",\"title\":\"m1\",\"year\":2000,\"genre\":\"Drama\",\"categories\":[\"a\"]},{\"id\":\"m2\",\"title\":\"m2\",\"year\":2000,\"genre\":\"Drama\",\"categories\":[\"b\"]}]}",
+      "name" : "find-problems",
+      "source" : "android-main:CatalogValidationTest.findsProblems"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "A"
+        ],
+        "categoryIds" : [
+          "a"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "a"
+          ],
+          "firstMovieCategories" : [
+            "a"
+          ],
+          "movieIds" : [
+            "m1",
+            "m2"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1",
+          "m2"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2000 · A",
+            "tmdbId" : null
+          },
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m2",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2000 · Drama",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+          "Movie 'm2' is listed in 'a' but doesn't list that category"
+        ],
+        "validator" : "inconsistent"
+      },
+      "input" : "{\"categories\":[{\"id\":\"a\",\"name\":\"A\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\",\"m2\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":2000,\"genre\":\"Drama\",\"categories\":[\"a\"]},{\"id\":\"m2\",\"title\":\"T2\",\"year\":2000,\"genre\":\"Drama\"}]}",
+      "name" : "one-sided-link",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : {
+              "buy" : [
+
+              ],
+              "free" : [
+
+              ],
+              "isEmpty" : false,
+              "region" : "US",
+              "rent" : [
+                "Apple"
+              ],
+              "stream" : [
+
+              ]
+            },
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"M\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"tmdbId\":\"not-a-number\",\"streaming\":{\"stream\":\"oops\",\"rent\":[{\"id\":2,\"name\":\"Apple\"}]}}]}",
+      "name" : "malformed-optional-fields",
+      "source" : "android-main:CatalogJsonTest.malformedNewFieldsNeverBreakTheCatalog"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"categories\":[],\"movies\":[{\"id\":\"m1\",\"year\":1999,\"genre\":\"Drama\"}]}",
+      "name" : "missing-title",
+      "source" : "android-main:CatalogJsonTest.missingRequiredKeyFails"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"categories\":[],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":\"1999\",\"genre\":\"Drama\"}]}",
+      "name" : "year-as-string",
+      "source" : "android-main:CatalogJsonTest.wrongTypeFails"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"categories\":[],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999.5,\"genre\":\"Drama\"}]}",
+      "name" : "year-fractional",
+      "source" : "android-main:CatalogJsonTest.fractionalYearFails"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999.0,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "year-integral-double",
+      "source" : "ios (Android CatalogJson comment claims 1983.0 is accepted)"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "<html>rate limited</html>",
+      "name" : "garbage",
+      "source" : "android-main:CatalogJsonTest.garbageFails"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"movies\":[]}",
+      "name" : "missing-categories-key",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"isInfamous\":\"yes\"}]}",
+      "name" : "isInfamous-wrong-type",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : true,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"weight\":2.5,\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"isInfamous\":true,\"tmdbId\":null}]}",
+      "name" : "isInfamous-true-and-weight",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"show\":{\"name\":\"X\"},\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "show-block-missing-hosts",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : true,
+        "movieIds" : [
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "A",
+          "B"
+        ],
+        "validationIssues" : [
+
+        ],
+        "validator" : "ok"
+      },
+      "input" : "{\"show\":{\"name\":\"X\",\"hosts\":[\"A\",\"B\"]},\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "show-block-full",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"posterURL\":\"\"}]}",
+      "name" : "posterURL-empty-string",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "decodes" : false
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"weight\":\"2\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"]}]}",
+      "name" : "weight-as-string",
+      "source" : "ios"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "a",
+          "a"
+        ],
+        "categoryIds" : [
+          "a",
+          "a"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "a"
+          ],
+          "firstMovieCategories" : [
+            "a"
+          ],
+          "movieIds" : [
+            "m1"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1",
+          "m1"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2000 · a",
+            "tmdbId" : null
+          },
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2000 · Drama",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+          "Category 'a' references unknown movie 'x'",
+          "Duplicate category id 'a'",
+          "Duplicate movie id 'm1'"
+        ],
+        "validator" : "inconsistent"
+      },
+      "input" : "{\"categories\":[{\"id\":\"a\",\"name\":\"a\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]},{\"id\":\"a\",\"name\":\"a\",\"colorHex\":\"#112233\",\"movieIds\":[\"x\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"m1\",\"year\":2000,\"genre\":\"Drama\",\"categories\":[\"a\"]},{\"id\":\"m1\",\"title\":\"m1\",\"year\":2000,\"genre\":\"Drama\",\"categories\":[]}]}",
+      "name" : "dedupe-first-wins",
+      "source" : "android-main:CatalogValidationTest.deduplicatedKeepsFirst"
+    },
+    {
+      "expected" : {
+        "categoryDisplayNames" : [
+          "One"
+        ],
+        "categoryIds" : [
+          "c1"
+        ],
+        "decodes" : true,
+        "deduplicated" : {
+          "categoryIds" : [
+            "c1"
+          ],
+          "firstMovieCategories" : [
+            "c1",
+            "ghost"
+          ],
+          "movieIds" : [
+            "m1",
+            "m2"
+          ]
+        },
+        "hasShowBlock" : false,
+        "movieIds" : [
+          "m1",
+          "m2"
+        ],
+        "movies" : [
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m1",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "1999 · One",
+            "tmdbId" : null
+          },
+          {
+            "episodeIds" : [
+
+            ],
+            "hostRating" : null,
+            "id" : "m2",
+            "isInfamous" : false,
+            "streaming" : null,
+            "subtitle" : "2001 · Comedy",
+            "tmdbId" : null
+          }
+        ],
+        "schemaVersion" : 1,
+        "showHosts" : [
+          "Rachael",
+          "Karl",
+          "Matt"
+        ],
+        "validationIssues" : [
+          "Movie 'm1' references unknown category 'ghost'"
+        ],
+        "validator" : "inconsistent"
+      },
+      "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\",\"ghost\"]},{\"id\":\"m2\",\"title\":\"T\",\"year\":2001,\"genre\":\"Comedy\"}]}",
+      "name" : "subtitle-genre-fallback",
+      "source" : "android-main:CatalogJsonTest.subtitleUsesCategoryNamesElseGenre (extended)"
+    }
+  ],
+  "categoryPalette" : {
+    "cases" : [
+      {
+        "catalogHex" : "#C1121F",
+        "categoryId" : "cat-horror",
+        "displayHex" : "#C25B5E"
+      },
+      {
+        "catalogHex" : null,
+        "categoryId" : "cat-listener",
+        "displayHex" : "#5E7DC0"
+      },
+      {
+        "catalogHex" : "#FF0000",
+        "categoryId" : "cat-new",
+        "displayHex" : "#CC6666"
+      },
+      {
+        "catalogHex" : "#00A6FB",
+        "categoryId" : "cat-new2",
+        "displayHex" : "#66A9CC"
+      },
+      {
+        "catalogHex" : null,
+        "categoryId" : "cat-unknown",
+        "displayHex" : "#CFAE63"
+      },
+      {
+        "catalogHex" : "nope",
+        "categoryId" : "cat-unknown",
+        "displayHex" : "#CFAE63"
+      },
+      {
+        "catalogHex" : null,
+        "categoryId" : "zzz",
+        "displayHex" : "#5E7DC0"
+      }
+    ],
+    "description" : "CategoryPalette.hex(forCategoryId:catalogHex:) = the colour every surface draws (SPEC §1.4).",
+    "radialStops" : [
+      {
+        "input" : "#C25B5E",
+        "stops" : [
+          "#E9A5A7",
+          "#C25B5E",
+          "#AF5255"
+        ]
+      },
+      {
+        "input" : "#4D97C2",
+        "stops" : [
+          "#9CCCE9",
+          "#4D97C2",
+          "#4588AF"
+        ]
+      },
+      {
+        "input" : "bad",
+        "stops" : [
+          "bad",
+          "bad",
+          "bad"
+        ]
+      }
+    ]
+  },
+  "description" : "movies.json decoding + validation (SPEC §1.1-1.2). For each case decode `input`; when expected.decodes is false the decoder must throw. validator = result of CatalogValidator.validate on the decoded catalog. validationIssues are exact strings, sorted.",
+  "hexColor" : {
+    "cases" : [
+      {
+        "hexString" : "#FF8000",
+        "input" : "#FF8000",
+        "prefersDarkText" : true,
+        "relativeLuminance" : 0.36698342968146075,
+        "rgba255" : [
+          255,
+          128,
+          0,
+          255
+        ],
+        "valid" : true
+      },
+      {
+        "hexString" : "#112233",
+        "input" : "11223380",
+        "prefersDarkText" : false,
+        "relativeLuminance" : 0.015022419420735887,
+        "rgba255" : [
+          17,
+          34,
+          51,
+          128
+        ],
+        "valid" : true
+      },
+      {
+        "input" : "#GG0000",
+        "valid" : false
+      },
+      {
+        "input" : "#FFF",
+        "valid" : false
+      },
+      {
+        "hexString" : "#E9C46A",
+        "input" : "#E9C46A",
+        "prefersDarkText" : true,
+        "relativeLuminance" : 0.5784410112104773,
+        "rgba255" : [
+          233,
+          196,
+          106,
+          255
+        ],
+        "valid" : true
+      },
+      {
+        "hexString" : "#7B2CBF",
+        "input" : "#7B2CBF",
+        "prefersDarkText" : false,
+        "relativeLuminance" : 0.09773905972928854,
+        "rgba255" : [
+          123,
+          44,
+          191,
+          255
+        ],
+        "valid" : true
+      },
+      {
+        "hexString" : "#2A9D8F",
+        "input" : " #2A9D8F ",
+        "prefersDarkText" : true,
+        "relativeLuminance" : 0.2658935250627919,
+        "rgba255" : [
+          42,
+          157,
+          143,
+          255
+        ],
+        "valid" : true
+      },
+      {
+        "hexString" : "#C1121F",
+        "input" : "#c1121f",
+        "prefersDarkText" : false,
+        "relativeLuminance" : 0.11868997926659511,
+        "rgba255" : [
+          193,
+          18,
+          31,
+          255
+        ],
+        "valid" : true
+      },
+      {
+        "input" : "",
+        "valid" : false
+      },
+      {
+        "input" : "#",
+        "valid" : false
+      },
+      {
+        "input" : "#1122334",
+        "valid" : false
+      },
+      {
+        "hexString" : "#FFFFFF",
+        "input" : "#FFFFFF",
+        "prefersDarkText" : true,
+        "relativeLuminance" : 1,
+        "rgba255" : [
+          255,
+          255,
+          255,
+          255
+        ],
+        "valid" : true
+      },
+      {
+        "hexString" : "#000000",
+        "input" : "#000000",
+        "prefersDarkText" : false,
+        "relativeLuminance" : 0,
+        "rgba255" : [
+          0,
+          0,
+          0,
+          255
+        ],
+        "valid" : true
+      },
+      {
+        "hexString" : "#00A6FB",
+        "input" : "#00A6FB",
+        "prefersDarkText" : true,
+        "relativeLuminance" : 0.34237471047452595,
+        "rgba255" : [
+          0,
+          166,
+          251,
+          255
+        ],
+        "valid" : true
+      }
+    ],
+    "description" : "HexColor parsing (SPEC §1.2 HexColor). rgba255 = round(component*255)."
+  }
+}

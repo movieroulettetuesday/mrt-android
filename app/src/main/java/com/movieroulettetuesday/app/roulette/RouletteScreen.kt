@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.roulette
 
+import com.movieroulettetuesday.app.catalog.displayColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -73,6 +74,7 @@ fun RouletteScreen(
                     onSpin = viewModel::spin,
                     onSpinFinished = viewModel::spinAnimationEnded,
                     haptics = haptics,
+                    onStop = viewModel::stopEarly,
                 )
                 state.rareBanner?.let {
                     Text(
@@ -138,14 +140,14 @@ fun RevealSheet(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            val catColor = HexColor.parse(reveal.category.colorHex)
+            val catColor = reveal.category.displayColor
             Text(
                 reveal.category.displayName,
                 Modifier
-                    .background(catColor?.let { Color(it.argb) } ?: Color.Gray, RoundedCornerShape(50))
+                    .background(Color(catColor.argb), RoundedCornerShape(50))
                     .padding(horizontal = 14.dp, vertical = 6.dp)
                     .testTag("reveal-category"),
-                color = if (catColor?.prefersDarkText == true) BrandColors.Ink else Color.White,
+                color = if (catColor.prefersDarkText) BrandColors.Ink else Color.White,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(

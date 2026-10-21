@@ -6,7 +6,10 @@ import com.movieroulettetuesday.app.catalog.RouletteCategory
 import kotlin.random.Random
 
 /** Very occasional surprises on top of a normal spin (RouletteCore/RareOutcomes.swift). */
-enum class RareOutcome { Normal, ForcedRespin, InfamousJackpot }
+enum class RareOutcome(
+    /** iOS raw value (mrt-shared vectors). */
+    val wire: String,
+) { Normal("normal"), ForcedRespin("forcedRespin"), InfamousJackpot("infamousJackpot") }
 
 class RareOutcomePolicy(
     val isEnabled: Boolean = true,
@@ -43,24 +46,76 @@ object RareOutcomeRoller {
         val infamous = infamousMovies(catalog)
         if (infamous.isEmpty()) return null
         val movie = infamous[random.nextInt(infamous.size)]
-        if (landed.id in movie.categories || movie.id in landed.movieIds) return movie to landed
-        val category = movie.categories.firstNotNullOfOrNull { catalog.category(it) } ?: landed
-        return movie to category
+        return movie to JackpotSelector.creditedCategory(movie, landed, catalog)
     }
 }
 
-/** SplitMix64, deterministic for tests (same constants as the iOS SeededRandomNumberGenerator). */
-class SeededRandom(seed: Long) : Random() {
-    private var state = seed
+/**
+ * How an Infamous Jackpot chooses its movie. Behind an interface so the pending iOS 1.0.1 formula
+ * ([RatingWeightedSelector], mrt-shared infamous-selection.md) can replace today's iOS main behavior
+ * ([FlaggedInfamousSelector]) with one line once it lands on iOS main.
+ */
+interface JackpotSelector {
+    /** Whether the jackpot band can fire for this catalog (otherwise the roll counts as normal). */
+    fun isAvailable(catalog: MovieCatalog): Boolean
 
-    override fun nextLong(): Long {
-        state += -0x61c8864680b583ebL // 0x9E3779B97F4A7C15
-        var z = state
-        z = (z xor (z ushr 30)) * -0x40a7b892e31b1a47L // 0xBF58476D1CE4E5B9
-        z = (z xor (z ushr 27)) * -0x6b2fb644ecceee15L // 0x94D049BB133111EB
-        return z xor (z ushr 31)
+    /** The jackpot movie and the category it is shown under; draws its own randomness. */
+    fun pick(catalog: MovieCatalog, landed: RouletteCategory, random: Random): Pair<Movie, RouletteCategory>?
+
+    companion object {
+        /** Landed category if the movie belongs to it (either direction), else its first known one, else landed. */
+        fun creditedCategory(movie: Movie, landed: RouletteCategory, catalog: MovieCatalog): RouletteCategory {
+            if (landed.id in movie.categories || movie.id in landed.movieIds) return landed
+            return movie.categories.firstNotNullOfOrNull { catalog.category(it) } ?: landed
+        }
+    }
+}
+
+/** iOS main (b673df1): uniform int over the `isInfamous` movies, in catalog order. */
+object FlaggedInfamousSelector : JackpotSelector {
+    override fun isAvailable(catalog: MovieCatalog) = RareOutcomeRoller.infamousMovies(catalog).isNotEmpty()
+    override fun pick(catalog: MovieCatalog, landed: RouletteCategory, random: Random) = RareOutcomeRoller.jackpotPick(catalog, landed, random)
+}
+
+/**
+ * Pending iOS 1.0.1 (infamous-selection.md): every movie is a candidate, weighted by its cached
+ * average listener rating (lower-rated more likely). Not the default until it is on iOS main.
+ * [averages] = movieId -> average stars (0.5...5), from the community ratings cache; missing = unrated.
+ */
+class RatingWeightedSelector(private val averages: () -> Map<String, Double>) : JackpotSelector {
+    override fun isAvailable(catalog: MovieCatalog) = catalog.movies.isNotEmpty()
+
+    override fun pick(catalog: MovieCatalog, landed: RouletteCategory, random: Random): Pair<Movie, RouletteCategory>? {
+        val movies = catalog.movies
+        val index = pickIndex(weights(movies, averages()), random.nextDouble()) ?: return null
+        val movie = movies[index]
+        return movie to JackpotSelector.creditedCategory(movie, landed, catalog)
     }
 
-    override fun nextBits(bitCount: Int): Int =
-        if (bitCount == 0) 0 else (nextLong() ushr (64 - bitCount)).toInt()
+    companion object {
+        const val INFAMOUS_WEIGHT = 5.0
+        const val UNRATED_WEIGHT = 2.5
+
+        fun weight(isInfamous: Boolean, average: Double?): Double = when {
+            isInfamous -> INFAMOUS_WEIGHT
+            average == null || !average.isFinite() -> UNRATED_WEIGHT
+            else -> 5.5 - average.coerceIn(0.5, 5.0)
+        }
+
+        fun weights(movies: List<Movie>, averages: Map<String, Double>): List<Double> =
+            movies.map { weight(it.isInfamous, averages[it.id]) }
+
+        /** One unit draw; half-open cumulative intervals; slack -> last index; empty -> null. */
+        fun pickIndex(weights: List<Double>, unit: Double): Int? {
+            if (weights.isEmpty()) return null
+            val total = weights.sum()
+            val target = unit * total
+            var cum = 0.0
+            for ((i, w) in weights.withIndex()) {
+                cum += w
+                if (target < cum) return i
+            }
+            return weights.size - 1
+        }
+    }
 }

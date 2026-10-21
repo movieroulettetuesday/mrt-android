@@ -23,6 +23,9 @@ class AppPreferences(private val store: KeyValueStore) {
     private val _appearance = MutableStateFlow(AppearancePreference.fromStored(store.getString(AppearancePreference.STORAGE_KEY)))
     val appearance: StateFlow<AppearancePreference> = _appearance.asStateFlow()
 
+    private val _tickSound = MutableStateFlow(store.getBoolean(TICK_SOUND, true))
+    val tickSound: StateFlow<Boolean> = _tickSound.asStateFlow()
+
     private val _haptics = MutableStateFlow(store.getBoolean(HAPTICS, true))
     val haptics: StateFlow<Boolean> = _haptics.asStateFlow()
 
@@ -33,11 +36,13 @@ class AppPreferences(private val store: KeyValueStore) {
     val autoShareRatings: StateFlow<Boolean> = _autoShareRatings.asStateFlow()
 
     fun setAppearance(value: AppearancePreference) { store.putString(AppearancePreference.STORAGE_KEY, value.raw); _appearance.value = value }
+    fun setTickSound(on: Boolean) { store.putBoolean(TICK_SOUND, on); _tickSound.value = on }
     fun setHaptics(on: Boolean) { store.putBoolean(HAPTICS, on); _haptics.value = on }
     fun setNewEpisodeAlerts(on: Boolean) { store.putBoolean(NEW_EPISODE_ALERTS, on); _newEpisodeAlerts.value = on }
     fun setAutoShareRatings(on: Boolean) { store.putBoolean(AUTO_SHARE_RATINGS, on); _autoShareRatings.value = on }
 
     companion object {
+        const val TICK_SOUND = "settings.tickSound"
         const val HAPTICS = "settings.haptics"
         const val NEW_EPISODE_ALERTS = "settings.newEpisodeAlerts"
         const val AUTO_SHARE_RATINGS = "settings.autoShareRatings"

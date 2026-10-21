@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.stats
 
+import com.movieroulettetuesday.app.catalog.displayColor
 import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -72,7 +73,7 @@ fun StatsScreen(
         ) {
             Column(Modifier.widthIn(max = 700.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 fun catColor(id: String): Color =
-                    catalog?.category(id)?.colorHex?.let(HexColor::parse)?.let { Color(it.argb) } ?: Color.Gray
+                    Color((catalog?.category(id)?.displayColor ?: HexColor.parse(com.movieroulettetuesday.app.catalog.CategoryPalette.hex(id))!!).argb)
                 if (snap.totalSpins > 0) {
                     MrtSection("This Device", Modifier.testTag("stats-overview")) {
                         Labeled("Total spins", "${snap.totalSpins}")

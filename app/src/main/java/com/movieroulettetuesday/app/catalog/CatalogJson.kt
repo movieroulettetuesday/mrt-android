@@ -44,9 +44,9 @@ object CatalogJson {
     private fun show(o: JsonObject) = ShowInfo(
         name = o.reqString("name"),
         hosts = o.req("hosts").arr("hosts").map { it.string("hosts[]") },
-        rssURL = o.optString("rssURL"),
-        applePodcastsURL = o.optString("applePodcastsURL"),
-        spotifyURL = o.optString("spotifyURL"),
+        rssURL = o.optURL("rssURL"),
+        applePodcastsURL = o.optURL("applePodcastsURL"),
+        spotifyURL = o.optURL("spotifyURL"),
         applePodcastID = o.optString("applePodcastID"),
         spotifyShowID = o.optString("spotifyShowID"),
         buzzsproutShowID = o.optString("buzzsproutShowID"),
@@ -69,7 +69,7 @@ object CatalogJson {
         categories = o.optStringList("categories") ?: emptyList(),
         episodeIds = o.optStringList("episodeIds") ?: emptyList(),
         episodeTitle = o.optString("episodeTitle"),
-        posterURL = o.optString("posterURL"),
+        posterURL = o.optURL("posterURL"),
         isInfamous = o.opt("isInfamous")?.let {
             (it as? JsonPrimitive)?.takeUnless { p -> p.isString }?.booleanOrNull
                 ?: throw CatalogDecodingException("'isInfamous' must be a boolean")
@@ -125,6 +125,17 @@ object CatalogJson {
     private fun JsonObject.reqString(key: String): String = req(key).string(key)
 
     private fun JsonObject.optString(key: String): String? = opt(key)?.string(key)
+
+    /**
+     * URL field. Like Swift's `URL` decoding, a string that isn't a URL fails the whole document
+     * (mrt-shared D9: `"posterURL": ""` rejects the catalog). Empty/blank strings and strings
+     * java.net.URI can't parse even after encoding spaces are rejected.
+     */
+    private fun JsonObject.optURL(key: String): String? = optString(key)?.also { v ->
+        if (v.isBlank() || runCatching { java.net.URI(v.trim().replace(" ", "%20")) }.isFailure) {
+            throw CatalogDecodingException("'$key' is not a valid URL")
+        }
+    }
 
     private fun JsonObject.optStringList(key: String): List<String>? =
         opt(key)?.arr(key)?.map { it.string("$key[]") }
