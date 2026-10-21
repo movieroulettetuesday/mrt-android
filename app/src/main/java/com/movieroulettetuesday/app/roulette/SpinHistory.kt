@@ -86,3 +86,26 @@ class SpinHistoryStore(private val file: File?, private val detailLimit: Int = 5
         private val json = Json { ignoreUnknownKeys = true }
     }
 }
+
+/** Per-device numbers derived from spin history, archive included. Port of `SpinStats`. */
+class SpinStats(log: SpinHistoryStore.Log) {
+    val totalSpins: Int = log.archivedTotal + log.results.size
+    val movieCounts: Map<String, Int>
+    val categoryCounts: Map<String, Int>
+
+    init {
+        val movies = log.archivedMovieCounts.toMutableMap()
+        val cats = log.archivedCategoryCounts.toMutableMap()
+        log.results.forEach {
+            movies[it.movieId] = (movies[it.movieId] ?: 0) + 1
+            cats[it.categoryId] = (cats[it.categoryId] ?: 0) + 1
+        }
+        movieCounts = movies
+        categoryCounts = cats
+    }
+
+    fun spinCount(movieId: String): Int = movieCounts[movieId] ?: 0
+    fun hasBeenSpun(movieId: String): Boolean = spinCount(movieId) > 0
+    fun categorySpinCount(categoryId: String): Int = categoryCounts[categoryId] ?: 0
+    val distinctMoviesSpun: Int get() = movieCounts.size
+}

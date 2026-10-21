@@ -3,6 +3,7 @@ package com.movieroulettetuesday.app.roulette
 import android.content.Context
 import android.content.Intent
 import com.movieroulettetuesday.app.catalog.Movie
+import com.movieroulettetuesday.app.episodes.PodcastEpisode
 
 /** Text share for a reveal (iOS RevealSheet ShareLink message + subject). The image card is not ported yet. */
 object SpinShare {
@@ -24,10 +25,21 @@ object SpinShare {
 
 /** "Discussed on …" line (RouletteCore/EpisodeLabel.swift, catalog-only until the Episodes feed is ported). */
 object EpisodeLabel {
-    fun discussedText(movie: Movie): String {
+    /** Resolve a Buzzsprout guid to a human title: feed title, else the catalog's episodeTitle, else the id. */
+    fun title(id: String, movie: Movie? = null, episodesByGUID: Map<String, PodcastEpisode> = emptyMap()): String {
+        episodesByGUID[id]?.let { return it.title }
+        if (movie != null && movie.episodeTitle != null && id in movie.episodeIds) return movie.episodeTitle
+        return id
+    }
+
+    /** "Discussed on The Outsiders (S4E34)" etc. Port of `EpisodeLabel.discussedText`. */
+    fun discussedText(movie: Movie, episodesByGUID: Map<String, PodcastEpisode> = emptyMap()): String {
         val ids = movie.episodeIds
         if (ids.isEmpty()) return "Not discussed on the show yet"
-        fun label(id: String) = if (ids.contains(id)) movie.episodeTitle ?: id else id
+        fun label(id: String): String {
+            val t = title(id, movie, episodesByGUID)
+            return episodesByGUID[id]?.seasonEpisodeLabel?.let { "$t ($it)" } ?: t
+        }
         return when (ids.size) {
             1 -> "Discussed on ${label(ids[0])}"
             2 -> "Discussed on ${label(ids[0])} & ${label(ids[1])}"

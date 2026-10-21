@@ -3,6 +3,8 @@ package com.movieroulettetuesday.app.roulette
 import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,7 +17,11 @@ import kotlinx.coroutines.SupervisorJob
 
 /** Roulette tab wired to the app's catalog repository and on-device spin history. */
 @Composable
-fun RouletteRoute(modifier: Modifier = Modifier) {
+fun RouletteRoute(
+    modifier: Modifier = Modifier,
+    onOpenMovie: ((String) -> Unit)? = null,
+    topBar: @Composable () -> Unit = {},
+) {
     val app = LocalContext.current.applicationContext as MrtApplication
     val vm: RouletteViewModel = viewModel(
         factory = viewModelFactory {
@@ -36,5 +42,6 @@ fun RouletteRoute(modifier: Modifier = Modifier) {
         app.catalogRepository.load()
         app.catalogRepository.refresh()
     }
-    RouletteScreen(vm, modifier)
+    val episodes by app.episodeRepository.state.collectAsStateWithLifecycle()
+    RouletteScreen(vm, modifier, episodesByGUID = episodes.byGuid, onOpenMovie = onOpenMovie, topBar = topBar)
 }

@@ -10,7 +10,10 @@ import com.movieroulettetuesday.app.episodes.EpisodeFeed
 import com.movieroulettetuesday.app.episodes.EpisodeRepository
 import com.movieroulettetuesday.app.ui.ArtworkLoader
 import com.movieroulettetuesday.app.roulette.SpinHistoryStore
+import com.movieroulettetuesday.app.movies.MyServices
+import com.movieroulettetuesday.app.movies.PersonalRatingsStore
 import java.io.File
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /** Process-wide singletons (no DI framework yet). */
 class MrtApplication : Application() {
@@ -42,6 +45,24 @@ class MrtApplication : Application() {
 
     val appleEpisodeLinks: AppleEpisodeLinks by lazy {
         if (isUnderTest) AppleEpisodeLinks(null, fetch = null) else AppleEpisodeLinks(File(cacheDir, AppleEpisodeLinks.CACHE_FILE))
+    }
+
+    val personalRatings: PersonalRatingsStore by lazy {
+        PersonalRatingsStore(
+            if (isUnderTest) null else File(filesDir, PersonalRatingsStore.FILE_NAME),
+        )
+    }
+
+    /** Settings › My Services (provider ids), mirrored into a flow for the Movies tab. */
+    val myServices: MutableStateFlow<MyServices> by lazy {
+        MutableStateFlow(
+            MyServices.parse(settings.getString(MyServices.STORAGE_KEY)),
+        )
+    }
+
+    fun setMyServices(services: MyServices) {
+        settings.putString(MyServices.STORAGE_KEY, services.serialized)
+        myServices.value = services
     }
 
     val spinHistory: SpinHistoryStore by lazy {

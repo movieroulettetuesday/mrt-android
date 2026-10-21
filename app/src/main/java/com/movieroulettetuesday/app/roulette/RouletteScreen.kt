@@ -41,6 +41,9 @@ fun RouletteScreen(
     viewModel: RouletteViewModel,
     modifier: Modifier = Modifier,
     onShare: (RouletteViewModel.Reveal) -> Unit = {},
+    episodesByGUID: Map<String, com.movieroulettetuesday.app.episodes.PodcastEpisode> = emptyMap(),
+    onOpenMovie: ((String) -> Unit)? = null,
+    topBar: @Composable () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -48,6 +51,7 @@ fun RouletteScreen(
         modifier.fillMaxSize().padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        topBar()
         Spacer(Modifier.height(16.dp))
         Text("Movie Roulette Tuesday", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         Text(
@@ -103,6 +107,8 @@ fun RouletteScreen(
                 onShare(reveal)
                 SpinShare.share(context, reveal.movie)
             },
+            episodesByGUID = episodesByGUID,
+            onOpenMovie = onOpenMovie?.let { open -> { viewModel.dismissReveal(); open(reveal.movie.id) } },
         )
     }
 }
@@ -115,6 +121,8 @@ fun RevealSheet(
     onDismiss: () -> Unit,
     onSpinAgain: () -> Unit,
     onShare: () -> Unit,
+    episodesByGUID: Map<String, com.movieroulettetuesday.app.episodes.PodcastEpisode> = emptyMap(),
+    onOpenMovie: (() -> Unit)? = null,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, modifier = Modifier.testTag("reveal-sheet")) {
@@ -146,7 +154,7 @@ fun RevealSheet(
                 textAlign = TextAlign.Center,
             )
             Text("${reveal.movie.year}", style = MaterialTheme.typography.titleMedium)
-            Text(EpisodeLabel.discussedText(reveal.movie), textAlign = TextAlign.Center)
+            Text(EpisodeLabel.discussedText(reveal.movie, episodesByGUID), textAlign = TextAlign.Center)
             Text(
                 if (reveal.spinCount == 1) "First spin on this device" else "Spun ${reveal.spinCount} times on this device",
                 style = MaterialTheme.typography.bodySmall,
@@ -155,6 +163,9 @@ fun RevealSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(onClick = onShare, modifier = Modifier.testTag("reveal-share")) { Text("Share") }
                 Button(onClick = onSpinAgain, modifier = Modifier.testTag("reveal-spin-again")) { Text("Spin Again") }
+            }
+            if (onOpenMovie != null) {
+                OutlinedButton(onClick = onOpenMovie, modifier = Modifier.testTag("reveal-movie-page")) { Text("Movie page") }
             }
             TextButton(onClick = onDismiss, modifier = Modifier.testTag("reveal-done")) { Text("Done") }
             Spacer(Modifier.height(12.dp))

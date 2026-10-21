@@ -28,6 +28,12 @@ object PodcastLinks {
         return "https://www.buzzsprout.com/$showId/episodes/$numeric"
     }
 
+    /** Apple Podcasts search for this episode within the show. */
+    fun appleSearch(episodeTitle: String, show: ShowInfo = ShowInfo.MRT): String? {
+        val parts = listOfNotNull("Movie Roulette Tuesday", episodeTitle, show.applePodcastID)
+        return "https://podcasts.apple.com/us/search?term=" + java.net.URLEncoder.encode(parts.joinToString(" "), "UTF-8").replace("+", "%20")
+    }
+
     /** `https://open.spotify.com/search/<query>`, RFC 3986 unreserved chars only. */
     fun spotifySearch(episodeTitle: String, show: ShowInfo = ShowInfo.MRT): String? {
         val q = spotifySearchQuery(episodeTitle)

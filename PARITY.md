@@ -42,7 +42,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | `RouletteTaglines.swift`, header "Dinner, discussion, and the wheel" | Header in `RouletteScreen.kt` | S | 🟡 tagline only |
 | `RulesSheet.swift` | Bottom sheet | S | ⬜ |
 | `SpinHistoryView.swift`, `SpinHistoryStore.swift`, `SpinHistoryLog.swift`/`FileStore` (500 detailed + archive) | `roulette/SpinHistory.kt` (`SpinHistoryStore`, JSON file, 500 + archive counts) | S / M | 🟡 store ✅, history screen ⬜ |
-| `MoviePageView.swift` (from reveal / movies) | Movie detail screen | M | ⬜ |
+| `MoviePageView.swift` (from reveal / movies) | `movies/MovieDetailScreen.kt` (header, spin count, Episodes → episode page, Where to Watch, Your Rating + status, Categories, Listen: Apple/Spotify search, Buzzsprout); reachable from Movies, Episodes and the reveal sheet ("Movie page") | M | ✅ |
 | `Intents/SpinMovieRouletteIntent.swift` (Siri/Shortcuts) | App Shortcut (`shortcuts.xml`) "Spin" → deep link | S | ⬜ |
 | `QuickSpin.swift` | Launcher shortcut | S | ⬜ |
 
@@ -52,11 +52,11 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | `RouletteCore/Models.swift` (`MovieCatalog`, `Movie`, `RouletteCategory`, `ShowInfo`, `StreamingInfo`, tolerant new fields, `validationIssues`, `deduplicated`, `subtitle`) | `catalog/Models.kt`, `catalog/CatalogJson.kt` (same required/optional/tolerant rules) | S | ✅ 10 + 5 tests |
 | `RemoteCatalog.swift` (raw GitHub URL, 8 s, validation, build-keyed cache, refresher), `CatalogSource.swift`, `Shared/AppCatalog.swift` | `catalog/CatalogLoading.kt`, `catalog/CatalogRepository.kt` (cache in `filesDir`, keyed by versionCode; 15 s refresh throttle) | M | ✅ 9 tests |
 | Bundled `Resources/movies.json` fallback | `app/src/main/assets/movies.json` (+ `scripts/sync-bundled-catalog.sh`) | S | ✅ (snapshot of `b673df1`, 180 movies, 10 categories) |
-| Pull-to-refresh catalog | `PullToRefreshBox` → `CatalogRepository.refresh()` | S | ⬜ (launch refresh ✅) |
-| `Movies/MoviesView.swift` (search, sort, filters: category / watchlist / watched / rated by me / haven't spun yet; season/year grouping) | Movies screen (LazyColumn/Grid, SearchBar, FilterChips) | L | ⬜ |
-| Where to Watch (`WhereToWatchDisplay`, `StreamingCatalog`, logos from image.tmdb.org, JustWatch/TMDB attribution, always visible with empty message) | Section on movie page (Coil for logos or plain `ImageBitmap` loader) | M | 🟡 model ✅, UI ⬜ |
-| My Services (`MyServices`, "on my services", "available first") | DataStore + filter | S | ⬜ |
-| `PersonalRatings.swift`, `PersonalRatingsStore.swift`, `StarRatingView.swift` (½–5 stars, Want to Watch / Watched) | Local store + star composable | M | ⬜ |
+| Pull-to-refresh catalog | `PullToRefreshBox` in `MoviesScreen` → `CatalogRepository.refresh()` | S | ✅ |
+| `Movies/MoviesView.swift` (search, sort, filters: category / watchlist / watched / rated by me / haven't spun yet; season/year grouping) | `movies/MoviesScreen.kt` (search title/genre/episode, Category / Show / Sort menus, On my services + Available first chips, Suggest row, footer "N of M movies", empty states), pure `MovieQuery` | L | ✅ tests (phone layout; no split view yet) |
+| Where to Watch (`WhereToWatchDisplay`, `StreamingCatalog`, logos from image.tmdb.org, JustWatch/TMDB attribution, always visible with empty message) | `WhereToWatchSection` in `movies/MovieDetailScreen.kt` + `movies/Streaming.kt` (`WhereToWatchDisplay`, `StreamingCatalog`, "Your service" badge, TMDB link, attribution) | M | ✅ 4 tests |
+| My Services (`MyServices`, "on my services", "available first") | `MyServices` (same "8,9,337" format) in SharedPreferences `streaming.myServices` → `MrtApplication.myServices`; picker lands with Settings | S | 🟡 filter ✅, picker in Settings branch |
+| `PersonalRatings.swift`, `PersonalRatingsStore.swift`, `StarRatingView.swift` (½–5 stars, Want to Watch / Watched) | `movies/PersonalRatings.kt` (`HalfStars`, entries, legacy whole-star read, rating ⇒ watched, corrupt-file quarantine, `personal-ratings.json` on device only), `ui/StarRating.kt` (tap/drag half stars, TalkBack adjustable) | M | ✅ 5 tests + Compose |
 | `Artwork.swift`, `ArtworkLoader.swift`, `ArtworkImage.swift` | `ui/Artwork.kt`: dependency-free loader (memory LRU + disk cache, HTTPS-only, candidates best-first: episode art → poster → show art); `ArtworkResolver` port | M | ✅ (http artwork upgraded to https) |
 | Host Rating (feature-flagged off on iOS) | Keep hidden | – | ⏸ off on iOS |
 
@@ -67,7 +67,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | `EpisodeStoreCore.swift`, `Episodes/EpisodeStore.swift` (cache, refresh) | `episodes/EpisodeRepository.kt` (cache-first, 20 s timeout, 5-min freshness, shared in-flight load, soft offline error, `episodes-cache.json`), `EpisodeGrouper`/`EpisodeGroupExpansion` (same serialized format) | M | ✅ 5 + 6 tests |
 | `EpisodesView.swift` (season sections), `EpisodeDetailView.swift` (About, Movie Discussed) | `episodes/EpisodesScreen.kt` (Season/Year/All segmented, collapsible remembered headers, pull-to-refresh, Offline label, footer count + updated), `EpisodeDetailScreen.kt` (artwork, About, fan mail, Movie Discussed, Listen) | M | ✅ 2 Compose tests (phone layout; no split view yet) |
 | `ListenCard.swift`, `ShowLinks.swift`, `AppleEpisodeLinks.swift` (Apple exact episode via iTunes lookup, Spotify search, Overcast, Buzzsprout) | `episodes/PodcastLinks.kt` (`PodcastLinks`, `AppleEpisodeLookup` hourly-throttled cache, Spotify search cleaner, `ListenLinks`) → `ACTION_VIEW` | M | ✅ 5 tests (iOS title cases ported) |
-| `EpisodeLabel.swift` ("Discussed on …") | `roulette/Share.kt` `EpisodeLabel` (catalog-only until feed lands) | S | 🟡 |
+| `EpisodeLabel.swift` ("Discussed on …") | `roulette/Share.kt` `EpisodeLabel` (full port: feed titles + "(S4E34)") | S | ✅ |
 
 ## 4. Stats
 | iOS | Android | Effort | Status |
