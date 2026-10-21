@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Optional new-episode alert (local notification only; asked when the user turns it on). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- No advertising ID: strip it even if a dependency ever adds it. -->
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
@@ -24,6 +26,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.MRT">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,6 +1,8 @@
 package com.movieroulettetuesday.app
 
+import android.content.Intent
 import android.os.Bundle
+import com.movieroulettetuesday.app.notifications.NewEpisodeNotifier
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +17,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) route(intent)
         setContent {
             val app = application as MrtApplication
             val appearance by app.preferences.appearance.collectAsStateWithLifecycle()
@@ -22,5 +25,16 @@ class MainActivity : ComponentActivity() {
                 MrtApp()
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        route(intent)
+    }
+
+    /** New-episode notification tap → that episode's page. */
+    private fun route(intent: Intent?) {
+        val guid = intent?.getStringExtra(NewEpisodeNotifier.EXTRA_GUID)?.takeIf { it.isNotBlank() } ?: return
+        (application as MrtApplication).pendingEpisode.value = guid
     }
 }

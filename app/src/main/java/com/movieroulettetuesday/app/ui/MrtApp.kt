@@ -1,6 +1,12 @@
 package com.movieroulettetuesday.app.ui
 
+import android.Manifest
 import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.movieroulettetuesday.app.notifications.NewEpisodeAlertToggle
+import com.movieroulettetuesday.app.notifications.NewEpisodeSchedule
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -108,6 +114,17 @@ fun MrtApp() {
         app.episodeRepository.load()
         app.catalogRepository.refresh()
     }
+    val pendingEpisode by app.pendingEpisode.collectAsStateWithLifecycle()
+    LaunchedEffect(pendingEpisode) {
+        val guid = pendingEpisode ?: return@LaunchedEffect
+        app.pendingEpisode.value = null
+        navController.navigate(TopLevelDestination.Episodes.route) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+        navController.navigate(Routes.episode("episodes", guid))
+    }
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -183,12 +200,31 @@ private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtAppli
         val appearance by prefs.appearance.collectAsStateWithLifecycle()
         val haptics by prefs.haptics.collectAsStateWithLifecycle()
         val alerts by prefs.newEpisodeAlerts.collectAsStateWithLifecycle()
+        val episodes by app.episodeRepository.state.collectAsStateWithLifecycle()
+        var alertNote by remember { mutableStateOf<String?>(null) }
+        val context = LocalContext.current
+        fun finish(granted: Boolean) {
+            alertNote = NewEpisodeAlertToggle.onPermissionResult(granted, episodes.episodes, prefs, app.episodeWatermarks) {
+                NewEpisodeSchedule.schedule(context)
+            }
+        }
+        val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            finish(granted && app.episodeNotifier.canPost())
+        }
         SettingsScreen(
-            state = SettingsState(appearance, haptics, alerts),
+            state = SettingsState(appearance, haptics, alerts, alertNote = alertNote),
             actions = SettingsActions(
                 setAppearance = prefs::setAppearance,
                 setHaptics = prefs::setHaptics,
-                setNewEpisodeAlerts = prefs::setNewEpisodeAlerts,
+                setNewEpisodeAlerts = { on ->
+                    alertNote = null
+                    when {
+                        !on -> NewEpisodeAlertToggle.turnOff(prefs) { NewEpisodeSchedule.cancel(context) }
+                        app.episodeNotifier.canPost() -> finish(true)
+                        Build.VERSION.SDK_INT >= 33 -> permission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        else -> finish(false) // notifications blocked in system settings
+                    }
+                },
                 setAutoShareRatings = prefs::setAutoShareRatings,
                 openMyServices = { nav.navigate("roulette/settings/services") },
                 openCredits = { nav.navigate("roulette/settings/credits") },

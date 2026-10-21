@@ -13,7 +13,14 @@ import com.movieroulettetuesday.app.roulette.SpinHistoryStore
 import com.movieroulettetuesday.app.movies.MyServices
 import com.movieroulettetuesday.app.movies.PersonalRatingsStore
 import com.movieroulettetuesday.app.settings.AppPreferences
+import com.movieroulettetuesday.app.episodes.RssFeedParser
+import com.movieroulettetuesday.app.notifications.NewEpisodeChecker
+import com.movieroulettetuesday.app.notifications.NewEpisodeNotifier
+import com.movieroulettetuesday.app.notifications.NewEpisodeSchedule
+import com.movieroulettetuesday.app.notifications.NewEpisodeWatermarkStore
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /** Process-wide singletons (no DI framework yet). */
@@ -30,6 +37,7 @@ class MrtApplication : Application() {
         super.onCreate()
         ArtworkLoader.enabled = !isUnderTest
         ArtworkLoader.diskDir = File(cacheDir, "artwork")
+        if (!isUnderTest && preferences.newEpisodeAlerts.value) NewEpisodeSchedule.schedule(this) // KEEP: no reset
     }
 
     /** Local app settings (iOS UserDefaults / @AppStorage). */
@@ -41,8 +49,30 @@ class MrtApplication : Application() {
             cacheFile = if (isUnderTest) null else File(filesDir, EpisodeFeed.CACHE_FILE),
             settings = settings,
             fetch = if (isUnderTest) null else EpisodeFeed::httpGet,
-        )
+        ).also { repo ->
+            // iOS ContentView: episodes already visible in the app never alert later.
+            repo.onEpisodesApplied = { if (preferences.newEpisodeAlerts.value) episodeWatermarks.markSeen(it) }
+        }
     }
+
+    val episodeWatermarks: NewEpisodeWatermarkStore by lazy { NewEpisodeWatermarkStore(settings) }
+    val episodeNotifier: NewEpisodeNotifier by lazy { NewEpisodeNotifier(this) }
+
+    /** Background new-episode check; replaceable in tests. */
+    var newEpisodeChecker: NewEpisodeChecker
+        get() = checkerOverride ?: NewEpisodeChecker(
+            preferences, episodeWatermarks,
+            fetch = {
+                if (isUnderTest) error("offline under tests")
+                withContext(Dispatchers.IO) { RssFeedParser.parse(EpisodeFeed.httpGet(EpisodeFeed.URL)).episodes }
+            },
+            notifier = episodeNotifier,
+        ).also { checkerOverride = it }
+        set(value) { checkerOverride = value }
+    private var checkerOverride: NewEpisodeChecker? = null
+
+    /** A tapped notification asks the UI to open this episode (iOS AppRouter). */
+    val pendingEpisode = MutableStateFlow<String?>(null)
 
     val appleEpisodeLinks: AppleEpisodeLinks by lazy {
         if (isUnderTest) AppleEpisodeLinks(null, fetch = null) else AppleEpisodeLinks(File(cacheDir, AppleEpisodeLinks.CACHE_FILE))

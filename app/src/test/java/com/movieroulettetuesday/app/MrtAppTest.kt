@@ -13,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.movieroulettetuesday.app.ui.MrtApp
 import com.movieroulettetuesday.app.ui.TopLevelDestination
 import com.movieroulettetuesday.app.ui.theme.MrtTheme
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,5 +58,16 @@ class MrtAppTest {
         compose.onNodeWithContentDescription("Back").performClick()
         compose.onNodeWithTag("settings-my-services").performScrollTo().performClick()
         compose.onNodeWithTag("my-services-screen").assertIsDisplayed()
+    }
+
+    @Test
+    fun notificationTapOpensEpisodePage() {
+        val app = androidx.test.core.app.ApplicationProvider.getApplicationContext<MrtApplication>()
+        compose.setContent { MrtTheme { MrtApp() } }
+        app.pendingEpisode.value = "Buzzsprout-unknown"
+        compose.waitForIdle()
+        compose.onNodeWithTag("tab-episodes").assertIsSelected()
+        compose.onNodeWithContentDescription("Back").assertIsDisplayed()
+        assertEquals(null, app.pendingEpisode.value)
     }
 }

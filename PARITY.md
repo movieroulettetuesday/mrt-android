@@ -82,7 +82,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 ## 6. New-episode notifications
 | iOS | Android | Effort | Status |
 |---|---|---|---|
-| `NewEpisodeAlerts.swift` (opt-in, BGAppRefresh ~6 h, watermark of seen guids (50), local notification "New episode of Movie Roulette Tuesday", tap → episode) | WorkManager periodic (6 h, network constraint) → RSS diff → `NotificationCompat`; `POST_NOTIFICATIONS` asked only when toggled on (API 33+); tap → `mrt://episode/<guid>`; no FCM | M | ⬜ |
+| `NewEpisodeAlerts.swift` (opt-in, BGAppRefresh ~6 h, watermark of seen guids (50), local notification "New episode of Movie Roulette Tuesday", tap → episode) | `notifications/NewEpisodeAlerts.kt` (`NewEpisodeDiff`, `NewEpisodeWatermarkStore` same keys `settings.newEpisodeAlerts` / `newEpisodeAlerts.watermark`, merge + 50-guid cap, `NewEpisodeChecker`, toggle logic) + `NewEpisodeWork.kt` (WorkManager 2.12 unique periodic 6 h, network required, KEEP; channel `new-episodes`; tag `episode-<guid>`; extra `episodeGUID` → `MainActivity` → episode page). POST_NOTIFICATIONS asked only when the toggle is turned on (API 33+); denied shows the iOS note. Episodes shown in the app are marked seen. No FCM | M | ✅ 5 + 4 tests + 1 Compose |
 
 ## 7. Home-screen widget
 | iOS | Android | Effort | Status |
@@ -107,6 +107,6 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 |---|---|
 | Release signing from env vars only; unsigned when absent | ✅ |
 | Public-repo secret scan (pre-push hook + `scripts/scan-secrets.sh` + self-test) | ✅ |
-| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 116 tests |
+| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 126 tests |
 | Play: targetSdk 36, minSdk 26, AAB, Data safety, AD_ID absent | 🟡 build side done; no AAB/upload key yet |
 | Device/emulator testing | ⏸ KVM on this box crashes the host kernel (see NOTES.md) |
