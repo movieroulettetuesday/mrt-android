@@ -17,6 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.platform.LocalView
+import android.view.HapticFeedbackConstants
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,8 +62,18 @@ fun RouletteWheel(
     onSpin: () -> Unit,
     onSpinFinished: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    haptics: Boolean = false,
 ) {
     val angle = remember { Animatable(rotation.toFloat()) }
+    // A light tick each time the pointer crosses into another slice while spinning (iOS per-click haptics).
+    val view = LocalView.current
+    LaunchedEffect(spin?.token, haptics, geometry) {
+        if (spin == null || !haptics) return@LaunchedEffect
+        snapshotFlow { geometry.segmentIndex(angle.value.toDouble()) }
+            .distinctUntilChanged()
+            .drop(1)
+            .collect { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK) }
+    }
     LaunchedEffect(spin?.token) {
         if (spin == null) {
             angle.snapTo(rotation.toFloat())

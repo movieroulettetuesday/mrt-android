@@ -40,7 +40,21 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.movieroulettetuesday.app.MrtApplication
+import com.movieroulettetuesday.app.BuildConfig
 import com.movieroulettetuesday.app.R
+import com.movieroulettetuesday.app.movies.StreamingCatalog
+import com.movieroulettetuesday.app.settings.CreditsScreen
+import com.movieroulettetuesday.app.settings.MyServicesScreen
+import com.movieroulettetuesday.app.settings.SettingsActions
+import com.movieroulettetuesday.app.settings.SettingsScreen
+import com.movieroulettetuesday.app.settings.SettingsState
+import com.movieroulettetuesday.app.stats.StatsScreen
+import com.movieroulettetuesday.app.suggest.SuggestMovieSheet
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.IconButton
 import com.movieroulettetuesday.app.catalog.CatalogRepository
 import com.movieroulettetuesday.app.episodes.EpisodeDetailScreen
 import com.movieroulettetuesday.app.episodes.EpisodesScreen
@@ -132,22 +146,69 @@ fun MrtApp() {
         ) {
             navigation(startDestination = "roulette/home", route = TopLevelDestination.Roulette.route) {
                 composable("roulette/home") {
-                    RouletteRoute(Modifier.testTag("screen-roulette"), onOpenMovie = { navController.navigate(Routes.movie("roulette", it)) })
+                    RouletteRoute(
+                        Modifier.testTag("screen-roulette"),
+                        onOpenMovie = { navController.navigate(Routes.movie("roulette", it)) },
+                        topBar = {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                                IconButton({ navController.navigate("roulette/settings") }, Modifier.testTag("open-settings")) {
+                                    Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                                }
+                            }
+                        },
+                    )
                 }
+                settingsRoutes(navController, app, onSuggest = { suggestOpen = true })
                 movieDetail("roulette", navController, app, linkEpisodes = true)
                 episodeDetail("roulette", navController, app, linkMovie = false)
             }
             episodesGraph(navController, app)
             moviesGraph(navController, app, onSuggest = { suggestOpen = true })
-            composable(TopLevelDestination.Stats.route) { PlaceholderScreen(TopLevelDestination.Stats) }
+            composable(TopLevelDestination.Stats.route) {
+                val inputs = rememberMoviesInputs(app)
+                val log by app.spinHistory.log.collectAsStateWithLifecycle()
+                StatsScreen(log, inputs.ratings, inputs.catalog, Modifier.testTag("screen-stats"))
+            }
         }
     }
-    if (suggestOpen) SuggestPlaceholder { suggestOpen = false }
+    if (suggestOpen) {
+        val catalog = rememberMoviesInputs(app).catalog
+        SuggestMovieSheet(categories = catalog?.categories.orEmpty(), onDismiss = { suggestOpen = false })
+    }
 }
 
-@Composable
-private fun SuggestPlaceholder(onDismiss: () -> Unit) {
-    LaunchedEffect(Unit) { onDismiss() }
+private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtApplication, onSuggest: () -> Unit) {
+    composable("roulette/settings") {
+        val prefs = app.preferences
+        val appearance by prefs.appearance.collectAsStateWithLifecycle()
+        val haptics by prefs.haptics.collectAsStateWithLifecycle()
+        val alerts by prefs.newEpisodeAlerts.collectAsStateWithLifecycle()
+        SettingsScreen(
+            state = SettingsState(appearance, haptics, alerts),
+            actions = SettingsActions(
+                setAppearance = prefs::setAppearance,
+                setHaptics = prefs::setHaptics,
+                setNewEpisodeAlerts = prefs::setNewEpisodeAlerts,
+                setAutoShareRatings = prefs::setAutoShareRatings,
+                openMyServices = { nav.navigate("roulette/settings/services") },
+                openCredits = { nav.navigate("roulette/settings/credits") },
+                suggest = onSuggest,
+                close = { nav.popBackStack() },
+            ),
+        )
+    }
+    composable("roulette/settings/services") {
+        val inputs = rememberMoviesInputs(app)
+        MyServicesScreen(
+            providers = inputs.catalog?.let { StreamingCatalog.services(it.movies) }.orEmpty(),
+            selected = inputs.services,
+            onToggle = { app.setMyServices(app.myServices.value.toggled(it)) },
+            onBack = { nav.popBackStack() },
+        )
+    }
+    composable("roulette/settings/credits") {
+        CreditsScreen("${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})") { nav.popBackStack() }
+    }
 }
 
 private fun NavGraphBuilder.movieDetail(prefix: String, nav: NavHostController, app: MrtApplication, linkEpisodes: Boolean) {

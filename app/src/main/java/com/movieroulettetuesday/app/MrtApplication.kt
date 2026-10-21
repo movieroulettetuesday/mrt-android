@@ -12,6 +12,7 @@ import com.movieroulettetuesday.app.ui.ArtworkLoader
 import com.movieroulettetuesday.app.roulette.SpinHistoryStore
 import com.movieroulettetuesday.app.movies.MyServices
 import com.movieroulettetuesday.app.movies.PersonalRatingsStore
+import com.movieroulettetuesday.app.settings.AppPreferences
 import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -64,6 +65,8 @@ class MrtApplication : Application() {
         settings.putString(MyServices.STORAGE_KEY, services.serialized)
         myServices.value = services
     }
+
+    val preferences: AppPreferences by lazy { AppPreferences(settings) }
 
     val spinHistory: SpinHistoryStore by lazy {
         SpinHistoryStore(if (isUnderTest) null else File(filesDir, SpinHistoryStore.FILE_NAME))

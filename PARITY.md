@@ -15,7 +15,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | `MovieRouletteTuesdayApp.swift`, `ContentView.swift` (TabView: Roulette, Episodes, Movies, Stats) | `MainActivity.kt`, `ui/MrtApp.kt` (single activity, `NavigationBar` + `NavHost`, same tab order) | S | ✅ |
 | Episodes tab badge (new since last viewed, `NewEpisodeBadge.swift`) | `NavigationBar` `BadgedBox` + `EpisodeRepository.markViewed` (SharedPreferences `episodes.lastViewedAt`, first-load baseline) | S | ✅ tested |
 | `Shared/Brand.swift`, `CleanPro.swift`, `Color+Hex.swift`, asset colors (BrandTeal/Peach, WheelRim, LaunchBackground) | `ui/theme/Theme.kt` (`BrandColors`, M3 light/dark schemes), `catalog/HexColor.kt` | S | 🟡 colors ported; CleanPro card styling not yet |
-| `AppearancePreference.swift`, `Appearance.swift` (System/Light/Dark) | DataStore pref + `MrtTheme(darkTheme=…)` | S | ⬜ |
+| `AppearancePreference.swift`, `Appearance.swift` (System/Light/Dark) | `settings/AppPreferences.kt` (`settings.appearance` = system/light/dark, same raw values) → `MrtTheme(darkTheme = forcesDark ?: system)` in `MainActivity` | S | ✅ tests |
 | `LaunchSplash.swift`, `LaunchSplashView.swift` (cold-launch animation, skippable, Reduce Motion crossfade) | `androidx.core:core-splashscreen` + Compose intro | M | ⬜ |
 | App icon (`AppIcon.png`) | Adaptive icon built from the same artwork (`mipmap-*/ic_launcher_foreground.png`, monochrome layer), bg `#F5F5F5`; identical to Play 512 candidate | S | ✅ |
 | `AdaptiveLayout.swift` (iPad/landscape) | Window size classes; wheel already capped at 520 dp | M | 🟡 phone-only layouts so far |
@@ -33,7 +33,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | `Roulette/RouletteViewModel.swift` (load, spin, watchdog, forced re-spin 1.6 s, deferred catalog swap, reveal, spin again) | `roulette/RouletteViewModel.kt` | M | ✅ 8 tests |
 | `Roulette/WheelView.swift`, `HubSpinButton.swift`, `RouletteView.swift` (slices, labels, pointer, glowing hub, tap wheel or hub to spin, Magic Tap) | `roulette/WheelView.kt`, `RouletteScreen.kt` (Canvas slices from the same geometry, readable labels, pointer, hub; tap wheel or hub) | M | 🟡 hub glow/visual polish, TalkBack custom action pending |
 | Animated spin timed to recording (`SpinMotion.swift`, `SpinSoundTrack.swift`, 6.294 s, wind-up + brake) | `roulette/SpinMotion.kt` (same speed curve as easing) | S | ✅ base curve; ⬜ per-click time warp |
-| Spin sound `wheel-spin.m4a` once per spin; haptic per slice crossing (`SpinFeedback.swift`, `SpinTicks.swift`) | `SoundPool`/`MediaPlayer` + `HapticFeedbackConstants.SEGMENT_TICK` | M | ⬜ |
+| Spin sound `wheel-spin.m4a` once per spin; haptic per slice crossing (`SpinFeedback.swift`, `SpinTicks.swift`) | Haptics ✅: `HapticFeedbackConstants.CLOCK_TICK` each time the pointer crosses a slice while spinning (`RouletteWheel`, toggle `settings.haptics`, default on). Sound: not shipped until Matthew OKs reusing `wheel-spin.m4a` | M | 🟡 haptics ✅, sound ⏸ |
 | Hub ■ stops a spin early (`SpinStopPlan`) | — | M | ⬜ |
 | Reduce Motion: same timeline, 1–2 turns | Remove-animations setting → 1–2 turns (`RouletteRoute.kt`) | S | ✅ |
 | `RevealSheet.swift` (category, then movie, year, "Discussed on…", spin count, Spin Again, jackpot styling) | `RevealSheet` in `RouletteScreen.kt` (ModalBottomSheet) | S | ✅ (jackpot styling basic) |
@@ -55,7 +55,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | Pull-to-refresh catalog | `PullToRefreshBox` in `MoviesScreen` → `CatalogRepository.refresh()` | S | ✅ |
 | `Movies/MoviesView.swift` (search, sort, filters: category / watchlist / watched / rated by me / haven't spun yet; season/year grouping) | `movies/MoviesScreen.kt` (search title/genre/episode, Category / Show / Sort menus, On my services + Available first chips, Suggest row, footer "N of M movies", empty states), pure `MovieQuery` | L | ✅ tests (phone layout; no split view yet) |
 | Where to Watch (`WhereToWatchDisplay`, `StreamingCatalog`, logos from image.tmdb.org, JustWatch/TMDB attribution, always visible with empty message) | `WhereToWatchSection` in `movies/MovieDetailScreen.kt` + `movies/Streaming.kt` (`WhereToWatchDisplay`, `StreamingCatalog`, "Your service" badge, TMDB link, attribution) | M | ✅ 4 tests |
-| My Services (`MyServices`, "on my services", "available first") | `MyServices` (same "8,9,337" format) in SharedPreferences `streaming.myServices` → `MrtApplication.myServices`; picker lands with Settings | S | 🟡 filter ✅, picker in Settings branch |
+| My Services (`MyServices`, "on my services", "available first") | `MyServices` (same "8,9,337" format) in SharedPreferences `streaming.myServices` → `MrtApplication.myServices`; picker `settings/SettingsScreen.kt` `MyServicesScreen` (checkmarks, attribution footer, empty text) | S | ✅ tests |
 | `PersonalRatings.swift`, `PersonalRatingsStore.swift`, `StarRatingView.swift` (½–5 stars, Want to Watch / Watched) | `movies/PersonalRatings.kt` (`HalfStars`, entries, legacy whole-star read, rating ⇒ watched, corrupt-file quarantine, `personal-ratings.json` on device only), `ui/StarRating.kt` (tap/drag half stars, TalkBack adjustable) | M | ✅ 5 tests + Compose |
 | `Artwork.swift`, `ArtworkLoader.swift`, `ArtworkImage.swift` | `ui/Artwork.kt`: dependency-free loader (memory LRU + disk cache, HTTPS-only, candidates best-first: episode art → poster → show art); `ArtworkResolver` port | M | ✅ (http artwork upgraded to https) |
 | Host Rating (feature-flagged off on iOS) | Keep hidden | – | ⏸ off on iOS |
@@ -72,12 +72,12 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 ## 4. Stats
 | iOS | Android | Effort | Status |
 |---|---|---|---|
-| `SpinStats.swift`, `Stats/StatsView.swift` (spin overview, top movie/category, Your Ratings count/average/top) | Stats screen | M | ⬜ (data from `SpinHistoryStore` is ready) |
+| `SpinStats.swift`, `Stats/StatsView.swift` (spin overview, top movie/category, Your Ratings count/average/top) | `stats/StatsCalculator.kt` (`StatsSnapshot`: totals incl. archive, most spun movie/category, by category, by genre, 10 recent; ties broken by id) + `stats/StatsScreen.kt` (No Stats Yet, This Device, Most Spun, Your Ratings, By Category bars, By Genre top 12, Recent Spins) | M | ✅ 3 + 2 Compose tests |
 
 ## 5. Settings (iOS: gear sheet on Roulette)
 | iOS | Android | Effort | Status |
 |---|---|---|---|
-| `SettingsSheet.swift`, `AppSettings.swift`: Appearance; Spin sound; Haptics; New-episode alert; My services; Auto-share my ratings; Follow the Show (8 links); Suggest a movie; Credits & About (version, TMDB credit/notice); Privacy note | Settings screen (DataStore) | M | ⬜ |
+| `SettingsSheet.swift`, `AppSettings.swift`: Appearance; Spin sound; Haptics; New-episode alert; My services; Auto-share my ratings; Follow the Show (8 links); Suggest a movie; Credits & About (version, TMDB credit/notice); Privacy note | `settings/SettingsScreen.kt` (gear on Roulette → `roulette/settings`): Appearance, Haptics, New-episode alert toggle (scheduling lands with notifications), My services, Follow the Show (8 links, iOS order/colors), Suggest, Credits & About (TMDB mark/notice, version), Privacy note (`PrivacyCopy`); Auto-share shown only when community is configured. Prefs in SharedPreferences with iOS keys. Spin sound row hidden (see Roulette) | M | ✅ 4 + 3 Compose tests |
 
 ## 6. New-episode notifications
 | iOS | Android | Effort | Status |
@@ -92,7 +92,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 ## 8. Suggest a Movie
 | iOS | Android | Effort | Status |
 |---|---|---|---|
-| `SuggestMovieSheet.swift`, `MovieSuggestion` (mailto `theMrtPodcast@gmail.com`, subject "Movie suggestion: …", body template) | `ACTION_SENDTO mailto:` with same subject/body; copy address if no mail app | S | ⬜ |
+| `SuggestMovieSheet.swift`, `MovieSuggestion` (mailto `theMrtPodcast@gmail.com`, subject "Movie suggestion: …", body template) | `suggest/SuggestMovieSheet.kt` + `MovieSuggestion.kt`: same fields/limits/prompts; `ACTION_SENDTO mailto:` with same subject/body plus EXTRA_SUBJECT/TEXT; credit name added as "From: …" like iOS `asEmail`; copies the address + "Email address copied" if no mail app | S | ✅ 5 + 3 Compose tests |
 | `InAppSuggestion` → CloudKit `Suggestion` record (title ≤120, note ≤280, credit ≤60, 1 per 10 min) | Needs backend | M | ⏸ backend decision |
 
 ## 9. Polls (CloudKit) and 10. Shared ratings (CloudKit)
@@ -107,6 +107,6 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 |---|---|
 | Release signing from env vars only; unsigned when absent | ✅ |
 | Public-repo secret scan (pre-push hook + `scripts/scan-secrets.sh` + self-test) | ✅ |
-| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 60 tests |
+| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 116 tests |
 | Play: targetSdk 36, minSdk 26, AAB, Data safety, AD_ID absent | 🟡 build side done; no AAB/upload key yet |
 | Device/emulator testing | ⏸ KVM on this box crashes the host kernel (see NOTES.md) |

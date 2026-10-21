@@ -44,6 +44,7 @@ fun RouletteScreen(
     episodesByGUID: Map<String, com.movieroulettetuesday.app.episodes.PodcastEpisode> = emptyMap(),
     onOpenMovie: ((String) -> Unit)? = null,
     topBar: @Composable () -> Unit = {},
+    haptics: Boolean = false,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -71,6 +72,7 @@ fun RouletteScreen(
                     canSpin = state.canSpin,
                     onSpin = viewModel::spin,
                     onSpinFinished = viewModel::spinAnimationEnded,
+                    haptics = haptics,
                 )
                 state.rareBanner?.let {
                     Text(

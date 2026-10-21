@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.movieroulettetuesday.app.ui.MrtApp
 import com.movieroulettetuesday.app.ui.TopLevelDestination
@@ -44,5 +45,17 @@ class MrtAppTest {
         compose.onNodeWithTag("tab-movies").assertIsSelected()
         compose.onNodeWithContentDescription("Back").performClick()
         compose.onNodeWithTag("movies-search").assertIsDisplayed()
+    }
+
+    @Test
+    fun gearOpensSettingsAndCredits() {
+        compose.setContent { MrtTheme { MrtApp() } }
+        compose.onNodeWithTag("open-settings").performClick()
+        compose.onNodeWithTag("settings-screen").assertIsDisplayed()
+        compose.onNodeWithTag("settings-credits").performScrollTo().performClick()
+        compose.onNodeWithTag("credits-screen").assertIsDisplayed()
+        compose.onNodeWithContentDescription("Back").performClick()
+        compose.onNodeWithTag("settings-my-services").performScrollTo().performClick()
+        compose.onNodeWithTag("my-services-screen").assertIsDisplayed()
     }
 }

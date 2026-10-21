@@ -43,5 +43,6 @@ fun RouletteRoute(
         app.catalogRepository.refresh()
     }
     val episodes by app.episodeRepository.state.collectAsStateWithLifecycle()
-    RouletteScreen(vm, modifier, episodesByGUID = episodes.byGuid, onOpenMovie = onOpenMovie, topBar = topBar)
+    val haptics by app.preferences.haptics.collectAsStateWithLifecycle()
+    RouletteScreen(vm, modifier, episodesByGUID = episodes.byGuid, onOpenMovie = onOpenMovie, topBar = topBar, haptics = haptics)
 }
