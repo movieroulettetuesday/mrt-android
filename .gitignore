@@ -1,0 +1,35 @@
+# Build output
+build/
+**/build/
+.gradle/
+.kotlin/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+
+# Local machine config (SDK path etc.) - never commit
+local.properties
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Secrets - never commit (also enforced by scripts/scan-secrets.sh)
+*.jks
+*.keystore
+*.p12
+*.p8
+*.pem
+*.key
+*.mobileprovision
+keystore.properties
+signing.properties
+google-services.json
+GoogleService-Info.plist
+.env
+.env.*
+!.env.example

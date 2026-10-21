@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Blocks the push if any commit being pushed (or the working tree) contains secrets.
+# Installed via: git config core.hooksPath .githooks   (scripts/install-hooks.sh)
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+zero=0000000000000000000000000000000000000000
+status=0
+echo "pre-push: running secret scan..."
+"$root/scripts/scan-secrets.sh" || status=1
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -z "${local_sha:-}" ] && continue
+  [ "$local_sha" = "$zero" ] && continue   # branch deletion
+  if [ "$remote_sha" = "$zero" ]; then
+    range="$local_sha"                      # new branch: scan its whole history
+  else
+    range="$remote_sha..$local_sha"
+  fi
+  "$root/scripts/scan-secrets.sh" --range "$range" || status=1
+done
+if [ "$status" -ne 0 ]; then
+  echo "pre-push: BLOCKED by secret scan." >&2
+  exit 1
+fi

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Movie Roulette</string>
+    <string name="tab_roulette">Roulette</string>
+    <string name="tab_episodes">Episodes</string>
+    <string name="tab_movies">Movies</string>
+    <string name="tab_stats">Stats</string>
+</resources>
