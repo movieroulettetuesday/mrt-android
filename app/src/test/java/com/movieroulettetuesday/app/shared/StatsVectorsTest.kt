@@ -31,10 +31,13 @@ class StatsVectorsTest {
     private fun ms(iso: String?) = iso?.let { Instant.parse(it).toEpochMilli() }
     private fun counts(o: JsonObject) = o.mapValues { num(it.value)!!.toInt() }
 
-    /** Equal-count runs are compared as sets (iOS sorts a Dictionary; SPEC Q6). */
+    /**
+     * Shared tie rule (answers-from-ios.md Q6): count descending, then id ascending (code points).
+     * The vectors' equal-count order came from a Swift Dictionary, so it is re-sorted by that rule.
+     */
     private fun assertBreakdown(tag: String, expected: List<CountedId>, actual: List<CountedId>) {
-        assertEquals("$tag counts", expected.map { it.count }, actual.map { it.count })
-        expected.groupBy { it.count }.forEach { (n, group) -> assertEquals("$tag count $n", group.map { it.id }.toSet(), actual.filter { it.count == n }.map { it.id }.toSet()) }
+        val canonical = expected.sortedWith(compareByDescending<CountedId> { it.count }.thenBy { it.id })
+        assertEquals(tag, canonical, actual)
     }
 
     @Test
@@ -56,6 +59,7 @@ class StatsVectorsTest {
             fun counted(o: JsonObject?, key: String = "id") = o?.let { CountedId(it.str(key)!!, it.int("count")!!) }
             assertEquals(name, counted(e["mostSpunMovie"] as? JsonObject)?.count, s.mostSpunMovie?.count)
             assertEquals(name, counted(e["mostSpunCategory"] as? JsonObject)?.count, s.mostSpunCategory?.count)
+            assertEquals(name, s.categoryBreakdown.firstOrNull(), s.mostSpunCategory)
             assertBreakdown("$name categories", e["categoryBreakdown"]!!.objs().map { counted(it)!! }, s.categoryBreakdown)
             assertBreakdown("$name genres", e["genreBreakdown"]!!.objs().map { counted(it, "genre")!! }, s.genreBreakdown)
             assertEquals(name, e["recentMovieIds"]!!.strings(), s.recent.map { it.movieId })

@@ -30,8 +30,12 @@ class MovieSuggestionTest {
     @Test
     fun inAppAsEmailCarriesCreditName() {
         val s = InAppSuggestion("Tremors", "Horror", "Worms", "Laura from Ohio")
-        assertEquals("Worms\nFrom: Laura from Ohio", s.asEmail.why)
-        assertEquals("From: Laura", InAppSuggestion("Tremors", creditName = " Laura ").asEmail.why)
+        assertTrue(s.asEmail.body.contains("Why: Worms\nFrom: Laura from Ohio\nCategory: Horror"))
+        // No note: "From:" stands alone, never iOS's "Why: From: …" (answers-from-ios.md E17).
+        val noNote = InAppSuggestion("Tremors", null, "  ", "Laura").asEmail.body
+        assertTrue(noNote, noNote.contains("Movie: Tremors\nFrom: Laura\n"))
+        assertFalse(noNote, noNote.contains("Why:"))
+        assertEquals("Laura", InAppSuggestion("Tremors", creditName = " Laura ").asEmail.credit)
         assertEquals("", InAppSuggestion("Tremors").asEmail.why)
         assertEquals("Horror", s.asEmail.category)
     }

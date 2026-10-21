@@ -100,8 +100,9 @@ object ShowNotes {
 }
 
 /**
- * Port of `ArtworkResolver`. Android is HTTPS-only (network security config), so `http://`
- * artwork is upgraded to `https://` (Buzzsprout and TMDB both serve https); anything else is dropped.
+ * Port of `ArtworkResolver`, identical to iOS: http and https URLs are kept as written (same
+ * candidate lists and cache keys on both platforms), anything else is dropped. The https upgrade
+ * Android needs (it never loads cleartext) happens in the image loader, see [ArtworkLoader.transportURLs].
  */
 object ArtworkResolver {
     fun usableURL(raw: String?): String? {
@@ -111,8 +112,7 @@ object ArtworkResolver {
         val scheme = uri.scheme?.lowercase() ?: return null
         if (uri.host.isNullOrEmpty()) return null
         return when (scheme) {
-            "https" -> t
-            "http" -> "https" + t.substring(4)
+            "https", "http" -> t
             else -> null
         }
     }

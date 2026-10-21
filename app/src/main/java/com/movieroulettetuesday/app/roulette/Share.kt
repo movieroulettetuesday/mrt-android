@@ -54,10 +54,13 @@ object EpisodeLabel {
             val t = title(id, movie, episodesByGUID)
             return episodesByGUID[id]?.seasonEpisodeLabel?.let { "$t ($it)" } ?: t
         }
-        return when (ids.size) {
-            1 -> "Discussed on ${label(ids[0])}"
-            2 -> "Discussed on ${label(ids[0])} & ${label(ids[1])}"
-            else -> "Discussed on ${label(ids[0])} + ${ids.size - 1} more"
+        // Identical labels collapse ("X & X" -> "X"; 3+ counts distinct labels), per MRT App's
+        // answers-from-ios.md Q9 (iOS 1.0.1 candidate).
+        val labels = ids.map(::label).distinct()
+        return when (labels.size) {
+            1 -> "Discussed on ${labels[0]}"
+            2 -> "Discussed on ${labels[0]} & ${labels[1]}"
+            else -> "Discussed on ${labels[0]} + ${labels.size - 1} more"
         }
     }
 }

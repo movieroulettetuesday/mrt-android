@@ -3,7 +3,13 @@ package com.movieroulettetuesday.app.suggest
 import com.movieroulettetuesday.app.net.QueryEncoding
 
 /** The pre-filled email for "Suggest a movie" (iOS `MovieSuggestion`). The user sends it from their mail app. */
-data class MovieSuggestion(val title: String, val why: String = "", val category: String? = null) {
+data class MovieSuggestion(
+    val title: String,
+    val why: String = "",
+    val category: String? = null,
+    /** "From: …" on its own line (never "Why: From: …", the iOS empty-note bug, answers-from-ios.md E17). */
+    val credit: String = "",
+) {
     val trimmedTitle: String get() = title.trim()
     val isValid: Boolean get() = trimmedTitle.isNotEmpty()
     val subject: String get() = "Movie suggestion: $trimmedTitle"
@@ -12,6 +18,7 @@ data class MovieSuggestion(val title: String, val why: String = "", val category
         get() {
             val lines = mutableListOf("Hi MRT Crew,", "", "I’d love to hear you cover:", "", "Movie: $trimmedTitle")
             why.trim().takeIf { it.isNotEmpty() }?.let { lines += "Why: $it" }
+            credit.trim().takeIf { it.isNotEmpty() }?.let { lines += "From: $it" }
             category?.trim()?.takeIf { it.isNotEmpty() }?.let { lines += "Category: $it" }
             lines += listOf("", "Thanks for the show!", "", "Sent from the Movie Roulette Tuesday app")
             return lines.joinToString("\n")
@@ -46,13 +53,9 @@ data class InAppSuggestion(val title: String, val category: String? = null, val 
     val isValid: Boolean get() = problems.isEmpty()
     val noteCharactersLeft: Int get() = NOTE_LIMIT - trimmedNote.length
 
-    /** The same pick as an email; the credit name goes in as "From: …" exactly like iOS. */
+    /** The same pick as an email; the credit name is its own "From: …" line after "Why:". */
     val asEmail: MovieSuggestion
-        get() {
-            var why = trimmedNote
-            if (trimmedCreditName.isNotEmpty()) why += (if (why.isEmpty()) "" else "\n") + "From: $trimmedCreditName"
-            return MovieSuggestion(title, why, trimmedCategory)
-        }
+        get() = MovieSuggestion(title, trimmedNote, trimmedCategory, trimmedCreditName)
 
     companion object {
         const val RECORD_TYPE = "Suggestion"

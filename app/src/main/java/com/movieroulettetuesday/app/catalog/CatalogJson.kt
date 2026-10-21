@@ -131,10 +131,12 @@ object CatalogJson {
      * (mrt-shared D9: `"posterURL": ""` rejects the catalog). Empty/blank strings and strings
      * java.net.URI can't parse even after encoding spaces are rejected.
      */
+    /**
+     * Strict like iOS `URL` decoding, which on current Foundation only rejects `""` (everything
+     * else is percent-encoded or becomes a relative URL that the artwork resolver later drops). D9.
+     */
     private fun JsonObject.optURL(key: String): String? = optString(key)?.also { v ->
-        if (v.isBlank() || runCatching { java.net.URI(v.trim().replace(" ", "%20")) }.isFailure) {
-            throw CatalogDecodingException("'$key' is not a valid URL")
-        }
+        if (v.isEmpty()) throw CatalogDecodingException("'$key' is not a valid URL")
     }
 
     private fun JsonObject.optStringList(key: String): List<String>? =

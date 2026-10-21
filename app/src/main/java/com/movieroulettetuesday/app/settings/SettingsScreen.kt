@@ -104,7 +104,7 @@ fun SettingsScreen(state: SettingsState, actions: SettingsActions, modifier: Mod
                 }
             }
         }
-        Section("Spin", "Tap the spinning wheel to stop it early.") {
+        Section("Spin", "Sound plays at media volume. Tap STOP in the center to stop a spin early.") {
             ToggleRow("Spin sound", Icons.Filled.MusicNote, state.tickSound, actions.setTickSound, "settings-tick-sound")
             ToggleRow("Haptics", Icons.Filled.Vibration, state.haptics, actions.setHaptics, "settings-haptics")
         }

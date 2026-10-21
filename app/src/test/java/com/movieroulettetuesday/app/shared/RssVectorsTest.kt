@@ -34,15 +34,12 @@ class RssVectorsTest {
         }
         val feed = result.getOrNull() ?: return false
         e.str("title")?.let { if (it != feed.title) return false }
-        if (e.containsKey("artworkURL") && e.str("artworkURL")?.let(::https) != feed.artworkURL) return false
+        if (e.containsKey("artworkURL") && e.str("artworkURL") != feed.artworkURL) return false
         val eps = e["episodes"]?.objs() ?: return feed.episodes.isEmpty() || !e.containsKey("episodes")
         assertEquals(name, eps.size, feed.episodes.size)
         eps.zip(feed.episodes).forEach { (x, ep) -> assertEpisode("$name ${ep.guid}", x, ep) }
         return true
     }
-
-    /** D10 (kept): Android is HTTPS-only, so http artwork is upgraded. */
-    private fun https(url: String) = if (url.startsWith("http://")) "https://" + url.removePrefix("http://") else url
 
     private fun assertEpisode(tag: String, x: JsonObject, ep: PodcastEpisode) {
         assertEquals(tag, x.str("guid"), ep.guid)
@@ -53,7 +50,7 @@ class RssVectorsTest {
         assertEquals(tag, x.int("episode"), ep.episode)
         assertEquals(tag, x.str("episodeType"), ep.episodeType)
         assertEquals(tag, x.str("summary"), ep.summary)
-        assertEquals(tag, x.str("imageURL")?.let(::https), ep.imageURL)
+        assertEquals(tag, x.str("imageURL"), ep.imageURL)
         assertEquals(tag, x.str("fanMailURL"), ep.fanMailURL)
         assertEquals(tag, x.str("seasonEpisodeLabel"), ep.seasonEpisodeLabel)
     }
@@ -77,6 +74,19 @@ class RssVectorsTest {
     fun showNotes() {
         for (c in v.arr("fanMailURL").objs()) assertEquals(c.str("input"), c.str("expected"), ShowNotes.fanMailURL(c.str("input")!!))
         for (c in v.arr("stripFanMail").objs()) assertEquals(c.str("input"), c.str("expected"), ShowNotes.strippingFanMail(c.str("input")!!))
+    }
+
+    /** Resolver identical to iOS (http kept); the https upgrade lives in the image loader only. */
+    @Test
+    fun artworkResolverMatchesIosAndLoaderUpgrades() {
+        for (c in v.obj("androidCrossCheck").arr("artworkUsableURL").objs()) {
+            assertEquals(c.str("input"), c.str("expected"), com.movieroulettetuesday.app.episodes.ArtworkResolver.usableURL(c.str("input")))
+        }
+        val loader = com.movieroulettetuesday.app.ui.ArtworkLoader
+        assertEquals(
+            listOf("https://a.example/x.jpg", "https://show.example/s.jpg"),
+            loader.transportURLs(listOf("http://a.example/x.jpg", "https://a.example/x.jpg", "ftp://x/y", "https://show.example/s.jpg")),
+        )
     }
 
     @Test
@@ -103,7 +113,14 @@ class RssVectorsTest {
         for (c in m.arr("discussedText").objs()) {
             val movie = catalog.movie(c.str("movieId")!!) ?: catalog.movies[0].copy(id = c.str("movieId")!!, episodeIds = emptyList())
             val got = EpisodeLabel.discussedText(movie, if (c.bool("feedLoaded") == true) byGuid else emptyMap())
-            assertEquals("${movie.id} loaded=${c.bool("feedLoaded")}", c.str("expected"), got)
+            // answers-from-ios.md Q9: identical labels collapse (iOS b673df1 still prints "X & X").
+            val collapsed = mapOf(
+                "Discussed on Double Feature & Double Feature" to "Discussed on Double Feature",
+                "Discussed on Triple + 2 more" to "Discussed on Triple", // 3 ids, one distinct label
+                "Discussed on Second (S1E2) + 2 more" to "Discussed on Second (S1E2) & Triple", // 3 ids, two distinct
+            )
+            val expected = collapsed[c.str("expected")] ?: c.str("expected")
+            assertEquals("${movie.id} loaded=${c.bool("feedLoaded")}", expected, got)
         }
         val totals = m.obj("episodeTotals")
         val t = EpisodeTotals.of(feed, catalog)

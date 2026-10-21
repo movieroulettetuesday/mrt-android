@@ -62,7 +62,7 @@ class RssFeedParserTest {
         assertEquals("Bonus: Listener Mailbag & Q&A", bonus.title)
         assertNull(bonus.season)
         assertEquals("bonus", bonus.episodeType)
-        assertEquals("https://storage.buzzsprout.com/bonus.jpg", bonus.imageURL) // http upgraded (HTTPS-only app)
+        assertEquals("http://storage.buzzsprout.com/bonus.jpg", bonus.imageURL) // kept like iOS; ArtworkLoader upgrades the transport
         assertTrue("longest notes win", bonus.summary.startsWith("A much longer summary"))
         assertEquals(Instant.parse("2023-02-03T08:00:00Z").toEpochMilli(), bonus.pubDate)
 

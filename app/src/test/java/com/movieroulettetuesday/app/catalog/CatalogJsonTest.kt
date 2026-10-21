@@ -86,4 +86,17 @@ class CatalogJsonTest {
         assertEquals("1999 · One", c.subtitle(c.movies.single()))
         assertEquals("1999 · Drama", c.subtitle(c.movies.single().copy(categories = emptyList())))
     }
+
+    /** D9 as iOS behaves on current Foundation: only an empty URL string fails the document. */
+    @Test
+    fun onlyEmptyUrlStringsFailDecoding() {
+        fun doc(poster: String) = """{"categories":[{"id":"c","name":"C","colorHex":"#112233","movieIds":["m"]}],
+            "movies":[{"id":"m","title":"T","year":2000,"genre":"Drama","categories":["c"],"posterURL":"$poster"}]}"""
+        assertEquals("a b", CatalogJson.decode(doc("a b")).movies[0].posterURL)
+        assertEquals("not a url", CatalogJson.decode(doc("not a url")).movies[0].posterURL)
+        assertEquals(" ", CatalogJson.decode(doc(" ")).movies[0].posterURL)
+        org.junit.Assert.assertThrows(CatalogDecodingException::class.java) { CatalogJson.decode(doc("")) }
+        // and the artwork resolver drops the unusable ones
+        assertEquals(null, com.movieroulettetuesday.app.episodes.ArtworkResolver.usableURL("not a url"))
+    }
 }

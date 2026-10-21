@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- targetCell* only matter on API 31+; older launchers use minWidth/minHeight. -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedAttribute"
     android:description="@string/widget_description"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:minWidth="110dp"

@@ -8,7 +8,7 @@ import kotlin.random.Random
  * - unit double = (next() & (2^53 - 1)) * 2^-53 (one draw, LOW 53 bits)
  * - double in a..<b = a + (b - a) * unit
  * - int in lo...hi = lo + Lemire multiply-high with rejection over n = hi - lo + 1
- * Production uses the system RNG; this is for tests, previews and vectors.
+ * Test-only (answers-from-ios.md Q18): production spins use the system RNG.
  */
 open class SwiftCompatRandom(seed: Long) : Random() {
     private var state = seed

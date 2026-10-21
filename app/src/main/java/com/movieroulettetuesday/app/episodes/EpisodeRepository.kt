@@ -60,6 +60,8 @@ class EpisodeRepository(
     private val clock: () -> Long = System::currentTimeMillis,
     /** Called with every applied episode list (widget snapshot). */
     var onEpisodesApplied: ((List<PodcastEpisode>) -> Unit)? = null,
+    /** After every successful network fetch (iOS refreshes the catalog on `lastFetchedAt` changes). */
+    var onNetworkFetched: () -> Unit = {},
 ) {
     sealed interface LoadState {
         data object Idle : LoadState
@@ -109,12 +111,16 @@ class EpisodeRepository(
             val result = withContext(io) {
                 runCatching {
                     val feed = RssFeedParser.parse(fetch(feedUrl))
+                    // A well-formed but empty feed (captive portal, outage page) is a failed refresh:
+                    // never overwrite the cache with it (answers-from-ios.md Q2).
+                    if (feed.episodes.isEmpty()) throw RssFeedException.empty()
                     CachedEpisodeFeed(clock(), feed.title, feed.episodes, feed.artworkURL).also { EpisodeFeed.saveCache(cacheFile, it) }
                 }
             }
             result.onSuccess {
                 lastNetworkSuccess = clock()
                 apply(it, fromCache = false)
+                runCatching { onNetworkFetched() }
             }.onFailure { e ->
                 val message = EpisodeFeed.friendlyMessage(e)
                 _state.update { s ->

@@ -20,11 +20,15 @@ import com.movieroulettetuesday.app.notifications.NewEpisodeSchedule
 import com.movieroulettetuesday.app.notifications.NewEpisodeWatermarkStore
 import java.io.File
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /** Process-wide singletons (no DI framework yet). */
 class MrtApplication : Application() {
+    /** App-lifetime work (catalog refresh after a feed fetch). */
+    val appScope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + Dispatchers.Main.immediate)
+
     /** Unit tests (Robolectric) stay on the bundled list: deterministic and offline (iOS: bundledOnly). */
     val isUnderTest: Boolean get() = Build.FINGERPRINT == "robolectric"
 
@@ -55,6 +59,8 @@ class MrtApplication : Application() {
                 if (preferences.newEpisodeAlerts.value) episodeWatermarks.markSeen(it)
                 widgetBridge.publishLatestEpisode(it)
             }
+            // iOS ContentView: the catalog refreshes at launch and after each feed fetch (no foreground trigger).
+            repo.onNetworkFetched = { appScope.launch { if (catalogRepository.refresh()) widgetBridge.catalogUpdated() } }
         }
     }
 

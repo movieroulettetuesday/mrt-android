@@ -67,7 +67,7 @@ class EpisodeModelsTest {
     @Test
     fun artworkResolver() {
         assertEquals("https://a.example/x.jpg", ArtworkResolver.usableURL(" https://a.example/x.jpg "))
-        assertEquals("https://a.example/x.jpg", ArtworkResolver.usableURL("http://a.example/x.jpg"))
+        assertEquals("http://a.example/x.jpg", ArtworkResolver.usableURL("http://a.example/x.jpg")) // kept like iOS; loader upgrades
         assertNull(ArtworkResolver.usableURL("file:///etc/passwd"))
         assertNull(ArtworkResolver.usableURL("javascript:alert(1)"))
         assertNull(ArtworkResolver.usableURL("/relative.jpg"))

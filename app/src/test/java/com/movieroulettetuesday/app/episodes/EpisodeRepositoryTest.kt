@@ -90,6 +90,23 @@ class EpisodeRepositoryTest {
         assertNull(repo.state.value.lastViewedAt)
     }
 
+    /** answers-from-ios.md Q2: a well-formed 200 with no items is a failed refresh; the cache stays byte-identical. */
+    @Test
+    fun emptyFeedIsAFailedRefreshAndKeepsTheCache() = runTest {
+        val cache = File(dir, "c4.json")
+        val io = UnconfinedTestDispatcher(testScheduler)
+        var fetched = 0
+        EpisodeRepository(cache, InMemoryKeyValueStore(), FakeFeed(feedV1).fetch, io = io, onNetworkFetched = { fetched++ }).load()
+        assertEquals(1, fetched)
+        val before = cache.readBytes()
+        val portal = EpisodeRepository(cache, InMemoryKeyValueStore(), FakeFeed("<rss><channel><title>Wi-Fi login</title></channel></rss>").fetch, io = io, onNetworkFetched = { fetched++ })
+        portal.load()
+        assertTrue(before.contentEquals(cache.readBytes()))
+        assertEquals(2, portal.state.value.episodes.size)
+        assertEquals("Couldn’t read the episode list. Pull down to try again.", portal.state.value.lastError)
+        assertEquals(1, fetched) // no catalog refresh after a failed fetch
+    }
+
     @Test
     fun corruptCacheIsIgnoredAndBrokenFeedNeverReplacesCache() = runTest {
         val cache = File(dir, "c3.json").apply { writeText("{not json") }

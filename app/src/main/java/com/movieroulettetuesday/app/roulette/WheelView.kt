@@ -125,10 +125,8 @@ fun RouletteWheel(
                 .fillMaxSize()
                 .graphicsLayer { rotationZ = (angle % 360.0).toFloat() }
                 .clip(CircleShape)
-                .clickable(
-                    enabled = canSpin || (spin != null && spin.stop == null && onStop != null),
-                    onClickLabel = if (spin != null) "Stop" else "Spin",
-                ) { if (spin != null) onStop?.invoke() else onSpin() },
+                // The wheel face only spins (iOS): stopping is the hub's job.
+                .clickable(enabled = canSpin, onClickLabel = "Spin") { onSpin() },
         ) {
             val r = size.minDimension / 2
             val c = Offset(size.width / 2, size.height / 2)

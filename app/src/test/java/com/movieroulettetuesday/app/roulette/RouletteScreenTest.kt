@@ -63,6 +63,22 @@ class RouletteScreenTest {
         assertEquals(1, history.totalSpins)
     }
 
+    /** Only the center control stops a spin (answers-from-ios.md E12); it reads STOP while spinning. */
+    @Test fun hubStopsASpinEarly() {
+        compose.setContent { MrtTheme { RouletteScreen(vm) } }
+        compose.mainClock.autoAdvance = false
+        compose.onNodeWithTag("spin-hub").performClick()
+        compose.mainClock.advanceTimeBy(300)
+        compose.onNodeWithText("STOP").assertIsDisplayed()
+        compose.onNodeWithTag("spin-hub").performClick()
+        compose.mainClock.advanceTimeBy(100)
+        assertTrue(vm.state.value.spin?.stop != null)
+        compose.mainClock.advanceTimeBy(2_000)
+        compose.mainClock.autoAdvance = true
+        compose.waitForIdle()
+        assertEquals(1, history.totalSpins)
+    }
+
     @Test fun shareSendsTextIntent() {
         spinToReveal()
         val movie = vm.state.value.reveal!!.movie

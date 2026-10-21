@@ -40,9 +40,23 @@ object ArtworkLoader {
 
     fun cached(url: String): ImageBitmap? = memory.get(url)
 
+    /**
+     * Transport step: `http://` becomes `https://` (same host and path; TLS or nothing, never a
+     * cleartext fallback), then duplicates are dropped, since an upgraded URL can equal a later
+     * candidate. A host without TLS just fails over to the next candidate, as on iOS (ATS).
+     */
+    fun transportURLs(urls: List<String>): List<String> =
+        urls.mapNotNull { u ->
+            when {
+                u.startsWith("https://", ignoreCase = true) -> u
+                u.startsWith("http://", ignoreCase = true) -> "https://" + u.substring(7)
+                else -> null
+            }
+        }.distinct()
+
     suspend fun load(urls: List<String>, maxPx: Int): ImageBitmap? = withContext(Dispatchers.IO) {
         if (!enabled) return@withContext null
-        for (url in urls) {
+        for (url in transportURLs(urls)) {
             memory.get(url)?.let { return@withContext it }
             val bytes = runCatching { readDisk(url) ?: Http.get(url, 15_000, accept = "image/*").also { writeDisk(url, it) } }.getOrNull() ?: continue
             val bmp = decode(bytes, maxPx) ?: continue
