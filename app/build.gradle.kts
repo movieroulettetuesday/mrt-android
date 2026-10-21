@@ -30,6 +30,19 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Community (polls + listener ratings), off unless both are provided at build time:
+        // MRT_CLOUDKIT_API_TOKEN = CloudKit Web Services READ-ONLY API token for the public DB
+        // (a client identifier like CloudKit JS uses, not a secret key), MRT_RELAY_URL = https base
+        // URL of the write relay (relay/). Never commit either value; see KEYS_SETUP.md.
+        val ckToken = providers.environmentVariable("MRT_CLOUDKIT_API_TOKEN").orNull?.trim().orEmpty()
+        val relayUrl = providers.environmentVariable("MRT_RELAY_URL").orNull?.trim()?.trimEnd('/').orEmpty()
+        require(ckToken.all { it.isLetterOrDigit() || it == '-' || it == '_' }) { "MRT_CLOUDKIT_API_TOKEN has unexpected characters" }
+        require(relayUrl.isEmpty() || (relayUrl.startsWith("https://") && relayUrl.none { it == '"' || it == '\\' || it.isWhitespace() })) {
+            "MRT_RELAY_URL must be an https URL"
+        }
+        buildConfigField("String", "MRT_CLOUDKIT_API_TOKEN", "\"$ckToken\"")
+        buildConfigField("String", "MRT_RELAY_URL", "\"$relayUrl\"")
     }
 
     signingConfigs {
