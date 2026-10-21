@@ -19,7 +19,7 @@ interface SpinFeedback {
 }
 
 /**
- * Plays `wheel-spin.m4a` (Matthew's recording, copied from the iOS repo at build time and verified by
+ * Plays `wheel-spin.m4a` (Matthew's recording, committed in assets, byte-identical to iOS and verified by
  * sha256; see app/build.gradle.kts). Missing asset = silent. The whole clip plays once per spin; the
  * wheel's motion is locked to it.
  */

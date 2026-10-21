@@ -258,42 +258,37 @@ val generateSharedContract = tasks.register<GenerateSharedContract>("generateSha
     outputDir.set(layout.buildDirectory.dir("generated/shared-contract/kotlin"))
 }
 
-// Spin sound: Matthew's recording from the iOS repo (ASSETS.md), copied at build time and verified by
-// sha256; never committed here. Debug builds without an iOS checkout just have no sound.
+// Spin sound: Matthew's recording (approved for this public repo Oct 21, 2026), committed as
+// app/src/main/assets/wheel-spin.m4a, byte-identical to the iOS original. Spin timing
+// (shared/data/spin-sound-track.json) is only valid for this exact file, so the build checks its sha256.
 val spinSoundSha256 = "f9b6db796152c10493ee5c434fc4ef5f68ceaddc5f25a0b40e2491f623a666fd"
-val iosCheckout: String = System.getenv("MRT_IOS_CHECKOUT") ?: rootProject.file("../ios-ref").path
 
-abstract class CopySpinSound : DefaultTask() {
-    @get:Input abstract val source: Property<String>
+abstract class VerifySpinSound : DefaultTask() {
+    @get:InputFile @get:PathSensitive(PathSensitivity.NONE) abstract val sound: RegularFileProperty
     @get:Input abstract val sha256: Property<String>
-    @get:Input abstract val required: Property<Boolean>
-    @get:OutputDirectory abstract val outputDir: DirectoryProperty
+    @get:OutputFile abstract val stamp: RegularFileProperty
 
     @TaskAction
     fun run() {
-        val out = outputDir.get().asFile
-        out.deleteRecursively(); out.mkdirs()
-        val src = File(source.get())
-        if (!src.isFile) {
-            if (required.get()) throw GradleException("wheel-spin.m4a not found at $src (set MRT_IOS_CHECKOUT).")
-            logger.warn("MRT: $src missing; building without the spin sound.")
-            return
+        val bytes = sound.get().asFile.readBytes()
+        val hash = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { b -> "%02x".format(b) }
+        if (hash != sha256.get()) {
+            throw GradleException("wheel-spin.m4a sha256 $hash != pinned ${sha256.get()} (mrt-shared ASSETS.md). Spin timing is locked to that file.")
         }
-        val hash = MessageDigest.getInstance("SHA-256").digest(src.readBytes()).joinToString("") { b -> "%02x".format(b) }
-        if (hash != sha256.get()) throw GradleException("wheel-spin.m4a sha256 $hash != pinned ${sha256.get()} (ASSETS.md). Spin timing is locked to that file.")
-        src.copyTo(out.resolve("wheel-spin.m4a"))
+        stamp.get().asFile.writeText(hash)
     }
 }
+
+val verifySpinSound = tasks.register<VerifySpinSound>("verifySpinSound") {
+    description = "Checks app/src/main/assets/wheel-spin.m4a against the sha256 pinned in mrt-shared ASSETS.md."
+    sound.set(layout.projectDirectory.file("src/main/assets/wheel-spin.m4a"))
+    sha256.set(spinSoundSha256)
+    stamp.set(layout.buildDirectory.file("spin-sound/verified.txt"))
+}
+generateSharedContract.configure { dependsOn(verifySpinSound) }
 
 androidComponents {
     onVariants { variant ->
         variant.sources.kotlin?.addGeneratedSourceDirectory(generateSharedContract, GenerateSharedContract::outputDir)
-        val copy = tasks.register<CopySpinSound>("copySpinSound${variant.name.replaceFirstChar { it.uppercase() }}") {
-            source.set(File(iosCheckout, "MovieRouletteTuesday/Resources/wheel-spin.m4a").path)
-            sha256.set(spinSoundSha256)
-            required.set(variant.buildType == "release")
-            outputDir.set(layout.buildDirectory.dir("generated/spin-sound/${variant.name}"))
-        }
-        variant.sources.assets?.addGeneratedSourceDirectory(copy, CopySpinSound::outputDir)
     }
 }
