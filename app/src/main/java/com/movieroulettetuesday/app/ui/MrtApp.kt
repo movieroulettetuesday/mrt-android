@@ -112,7 +112,18 @@ fun MrtApp() {
     LaunchedEffect(Unit) {
         app.catalogRepository.load()
         app.episodeRepository.load()
-        app.catalogRepository.refresh()
+        if (app.catalogRepository.refresh()) app.widgetBridge.catalogUpdated()
+    }
+    val pendingMovie by app.pendingMovie.collectAsStateWithLifecycle()
+    LaunchedEffect(pendingMovie) {
+        val id = pendingMovie ?: return@LaunchedEffect
+        app.pendingMovie.value = null
+        navController.navigate(TopLevelDestination.Movies.route) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+        navController.navigate(Routes.movie("movies", id))
     }
     val pendingEpisode by app.pendingEpisode.collectAsStateWithLifecycle()
     LaunchedEffect(pendingEpisode) {

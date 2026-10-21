@@ -15,6 +15,8 @@ import com.movieroulettetuesday.app.ui.TopLevelDestination
 import com.movieroulettetuesday.app.ui.theme.MrtTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -69,5 +71,21 @@ class MrtAppTest {
         compose.onNodeWithTag("tab-episodes").assertIsSelected()
         compose.onNodeWithContentDescription("Back").assertIsDisplayed()
         assertEquals(null, app.pendingEpisode.value)
+    }
+
+    @Test
+    fun widgetTapOpensTodaysMovie() {
+        val app = androidx.test.core.app.ApplicationProvider.getApplicationContext<MrtApplication>()
+        compose.setContent { MrtTheme { MrtApp() } }
+        compose.waitForIdle()
+        compose.waitUntil(5_000) { app.catalogRepository.catalog != null }
+        val catalog = app.catalogRepository.catalog!!
+        val pick = com.movieroulettetuesday.app.widget.SpinOfTheDay.pick("2026-10-21", catalog)!!
+        app.pendingMovie.value = pick.movie.id
+        compose.waitForIdle()
+        compose.onNodeWithTag("tab-movies").assertIsSelected()
+        compose.onNodeWithContentDescription("Back").assertIsDisplayed()
+        compose.onAllNodesWithText(pick.movie.title).onFirst().assertIsDisplayed()
+        assertEquals(null, app.pendingMovie.value)
     }
 }

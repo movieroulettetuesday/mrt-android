@@ -87,7 +87,7 @@ _Last updated 2026-10-21 (ET) after merging the shared contract (`feature/shared
 ## 7. Home-screen widget
 | iOS | Android | Effort | Status |
 |---|---|---|---|
-| `MovieRouletteTuesdayWidget/SpinOfTheDayWidget.swift`, `SpinOfTheDay.swift` (FNV-1a deterministic daily pick), `WidgetSnapshot.swift`, `WidgetBridge.swift` (latest episode, last spin; small/medium/large/accessory) | Jetpack Glance widget; port FNV-1a so the same day shows the same pick as iOS | M | ⬜ |
+| `MovieRouletteTuesdayWidget/SpinOfTheDayWidget.swift`, `SpinOfTheDay.swift` (FNV-1a deterministic daily pick), `WidgetSnapshot.swift`, `WidgetBridge.swift` (latest episode, last spin; small/medium/large/accessory) | `widget/` Glance widget “Spin of the Day” (small / medium / large by size, same text and fallbacks as iOS, Clean Pro gradient light/dark from `palette.json`, category capsule in the display palette); `SpinOfTheDay` (FNV-1a, shared vectors), `WidgetSnapshot` + store (`filesDir/widget-snapshot.json`, no-op writes skipped), `WidgetBridge` (latest episode, last spin, catalog refresh), midnight WorkManager refresh; tap → `ACTION_OPEN_MOVIE` → movie page. Lock-screen accessory family: no Android equivalent | M | ✅ |
 
 ## 8. Suggest a Movie
 | iOS | Android | Effort | Status |
@@ -120,6 +120,6 @@ _Last updated 2026-10-21 (ET) after merging the shared contract (`feature/shared
 |---|---|
 | Release signing from env vars only; unsigned when absent | ✅ |
 | Public-repo secret scan (pre-push hook + `scripts/scan-secrets.sh` + self-test) | ✅ |
-| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 126 tests |
+| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 175 tests |
 | Play: targetSdk 36, minSdk 26, AAB, Data safety, AD_ID absent | 🟡 build side done; no AAB/upload key yet |
 | Device/emulator testing | ⏸ KVM on this box crashes the host kernel (see NOTES.md) |

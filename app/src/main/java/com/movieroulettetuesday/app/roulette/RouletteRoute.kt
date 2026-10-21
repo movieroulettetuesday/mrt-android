@@ -33,6 +33,7 @@ fun RouletteRoute(
                     // System "Remove animations" ≈ iOS Reduce Motion: same timeline, only 1–2 turns.
                     feedback = app.spinSound,
                     soundEnabled = { app.preferences.tickSound.value },
+                    onSpinRecorded = { movie, category, at -> app.widgetBridge.publishSpin(movie, category, at) },
                     reduceMotion = {
                         Settings.Global.getFloat(app.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
                     },

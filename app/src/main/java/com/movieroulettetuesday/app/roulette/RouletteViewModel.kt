@@ -36,6 +36,8 @@ class RouletteViewModel(
     private val now: () -> Double = { System.nanoTime() / 1e9 },
     /** Which movie an Infamous Jackpot picks (iOS main: uniform over isInfamous). */
     private val jackpot: JackpotSelector = FlaggedInfamousSelector,
+    /** Each recorded spin (movie, credited category, epoch ms): the home-screen widget's "last spin". */
+    private val onSpinRecorded: (Movie, RouletteCategory, Long) -> Unit = { _, _, _ -> },
 ) : ViewModel(scope) {
 
     data class Reveal(
@@ -255,6 +257,7 @@ class RouletteViewModel(
         }
         val result = SpinResult(movieId = movie.id, categoryId = category.id)
         history.record(result)
+        runCatching { onSpinRecorded(movie, category, result.timestampEpochMs) }
         _state.update {
             it.copy(
                 notice = if (isJackpot) "Infamous Jackpot!" else null,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movieroulettetuesday.app.ui.MrtApp
+import com.movieroulettetuesday.app.widget.SpinOfTheDayWidget
 import com.movieroulettetuesday.app.ui.theme.MrtTheme
 
 /** Single activity; everything else is Compose. */
@@ -32,8 +33,11 @@ class MainActivity : ComponentActivity() {
         route(intent)
     }
 
-    /** New-episode notification tap → that episode's page. */
+    /** New-episode notification tap → that episode's page; widget tap → today's movie. */
     private fun route(intent: Intent?) {
+        intent?.takeIf { it.action == SpinOfTheDayWidget.ACTION_OPEN_MOVIE }
+            ?.getStringExtra(SpinOfTheDayWidget.EXTRA_MOVIE_ID)?.takeIf { it.isNotBlank() }
+            ?.let { (application as MrtApplication).pendingMovie.value = it; return }
         val guid = intent?.getStringExtra(NewEpisodeNotifier.EXTRA_GUID)?.takeIf { it.isNotBlank() } ?: return
         (application as MrtApplication).pendingEpisode.value = guid
     }

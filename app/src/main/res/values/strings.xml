@@ -6,4 +6,6 @@
     <string name="tab_stats">Stats</string>
     <string name="channel_new_episodes">New episodes</string>
     <string name="channel_new_episodes_description">An alert when a new episode of the show comes out.</string>
+    <string name="widget_name">Spin of the Day</string>
+    <string name="widget_description">Today’s pick from the Movie Roulette Tuesday wheel, plus the latest episode.</string>
 </resources>

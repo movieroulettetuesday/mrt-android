@@ -51,7 +51,10 @@ class MrtApplication : Application() {
             fetch = if (isUnderTest) null else EpisodeFeed::httpGet,
         ).also { repo ->
             // iOS ContentView: episodes already visible in the app never alert later.
-            repo.onEpisodesApplied = { if (preferences.newEpisodeAlerts.value) episodeWatermarks.markSeen(it) }
+            repo.onEpisodesApplied = {
+                if (preferences.newEpisodeAlerts.value) episodeWatermarks.markSeen(it)
+                widgetBridge.publishLatestEpisode(it)
+            }
         }
     }
 
@@ -70,6 +73,21 @@ class MrtApplication : Application() {
         ).also { checkerOverride = it }
         set(value) { checkerOverride = value }
     private var checkerOverride: NewEpisodeChecker? = null
+
+    /** Home-screen widget data (latest episode, last spin); no widget refresh under tests. */
+    val widgetBridge: com.movieroulettetuesday.app.widget.WidgetBridge by lazy {
+        if (isUnderTest) {
+            com.movieroulettetuesday.app.widget.WidgetBridge(
+                com.movieroulettetuesday.app.widget.WidgetSnapshotStore(File(cacheDir, "test-" + com.movieroulettetuesday.app.widget.WidgetSnapshotStore.FILE_NAME)),
+                refresh = {},
+            )
+        } else {
+            com.movieroulettetuesday.app.widget.WidgetBridge.create(this)
+        }
+    }
+
+    /** A widget tap asks the UI to open this movie (iOS `mrt://movie/<id>`). */
+    val pendingMovie = MutableStateFlow<String?>(null)
 
     /** A tapped notification asks the UI to open this episode (iOS AppRouter). */
     val pendingEpisode = MutableStateFlow<String?>(null)
