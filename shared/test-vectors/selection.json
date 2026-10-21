@@ -1490,7 +1490,7 @@
         "wasForcedRespin" : true
       }
     ],
-    "description" : "QuickSpin.resolve(catalog, history: [], default policy) (Siri/Shortcuts path): per attempt randomTargetRotation(from: 0, fullTurns: 1...1) then roll, then jackpotPick or selectMovie."
+    "description" : "QuickSpin.resolve(catalog, history: [], default policy) (Siri/Shortcuts path): per attempt randomTargetRotation(from: 0, fullTurns: 1...1) (NOTE E11: Int.random(in: 1...1) still consumes one next(), so each attempt uses 2 draws for the target) then roll, then jackpotPick or selectMovie."
   },
   "rareOutcome" : {
     "cases" : [

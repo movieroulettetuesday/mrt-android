@@ -1344,5 +1344,64 @@
       }
     ],
     "description" : "HexColor parsing (SPEC §1.2 HexColor). rgba255 = round(component*255)."
+  },
+  "posterURLDecoding" : {
+    "cases" : [
+      {
+        "expected" : {
+          "artworkUsable" : null,
+          "decodes" : false,
+          "posterURL" : null
+        },
+        "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"posterURL\":\"\"}]}",
+        "posterURL" : ""
+      },
+      {
+        "expected" : {
+          "artworkUsable" : null,
+          "decodes" : true,
+          "posterURL" : "a%20b"
+        },
+        "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"posterURL\":\"a b\"}]}",
+        "posterURL" : "a b"
+      },
+      {
+        "expected" : {
+          "artworkUsable" : "https://ex.com/%C3%A9.jpg",
+          "decodes" : true,
+          "posterURL" : "https://ex.com/%C3%A9.jpg"
+        },
+        "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"posterURL\":\"https://ex.com/é.jpg\"}]}",
+        "posterURL" : "https://ex.com/é.jpg"
+      },
+      {
+        "expected" : {
+          "artworkUsable" : null,
+          "decodes" : true,
+          "posterURL" : "not%20a%20url"
+        },
+        "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"posterURL\":\"not a url\"}]}",
+        "posterURL" : "not a url"
+      },
+      {
+        "expected" : {
+          "artworkUsable" : "https://ex.com/poster.jpg",
+          "decodes" : true,
+          "posterURL" : "https://ex.com/poster.jpg"
+        },
+        "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"posterURL\":\"https://ex.com/poster.jpg\"}]}",
+        "posterURL" : "https://ex.com/poster.jpg"
+      },
+      {
+        "expected" : {
+          "artworkUsable" : "http://ex.com/p.jpg",
+          "decodes" : true,
+          "posterURL" : "http://ex.com/p.jpg"
+        },
+        "input" : "{\"categories\":[{\"id\":\"c1\",\"name\":\"One\",\"colorHex\":\"#112233\",\"movieIds\":[\"m1\"]}],\"movies\":[{\"id\":\"m1\",\"title\":\"T\",\"year\":1999,\"genre\":\"Drama\",\"categories\":[\"c1\"],\"posterURL\":\"http://ex.com/p.jpg\"}]}",
+        "posterURL" : "http://ex.com/p.jpg"
+      }
+    ],
+    "description" : "SPEC §1.1 / E4: on current Foundation only an EMPTY posterURL fails decoding (and so rejects the whole document). Other strings are percent-encoded or become relative URLs, which ArtworkResolver then drops. Generated on Linux swift-corelibs; iOS 17+ URL(string:) is expected to match (unverified on device). Android MUST fail on the empty string and MUST NOT fail on the other cases; for those, the stored posterURL may differ in encoding as long as artworkUsable (null vs non-null) matches."
   }
 }

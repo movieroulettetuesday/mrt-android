@@ -1,0 +1,201 @@
+{
+  "_generated" : {
+    "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
+    "iosCommit" : "b673df1",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+  },
+  "catalogRefresh" : {
+    "apply" : [
+      {
+        "event" : "fresh valid catalog",
+        "expected" : "apply now",
+        "state" : {
+          "catalog" : "nil"
+        }
+      },
+      {
+        "event" : "fresh valid catalog (different)",
+        "expected" : "apply now",
+        "state" : {
+          "idle" : true
+        }
+      },
+      {
+        "event" : "fresh valid catalog (equal after deduplicated())",
+        "expected" : "no-op",
+        "state" : {
+          "idle" : true
+        }
+      },
+      {
+        "event" : "fresh valid catalog",
+        "expected" : "hold as pending (wheel unchanged)",
+        "state" : {
+          "isSpinning" : true
+        }
+      },
+      {
+        "event" : "fresh valid catalog",
+        "expected" : "hold as pending",
+        "state" : {
+          "revealOpen" : true
+        }
+      },
+      {
+        "event" : "fresh valid catalog",
+        "expected" : "hold as pending",
+        "state" : {
+          "awaitingForcedRespin" : true
+        }
+      },
+      {
+        "event" : "spin finishes (finishSpin)",
+        "expected" : "pending NOT applied",
+        "state" : {
+          "isSpinning" : true,
+          "pending" : true
+        }
+      },
+      {
+        "event" : "spin finishes on an empty category (notice, no reveal)",
+        "expected" : "pending NOT applied; old wheel stays until the next spin starts",
+        "state" : {
+          "pending" : true
+        }
+      },
+      {
+        "event" : "reveal dismissed",
+        "expected" : "pending applied",
+        "state" : {
+          "pending" : true
+        }
+      },
+      {
+        "event" : "next spin starts (user or forced re-spin)",
+        "expected" : "pending applied BEFORE the spin target is drawn",
+        "state" : {
+          "pending" : true
+        }
+      },
+      {
+        "event" : "fresh catalog accepted (applied or pending)",
+        "expected" : "widget timeline reload requested (WidgetBridge.catalogUpdated)",
+        "state" : {
+          "any" : true
+        }
+      },
+      {
+        "event" : "fetch / decode / validation failure",
+        "expected" : "nothing changes; cache untouched",
+        "state" : {
+          "any" : true
+        }
+      },
+      {
+        "event" : "valid catalog but cache WRITE fails",
+        "expected" : "error swallowed; fresh catalog still applied",
+        "state" : {
+          "any" : true
+        }
+      }
+    ],
+    "source" : "ContentView.swift:53-59,75-80; MovieRouletteTuesdayApp.swift:61-63; Roulette/RouletteViewModel.swift:179-198,210,371-373; RouletteCore/RemoteCatalog.swift:176-181",
+    "triggers" : [
+      {
+        "effect" : "load local catalog (cache else bundled), THEN refreshRemoteCatalog()",
+        "event" : "appLaunch"
+      },
+      {
+        "effect" : "refreshRemoteCatalog()",
+        "event" : "episodeFeedFetchCompleted (episodes.lastFetchedAt changed; includes pull-to-refresh)"
+      },
+      {
+        "effect" : "NO catalog refresh",
+        "event" : "appForeground (scenePhase active)"
+      },
+      {
+        "effect" : "schedule new-episode BG task only (if enabled)",
+        "event" : "appBackground (scenePhase background)"
+      },
+      {
+        "effect" : "await the in-flight one; no second request",
+        "event" : "refreshRemoteCatalog while another refresh is in flight"
+      },
+      {
+        "effect" : "skipped",
+        "event" : "refreshRemoteCatalog < 15 s after the last one STARTED"
+      }
+    ]
+  },
+  "description" : "State-machine rules that live outside RouletteCore (SwiftUI app code), so they are hand-derived from the cited iOS lines rather than executed. Each case: state + event -> expected effects. Android tests should drive their view model with the same sequences.",
+  "spinControls" : {
+    "cases" : [
+      {
+        "canSpin" : true,
+        "canStop" : false,
+        "expected" : "spin",
+        "input" : "hubButton"
+      },
+      {
+        "canSpin" : false,
+        "canStop" : true,
+        "expected" : "stopEarly",
+        "input" : "hubButton"
+      },
+      {
+        "canSpin" : false,
+        "canStop" : false,
+        "expected" : "nothing (disabled)",
+        "input" : "hubButton"
+      },
+      {
+        "canSpin" : true,
+        "canStop" : false,
+        "expected" : "spin",
+        "input" : "wheelFaceTap"
+      },
+      {
+        "canSpin" : false,
+        "canStop" : true,
+        "expected" : "nothing (wheel-tap-to-stop was dropped Oct 15; do not add on Android)",
+        "input" : "wheelFaceTap"
+      },
+      {
+        "canSpin" : true,
+        "canStop" : false,
+        "expected" : "spin",
+        "input" : "magicTap (VoiceOver two-finger double tap; Android: no direct equivalent, map to the accessibility action of the screen)"
+      },
+      {
+        "canSpin" : false,
+        "canStop" : true,
+        "expected" : "stopEarly",
+        "input" : "magicTap"
+      },
+      {
+        "canSpin" : true,
+        "canStop" : false,
+        "expected" : "spin",
+        "input" : "accessibilityActivate on the wheel"
+      },
+      {
+        "canSpin" : false,
+        "canStop" : true,
+        "expected" : "nothing",
+        "input" : "accessibilityActivate on the wheel"
+      },
+      {
+        "canSpin" : false,
+        "canStop" : true,
+        "expected" : "sound/haptics silenced; the spin still finishes and records exactly once (watchdog)",
+        "input" : "leave the screen mid-spin"
+      }
+    ],
+    "definitions" : {
+      "canSpin" : "catalog loaded && !isSpinning && reveal == nil && !awaitingForcedRespin",
+      "canStop" : "isSpinning && spinIsStoppable && !isStopping (stoppable = clip-locked spin in flight)"
+    },
+    "source" : "Roulette/RouletteView.swift:52,251-252,292,304,310; Roulette/RouletteViewModel.swift:114-118",
+    "stopEarlyRandomDraws" : 2
+  }
+}

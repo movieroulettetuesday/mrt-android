@@ -372,6 +372,217 @@
     ]
   },
   "description" : "Buzzsprout RSS parsing (SPEC §2). feeds[].input is the raw XML; expected.episodes is the parsed list in feed order after guid de-duplication. pubDate is ISO-8601 UTC. summary = longest of (description, content:encoded, itunes:summary) after HTML strip + fan-mail strip.",
+  "discussedFormats" : {
+    "cases" : [
+      {
+        "episodeIds" : [
+
+        ],
+        "episodeTitle" : null,
+        "expected" : "Not discussed on the show yet",
+        "feedLoaded" : true,
+        "iosB673df1" : "Not discussed on the show yet",
+        "iosMatchesSharedRule" : true,
+        "name" : "no ids"
+      },
+      {
+        "episodeIds" : [
+          "g1"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on The Outsiders (S4E34)",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on The Outsiders (S4E34)",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id in feed with S/E"
+      },
+      {
+        "episodeIds" : [
+          "g3"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on Bonus Chat",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on Bonus Chat",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id in feed without S/E"
+      },
+      {
+        "episodeIds" : [
+          "g1"
+        ],
+        "episodeTitle" : "Ep Title",
+        "expected" : "Discussed on Ep Title",
+        "feedLoaded" : false,
+        "iosB673df1" : "Discussed on Ep Title",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id, no feed, episodeTitle"
+      },
+      {
+        "episodeIds" : [
+          "Buzzsprout-123"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on Buzzsprout-123",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on Buzzsprout-123",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id not in feed, no episodeTitle -> raw guid"
+      },
+      {
+        "episodeIds" : [
+          "g1",
+          "g2"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)",
+        "iosMatchesSharedRule" : true,
+        "name" : "2 ids in feed"
+      },
+      {
+        "episodeIds" : [
+          "g1",
+          "g2",
+          "g4"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on The Outsiders (S4E34) + 2 more",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 2 more",
+        "iosMatchesSharedRule" : true,
+        "name" : "3 ids in feed"
+      },
+      {
+        "episodeIds" : [
+          "g1",
+          "x9",
+          "g2",
+          "g4"
+        ],
+        "episodeTitle" : "Ep Title",
+        "expected" : "Discussed on The Outsiders (S4E34) + 3 more",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 3 more",
+        "iosMatchesSharedRule" : true,
+        "name" : "4 ids, one missing (episodeTitle used)"
+      },
+      {
+        "episodeIds" : [
+          "g1",
+          "g2"
+        ],
+        "episodeTitle" : "Ep Title",
+        "expected" : "Discussed on Ep Title",
+        "feedLoaded" : false,
+        "iosB673df1" : "Discussed on Ep Title & Ep Title",
+        "iosMatchesSharedRule" : false,
+        "name" : "2 ids, no feed -> identical labels (Q9)"
+      },
+      {
+        "episodeIds" : [
+          "g1",
+          "g2",
+          "g4"
+        ],
+        "episodeTitle" : "Ep Title",
+        "expected" : "Discussed on Ep Title",
+        "feedLoaded" : false,
+        "iosB673df1" : "Discussed on Ep Title + 2 more",
+        "iosMatchesSharedRule" : false,
+        "name" : "3 ids, no feed -> identical labels (Q9)"
+      },
+      {
+        "episodeIds" : [
+          "g1",
+          "zz",
+          "yy"
+        ],
+        "episodeTitle" : "Ep Title",
+        "expected" : "Discussed on The Outsiders (S4E34) & Ep Title",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 2 more",
+        "iosMatchesSharedRule" : false,
+        "name" : "3 ids, 2 distinct labels"
+      },
+      {
+        "episodeIds" : [
+          "g1",
+          "zz"
+        ],
+        "episodeTitle" : "Ep Title",
+        "expected" : "Discussed on The Outsiders (S4E34) & Ep Title",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) & Ep Title",
+        "iosMatchesSharedRule" : true,
+        "name" : "2 ids, one in feed one via episodeTitle"
+      },
+      {
+        "episodeIds" : [
+          "sample-ep-6"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on Episode 6 (sample)",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on Episode 6 (sample)",
+        "iosMatchesSharedRule" : true,
+        "name" : "samples 1"
+      },
+      {
+        "episodeIds" : [
+          "sample-ep-6",
+          "sample-ep-7"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on Episodes 6 & 7 (sample)",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on Episodes 6 & 7 (sample)",
+        "iosMatchesSharedRule" : true,
+        "name" : "samples 2"
+      },
+      {
+        "episodeIds" : [
+          "sample-ep-6",
+          "sample-ep-7",
+          "sample-ep-9"
+        ],
+        "episodeTitle" : null,
+        "expected" : "Discussed on Episode 6 + 2 more (sample)",
+        "feedLoaded" : true,
+        "iosB673df1" : "Discussed on Episode 6 + 2 more (sample)",
+        "iosMatchesSharedRule" : true,
+        "name" : "samples 3"
+      }
+    ],
+    "description" : "EpisodeLabel.discussedText (SPEC §2.3). Formats: 0 ids -> 'Not discussed on the show yet'; label = title + ' (S4E34)' when the feed has S/E; 1 -> 'Discussed on A'; 2 -> 'Discussed on A & B'; 3+ -> 'Discussed on A + N more'. Title source: feed title, else movie.episodeTitle, else 'Episode n' for sample ids, else the raw guid. `iosB673df1` = what iOS main renders today; `expected` = shared rule decided by MRT App: identical labels collapse and the 1/2/3+ format uses the DISTINCT label count (Q9; iOS fix is a 1.0.1 candidate). Siri always renders with no feed.",
+    "feed" : [
+      {
+        "episode" : 34,
+        "guid" : "g1",
+        "season" : 4,
+        "title" : "The Outsiders"
+      },
+      {
+        "episode" : 35,
+        "guid" : "g2",
+        "season" : 4,
+        "title" : "Laura"
+      },
+      {
+        "episode" : null,
+        "guid" : "g3",
+        "season" : null,
+        "title" : "Bonus Chat"
+      },
+      {
+        "episode" : 1,
+        "guid" : "g4",
+        "season" : 2,
+        "title" : "Mailbag"
+      }
+    ]
+  },
   "fanMailURL" : [
     {
       "expected" : null,
@@ -611,6 +822,78 @@
       "name" : "fan mail anchor without fan_mail href but label"
     },
     {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "g",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "short desc",
+            "title" : "X"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>X</title><guid>g</guid><description>short desc</description><content:encoded><![CDATA[<p>a much longer content encoded body that would win if it counted</p>]]></content:encoded></item></channel></rss>",
+      "name" : "content:encoded AFTER description is ignored (first HTML field wins; SPEC §2.2 / E8)"
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "g",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "a much longer content encoded body that wins",
+            "title" : "X"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>X</title><guid>g</guid><content:encoded><![CDATA[<p>a much longer content encoded body that wins</p>]]></content:encoded><description>short desc</description><itunes:summary>tiny</itunes:summary></item></channel></rss>",
+      "name" : "content:encoded BEFORE description is used (and wins over a shorter summary)"
+    },
+    {
+      "expected" : {
+        "artworkURL" : null,
+        "episodes" : [
+          {
+            "episode" : null,
+            "episodeType" : null,
+            "fanMailURL" : null,
+            "guid" : "g",
+            "imageURL" : null,
+            "link" : null,
+            "pubDate" : null,
+            "season" : null,
+            "seasonEpisodeLabel" : null,
+            "summary" : "a longer itunes summary text",
+            "title" : "X"
+          }
+        ],
+        "ok" : true,
+        "title" : "T"
+      },
+      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>X</title><guid>g</guid><description>short desc</description><itunes:summary>a longer itunes summary text</itunes:summary></item></channel></rss>",
+      "name" : "itunes:summary longer than description wins"
+    },
+    {
       "acceptable" : [
         {
           "error" : "malformed",
@@ -633,7 +916,7 @@
       },
       "input" : "<rss><channel><item>",
       "name" : "truncated rss (android-main RssFeedParserTest.emptyAndBrokenInput)",
-      "platformNote" : "OPEN QUESTION Q2: swift-corelibs XMLParser (Linux) yields ok with 0 episodes; Android main throws RssFeedException; Apple XMLParser may throw. Either way: no episodes. See DISCREPANCIES D10.",
+      "platformNote" : "OPEN QUESTION Q2: swift-corelibs XMLParser (Linux) yields ok with 0 episodes; Android main throws RssFeedException; Apple XMLParser may throw. Either way: no episodes. See DISCREPANCIES D11.",
       "source" : "android-main:RssFeedParserTest.emptyAndBrokenInput"
     },
     {
@@ -791,6 +1074,28 @@
     }
   ],
   "feedURL" : "https://rss.buzzsprout.com/2117292.rss",
+  "feedURLRule" : {
+    "cases" : [
+      {
+        "catalogShowRssURL" : null,
+        "fetchURL" : "https://rss.buzzsprout.com/2117292.rss"
+      },
+      {
+        "catalogShowRssURL" : "https://rss.buzzsprout.com/2117292.rss",
+        "fetchURL" : "https://rss.buzzsprout.com/2117292.rss"
+      },
+      {
+        "catalogShowRssURL" : "https://example.com/other.rss",
+        "fetchURL" : "https://rss.buzzsprout.com/2117292.rss"
+      }
+    ],
+    "description" : "SPEC §2.1 / E5: the feed URL is hard-coded. show.rssURL from the catalog is decoded but NEVER used to fetch (Episodes tab and background alert check).",
+    "httpCaching" : {
+      "catalogRequest" : "bypasses the HTTP cache",
+      "feedRequest" : "useProtocolCachePolicy (HTTP caching applies)"
+    },
+    "source" : "RouletteCore/EpisodeStoreCore.swift:8; Episodes/EpisodeStore.swift:33; MovieRouletteTuesdayApp.swift:7,18; Shared/NewEpisodeAlerts.swift:87"
+  },
   "links" : {
     "appleSearch" : [
       {
@@ -1057,6 +1362,55 @@
       "input" : "garbage"
     }
   ],
+  "refreshRule" : {
+    "cases" : [
+      {
+        "expected" : {
+          "cacheOverwritten" : false,
+          "episodesListChanged" : false,
+          "refresh" : "failed"
+        },
+        "feed" : "empty-channel (see feeds[])",
+        "iosB673df1" : {
+          "cacheOverwritten" : true,
+          "episodesListChanged" : true,
+          "refresh" : "succeeded"
+        },
+        "parse" : {
+          "episodes" : 0,
+          "ok" : true
+        }
+      },
+      {
+        "expected" : {
+          "cacheOverwritten" : false,
+          "episodesListChanged" : false,
+          "refresh" : "failed"
+        },
+        "feed" : "not-xml / truncated rss (see feeds[])",
+        "iosB673df1" : "Linux probe: succeeded with 0 episodes, cache overwritten; Darwin unverified",
+        "parse" : "ok with 0 episodes, or malformed (platform-dependent)"
+      },
+      {
+        "expected" : {
+          "cacheOverwritten" : true,
+          "episodesListChanged" : true,
+          "refresh" : "succeeded"
+        },
+        "feed" : "buzzsprout-fixture",
+        "iosB673df1" : {
+          "cacheOverwritten" : true,
+          "episodesListChanged" : true,
+          "refresh" : "succeeded"
+        },
+        "parse" : {
+          "episodes" : 2,
+          "ok" : true
+        }
+      }
+    ],
+    "description" : "Shared rule (MRT App, Q2): the PARSER may return 0 episodes; the REFRESH treats 0 episodes (or a parse error) as a failure: cache file untouched, current list kept, soft error shown. iOS b673df1 instead saves and applies the empty feed (bug, 1.0.1 candidate); Android follows the shared rule."
+  },
   "stripFanMail" : [
     {
       "expected" : "Hi there",

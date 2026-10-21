@@ -37,7 +37,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
@@ -109,6 +111,14 @@ fun RouletteWheel(
     val measurer = rememberTextMeasurer()
     val rim = BrandColors.WheelRimLight
     val label = categories.getOrNull(geometry.segmentIndex(rotation))?.displayName
+    val canStop = spin != null && spin.stop == null && onStop != null
+    fun perform(input: SpinControls.Input) {
+        when (SpinControls.resolve(input, canSpin, canStop)) {
+            SpinControls.Action.Spin -> onSpin()
+            SpinControls.Action.StopEarly -> onStop?.invoke()
+            SpinControls.Action.Nothing -> Unit
+        }
+    }
     Box(
         modifier
             .fillMaxWidth()
@@ -117,6 +127,14 @@ fun RouletteWheel(
             .semantics {
                 contentDescription = "Roulette wheel"
                 if (label != null && spin == null) stateDescription = "Pointer on $label"
+                // Android stand-in for VoiceOver's magic tap: one screen-level action that spins or stops.
+                if (canSpin || canStop) {
+                    customActions = listOf(
+                        CustomAccessibilityAction(if (canStop) "Stop the wheel" else "Spin the wheel") {
+                            perform(SpinControls.Input.MagicTap); true
+                        },
+                    )
+                }
             },
         contentAlignment = Alignment.Center,
     ) {
@@ -126,7 +144,7 @@ fun RouletteWheel(
                 .graphicsLayer { rotationZ = (angle % 360.0).toFloat() }
                 .clip(CircleShape)
                 // The wheel face only spins (iOS): stopping is the hub's job.
-                .clickable(enabled = canSpin, onClickLabel = "Spin") { onSpin() },
+                .clickable(enabled = canSpin, onClickLabel = "Spin") { perform(SpinControls.Input.WheelFaceTap) },
         ) {
             val r = size.minDimension / 2
             val c = Offset(size.width / 2, size.height / 2)
@@ -183,9 +201,9 @@ fun RouletteWheel(
                 .background(MaterialTheme.colorScheme.surface)
                 .border(4.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 .clickable(
-                    enabled = canSpin || (spin != null && spin.stop == null && onStop != null),
+                    enabled = canSpin || canStop,
                     onClickLabel = if (spin != null) "Stop the wheel" else "Spin the wheel",
-                ) { if (spin != null) onStop?.invoke() else onSpin() }
+                ) { perform(SpinControls.Input.HubButton) }
                 .testTag("spin-hub"),
             contentAlignment = Alignment.Center,
         ) {

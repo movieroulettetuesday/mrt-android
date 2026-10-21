@@ -92,6 +92,8 @@ kotlin {
 tasks.withType<Test>().configureEach {
     javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(21)) })
     maxHeapSize = "2g"
+    // The vector tests read shared/ directly: re-run them whenever the pinned contract changes.
+    inputs.dir(rootProject.layout.projectDirectory.dir("shared")).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("sharedContract")
     // Robolectric 4.17 + API 36 touches FileDescriptor internals.
     jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED")
 }
@@ -133,11 +135,13 @@ dependencies {
 // Constants in shared/data/*.json are turned into Kotlin (SharedContract.kt) at build time.
 // ---------------------------------------------------------------------------------------------
 val sharedDir = rootProject.layout.projectDirectory.dir("shared")
-val externalSharedDir: String = System.getenv("MRT_SHARED_DIR") ?: "/workspace/mrt-shared"
+val externalSharedDir: String = providers.environmentVariable("MRT_SHARED_DIR").orNull ?: "/workspace/mrt-shared"
 
 abstract class VerifySharedContract : DefaultTask() {
     @get:InputDirectory abstract val pinnedDir: DirectoryProperty
     @get:Input abstract val externalDir: Property<String>
+    /** The mrt-shared JSON files themselves, so editing mrt-shared re-runs the check (never "up to date"). */
+    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE) abstract val externalFiles: ConfigurableFileCollection
     @get:OutputFile abstract val stamp: RegularFileProperty
 
     private fun sha256Hex(f: File): String =
@@ -154,6 +158,14 @@ abstract class VerifySharedContract : DefaultTask() {
         val onDisk = root.walkTopDown().filter { it.isFile && it.extension == "json" }
             .map { it.relativeTo(root).invariantSeparatorsPath }.toSet()
         if (onDisk != sums.keys) throw GradleException("shared/: ${onDisk - sums.keys} / ${sums.keys - onDisk} not matching SHA256SUMS")
+        if (File(external, "test-vectors").isDirectory) {
+            val ext = external.walkTopDown().filter { it.isFile && it.extension == "json" }
+                .map { it.relativeTo(external).invariantSeparatorsPath }
+                .filter { it.startsWith("data/") || it.startsWith("test-vectors/") }.toSet()
+            if (ext != sums.keys) {
+                throw GradleException("shared/ is stale vs ${external.path}: missing ${ext - sums.keys}, extra ${sums.keys - ext}. Run scripts/sync-shared.sh.")
+            }
+        }
         for ((path, hash) in sums) {
             if (sha256Hex(File(root, path)) != hash) throw GradleException("shared/$path does not match SHA256SUMS. Run scripts/sync-shared.sh.")
             val ext = File(external, path)
@@ -169,6 +181,7 @@ val verifySharedContract = tasks.register<VerifySharedContract>("verifySharedCon
     description = "Checks shared/ against shared/SHA256SUMS (and against mrt-shared when present)."
     pinnedDir.set(sharedDir)
     externalDir.set(externalSharedDir)
+    externalFiles.from(fileTree(externalSharedDir) { include("data/**/*.json", "test-vectors/**/*.json") })
     stamp.set(layout.buildDirectory.file("shared-contract/verified.txt"))
 }
 

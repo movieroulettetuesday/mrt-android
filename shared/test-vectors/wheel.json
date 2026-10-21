@@ -1571,6 +1571,12 @@
     "stopPlan" : {
       "currentAngle" : 1029.8747666417953,
       "displayedAngleAtEnd" : 1410.7914038475856,
+      "drawAccounting" : {
+        "explanation" : "SpinStopPlan.randomTarget = randomTargetRotation(from: current+120, fullTurns: 0...0). Int.random(in: 0...0) still consumes ONE next() (Lemire, n=1), then ONE next() for the extra angle: 2 draws total. secondDrawExtraDegrees = draw 2 of seed 5 as Double in [0,360), before edge padding.",
+        "rngDrawsConsumed" : 2,
+        "sameResultAsUncounted" : true,
+        "secondDrawExtraDegrees" : 260.91663720579015
+      },
       "elapsed" : 2,
       "landedIndex" : 0,
       "newTarget" : 1410.7914038475856,

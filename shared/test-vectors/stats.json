@@ -167,7 +167,7 @@
     ],
     "schemaVersion" : 2
   },
-  "description" : "Stats formulas and other pure local logic (SPEC §2.4-2.5, §5, §7-§9). Ties in counts are avoided on purpose (see SPEC OPEN QUESTION Q6).",
+  "description" : "Stats formulas and other pure local logic (SPEC §2.4-2.5, §5, §7-§9). Count ordering follows the shared tie rule (count desc, then id/genre ascending by code point; SPEC §5, Q6), not iOS b673df1 Dictionary order.",
   "emailSuggestion" : {
     "address" : "theMrtPodcast@gmail.com",
     "cases" : [
@@ -937,6 +937,25 @@
         "title" : "T"
       }
     ],
+    "creditLine" : {
+      "cases" : [
+        {
+          "creditName" : "Laura from Ohio",
+          "expectedBody" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nFrom: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+          "iosB673df1Body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: From: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+          "note" : "",
+          "title" : "Tremors"
+        },
+        {
+          "creditName" : "Laura from Ohio",
+          "expectedBody" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: Worms\nFrom: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+          "iosB673df1Body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: Worms\nFrom: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+          "note" : "Worms",
+          "title" : "Tremors"
+        }
+      ],
+      "description" : "E17 / Q8: every email from the app (Mail compose and mailto) uses InAppSuggestion.asEmail, so the credit is included when filled in. iOS b673df1 appends the credit INTO `why`, so an empty note renders `Why: From: <name>` (bug, 1.0.1 candidate). Shared rule: `From: <credit>` is its own line after `Why:`, or replaces it when the note is empty. Android follows the shared rule."
+    },
     "limits" : {
       "creditName" : 60,
       "note" : 280,
@@ -1252,15 +1271,15 @@
           },
           {
             "count" : 1,
-            "id" : "zzz"
-          },
-          {
-            "count" : 1,
             "id" : "b"
           },
           {
             "count" : 1,
             "id" : "c"
+          },
+          {
+            "count" : 1,
+            "id" : "zzz"
           }
         ],
         "distinctMovies" : 5,
@@ -1271,11 +1290,11 @@
           },
           {
             "count" : 1,
-            "genre" : "Drama"
+            "genre" : "Comedy"
           },
           {
             "count" : 1,
-            "genre" : "Comedy"
+            "genre" : "Drama"
           }
         ],
         "mostSpunCategory" : {
@@ -1291,7 +1310,6 @@
           "c-1",
           "a-1"
         ],
-        "tieOrderUnspecified" : "entries with equal counts may appear in any order (iOS sorts a Dictionary; see SPEC Q6); compare equal-count groups as sets",
         "totalSpins" : 7
       },
       "history" : [
@@ -1361,11 +1379,11 @@
           },
           {
             "count" : 1,
-            "id" : "zzz"
+            "id" : "c"
           },
           {
             "count" : 1,
-            "id" : "c"
+            "id" : "zzz"
           }
         ],
         "distinctMovies" : 6,
@@ -1396,7 +1414,6 @@
           "c-1",
           "a-1"
         ],
-        "tieOrderUnspecified" : "entries with equal counts may appear in any order (iOS sorts a Dictionary; see SPEC Q6); compare equal-count groups as sets",
         "totalSpins" : 14
       },
       "history" : [
@@ -1461,13 +1478,96 @@
         "recentMovieIds" : [
 
         ],
-        "tieOrderUnspecified" : "entries with equal counts may appear in any order (iOS sorts a Dictionary; see SPEC Q6); compare equal-count groups as sets",
         "totalSpins" : 0
       },
       "history" : [
 
       ],
       "name" : "empty"
+    },
+    {
+      "archive" : {
+        "categoryCounts" : {
+
+        },
+        "movieCounts" : {
+
+        },
+        "totalSpins" : 0
+      },
+      "expected" : {
+        "categoryBreakdown" : [
+          {
+            "count" : 2,
+            "id" : "a"
+          },
+          {
+            "count" : 2,
+            "id" : "b"
+          },
+          {
+            "count" : 1,
+            "id" : "c"
+          }
+        ],
+        "distinctMovies" : 4,
+        "genreBreakdown" : [
+          {
+            "count" : 2,
+            "genre" : "Comedy"
+          },
+          {
+            "count" : 2,
+            "genre" : "Horror"
+          },
+          {
+            "count" : 1,
+            "genre" : "Drama"
+          }
+        ],
+        "mostSpunCategory" : {
+          "count" : 2,
+          "id" : "a"
+        },
+        "mostSpunMovie" : {
+          "count" : 2,
+          "id" : "b-1"
+        },
+        "recentMovieIds" : [
+          "b-1",
+          "a-2",
+          "c-1"
+        ],
+        "totalSpins" : 5
+      },
+      "history" : [
+        {
+          "categoryId" : "b",
+          "movieId" : "b-1",
+          "timestamp" : "2026-10-01T12:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-1",
+          "timestamp" : "2026-10-01T13:00:00Z"
+        },
+        {
+          "categoryId" : "c",
+          "movieId" : "c-1",
+          "timestamp" : "2026-10-01T14:00:00Z"
+        },
+        {
+          "categoryId" : "a",
+          "movieId" : "a-2",
+          "timestamp" : "2026-10-01T15:00:00Z"
+        },
+        {
+          "categoryId" : "b",
+          "movieId" : "b-1",
+          "timestamp" : "2026-10-01T16:00:00Z"
+        }
+      ],
+      "name" : "ties (shared rule: count desc, then id asc; genre asc)"
     }
   ],
   "spinOfTheDay" : {
@@ -1504,6 +1604,106 @@
       }
     ],
     "description" : "SpinOfTheDay.pick for the dayKey (local calendar day; vectors use UTC noon).",
+    "fallbackCategory" : {
+      "cases" : [
+        {
+          "categoryId" : null,
+          "dayKey" : "2026-01-02",
+          "movieCategories" : [
+
+          ],
+          "movieId" : "m3"
+        },
+        {
+          "categoryId" : null,
+          "dayKey" : "2026-01-06",
+          "movieCategories" : [
+            "ghost",
+            "c2"
+          ],
+          "movieId" : "m1"
+        },
+        {
+          "categoryId" : "c2",
+          "dayKey" : "2026-01-13",
+          "movieCategories" : [
+            "c2"
+          ],
+          "movieId" : "m2"
+        }
+      ],
+      "catalog" : {
+        "categories" : [
+          {
+            "colorHex" : "#112233",
+            "fullName" : null,
+            "id" : "c-empty",
+            "movieIds" : [
+
+            ],
+            "name" : "Empty",
+            "weight" : null
+          },
+          {
+            "colorHex" : "#445566",
+            "fullName" : null,
+            "id" : "c2",
+            "movieIds" : [
+              "m2"
+            ],
+            "name" : "Two",
+            "weight" : null
+          }
+        ],
+        "movies" : [
+          {
+            "categories" : [
+              "ghost",
+              "c2"
+            ],
+            "episodeIds" : [
+
+            ],
+            "episodeTitle" : null,
+            "genre" : "g",
+            "id" : "m1",
+            "isInfamous" : false,
+            "title" : "M1",
+            "year" : 2000
+          },
+          {
+            "categories" : [
+              "c2"
+            ],
+            "episodeIds" : [
+
+            ],
+            "episodeTitle" : null,
+            "genre" : "g",
+            "id" : "m2",
+            "isInfamous" : false,
+            "title" : "M2",
+            "year" : 2000
+          },
+          {
+            "categories" : [
+
+            ],
+            "episodeIds" : [
+
+            ],
+            "episodeTitle" : null,
+            "genre" : "g",
+            "id" : "m3",
+            "isInfamous" : false,
+            "title" : "M3",
+            "year" : 2000
+          }
+        ],
+        "schemaVersion" : 1
+      },
+      "description" : "SPEC §8 / E16: when the day's category has no candidates, the movie comes from the whole catalog and its category is movie.categories.first ONLY if that id is known, otherwise null. There is no search for a later known id (unlike jackpotPick). The widget uses the catalog without deduplicated()."
+    },
     "stableHash" : [
       {
         "fnv1a64" : "14695981039346656037",
