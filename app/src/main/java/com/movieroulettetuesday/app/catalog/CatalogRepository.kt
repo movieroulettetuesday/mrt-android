@@ -70,13 +70,13 @@ class CatalogRepository(
     companion object {
         const val LOAD_FAILED = "The movie list couldn’t be loaded. Check your connection and try again."
 
-        fun create(context: Context, build: String): CatalogRepository {
+        fun create(context: Context, build: String, networkEnabled: Boolean = true): CatalogRepository {
             val app = context.applicationContext
-            val cache = CatalogCache(File(app.filesDir, CatalogCache.FILE_NAME), build)
+            val cache = if (networkEnabled) CatalogCache(File(app.filesDir, CatalogCache.FILE_NAME), build) else null
             return CatalogRepository(
                 cache = cache,
                 bundled = { app.assets.open(RemoteCatalog.BUNDLED_ASSET).use { it.readBytes() } },
-                refresher = CatalogRefresher(RemoteCatalogSource(), cache),
+                refresher = if (networkEnabled) CatalogRefresher(RemoteCatalogSource(), cache) else null,
             )
         }
     }

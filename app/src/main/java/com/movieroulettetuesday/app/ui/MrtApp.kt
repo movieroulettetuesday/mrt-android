@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Casino
+import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material3.Icon
@@ -28,10 +28,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.movieroulettetuesday.app.R
+import com.movieroulettetuesday.app.roulette.RouletteRoute
 
 /** The four iOS tabs (ContentView.swift): Roulette, Episodes, Movies, Stats. */
 enum class TopLevelDestination(val route: String, @param:StringRes val label: Int, val icon: ImageVector) {
-    Roulette("roulette", R.string.tab_roulette, Icons.Filled.Casino),
+    Roulette("roulette", R.string.tab_roulette, Icons.Filled.Album),
     Episodes("episodes", R.string.tab_episodes, Icons.Filled.Mic),
     Movies("movies", R.string.tab_movies, Icons.Filled.Movie),
     Stats("stats", R.string.tab_stats, Icons.Filled.BarChart),
@@ -69,7 +70,10 @@ fun MrtApp() {
             startDestination = TopLevelDestination.Roulette.route,
             modifier = Modifier.padding(padding),
         ) {
-            TopLevelDestination.entries.forEach { dest ->
+            composable(TopLevelDestination.Roulette.route) {
+                RouletteRoute(Modifier.testTag("screen-roulette"))
+            }
+            TopLevelDestination.entries.filter { it != TopLevelDestination.Roulette }.forEach { dest ->
                 composable(dest.route) { PlaceholderScreen(dest) }
             }
         }
