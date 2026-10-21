@@ -46,6 +46,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.movieroulettetuesday.app.MrtApplication
+import com.movieroulettetuesday.app.catalog.ShowInfo
+import com.movieroulettetuesday.app.community.CommunityCopy
+import com.movieroulettetuesday.app.community.EpisodePollSection
+import com.movieroulettetuesday.app.community.ListenerRatingSection
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import com.movieroulettetuesday.app.BuildConfig
 import com.movieroulettetuesday.app.R
 import com.movieroulettetuesday.app.movies.StreamingCatalog
@@ -56,6 +62,7 @@ import com.movieroulettetuesday.app.settings.SettingsScreen
 import com.movieroulettetuesday.app.settings.SettingsState
 import com.movieroulettetuesday.app.stats.StatsScreen
 import com.movieroulettetuesday.app.suggest.SuggestMovieSheet
+import com.movieroulettetuesday.app.suggest.SuggestionRateLimit
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -201,7 +208,14 @@ fun MrtApp() {
     }
     if (suggestOpen) {
         val catalog = rememberMoviesInputs(app).catalog
-        SuggestMovieSheet(categories = catalog?.categories.orEmpty(), onDismiss = { suggestOpen = false })
+        val community = app.community?.takeIf { it.canWrite }
+        SuggestMovieSheet(
+            categories = catalog?.categories.orEmpty(),
+            onDismiss = { suggestOpen = false },
+            sendInApp = community?.let { c -> { s -> c.submitSuggestion(s, app.appVersion) } },
+            rateLimit = { SuggestionRateLimit(app.settings.getLong(SuggestionRateLimit.STORAGE_KEY)) },
+            recordSend = { app.settings.putLong(SuggestionRateLimit.STORAGE_KEY, System.currentTimeMillis()) },
+        )
     }
 }
 
@@ -212,6 +226,8 @@ private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtAppli
         val haptics by prefs.haptics.collectAsStateWithLifecycle()
         val tickSound by prefs.tickSound.collectAsStateWithLifecycle()
         val alerts by prefs.newEpisodeAlerts.collectAsStateWithLifecycle()
+        val autoShare by prefs.autoShareRatings.collectAsStateWithLifecycle()
+        val canShare = app.community?.canWrite == true
         val episodes by app.episodeRepository.state.collectAsStateWithLifecycle()
         var alertNote by remember { mutableStateOf<String?>(null) }
         val context = LocalContext.current
@@ -224,7 +240,8 @@ private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtAppli
             finish(granted && app.episodeNotifier.canPost())
         }
         SettingsScreen(
-            state = SettingsState(appearance, haptics, alerts, alertNote = alertNote, tickSound = tickSound),
+            state = SettingsState(appearance, haptics, alerts, alertNote = alertNote, tickSound = tickSound,
+                autoShareRatings = if (canShare) autoShare else null, communityEnabled = canShare),
             actions = SettingsActions(
                 setAppearance = prefs::setAppearance,
                 setHaptics = prefs::setHaptics,
@@ -262,12 +279,21 @@ private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtAppli
 
 private fun NavGraphBuilder.movieDetail(prefix: String, nav: NavHostController, app: MrtApplication, linkEpisodes: Boolean) {
     composable("$prefix/movie/{id}") { entry ->
+        val inputs = rememberMoviesInputs(app)
+        val community = app.community
+        val autoShare by app.preferences.autoShareRatings.collectAsStateWithLifecycle()
+        val sharing = autoShare && community?.canWrite == true
+        val scope = rememberCoroutineScope()
+        val movieId = entry.arguments?.getString("id").orEmpty()
         MovieDetailScreen(
-            movieId = entry.arguments?.getString("id").orEmpty(),
-            inputs = rememberMoviesInputs(app),
+            movieId = movieId,
+            inputs = inputs,
             ratingsStore = app.personalRatings,
             onBack = { nav.popBackStack() },
             onOpenEpisode = if (linkEpisodes) ({ nav.navigate(Routes.episode(prefix, it)) }) else null,
+            ratingFooter = if (sharing) CommunityCopy.AUTO_SHARE_FOOTER else "Saved on this device.",
+            onRated = { half -> if (sharing && half != null) scope.launch { community?.submitListenerRating(movieId, half) } },
+            extra = { movie -> community?.let { ListenerRatingSection(movie.id, inputs.ratings.halfStars(movie.id), it) } },
         )
     }
 }
@@ -282,6 +308,9 @@ private fun NavGraphBuilder.episodeDetail(prefix: String, nav: NavHostController
             catalog = inputs.catalog,
             onBack = { nav.popBackStack() },
             onOpenMovie = if (linkMovie) ({ nav.navigate(Routes.movie(prefix, it)) }) else null,
+            extra = { episode ->
+                app.community?.let { c -> EpisodePollSection(c.poll(episode.guid, inputs.catalog?.showInfo ?: ShowInfo.MRT), c) }
+            },
         )
     }
 }

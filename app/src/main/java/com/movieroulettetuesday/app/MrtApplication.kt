@@ -3,6 +3,12 @@ package com.movieroulettetuesday.app
 import android.app.Application
 import android.os.Build
 import com.movieroulettetuesday.app.catalog.CatalogRepository
+import com.movieroulettetuesday.app.community.CommunityConfig
+import com.movieroulettetuesday.app.community.CommunityService
+import com.movieroulettetuesday.app.community.CommunityStore
+import com.movieroulettetuesday.app.community.InstallId
+import com.movieroulettetuesday.app.community.PollOverrides
+import com.movieroulettetuesday.app.community.WebCommunityStore
 import com.movieroulettetuesday.app.data.KeyValueStore
 import com.movieroulettetuesday.app.data.PrefsKeyValueStore
 import com.movieroulettetuesday.app.episodes.AppleEpisodeLinks
@@ -42,7 +48,23 @@ class MrtApplication : Application() {
         ArtworkLoader.enabled = !isUnderTest
         ArtworkLoader.diskDir = File(cacheDir, "artwork")
         if (!isUnderTest && preferences.newEpisodeAlerts.value) NewEpisodeSchedule.schedule(this) // KEEP: no reset
+        val config = if (isUnderTest) CommunityConfig.disabled
+        else CommunityConfig.fromBuild(BuildConfig.MRT_CLOUDKIT_API_TOKEN, BuildConfig.MRT_RELAY_URL)
+        if (config.canRead) community = createCommunity(WebCommunityStore(config, installId = { InstallId(settings).value }))
     }
+
+    /**
+     * Listener polls + ratings (Option A: CloudKit Web Services reads, relay writes). null = this
+     * build has no CloudKit API token, so every community UI stays hidden. Tests can set it.
+     */
+    var community: CommunityService? = null
+
+    fun createCommunity(store: CommunityStore): CommunityService {
+        val overrides = runCatching { assets.open("polls.json").use { PollOverrides.decode(it.readBytes().decodeToString()) } }.getOrNull()
+        return CommunityService(store, settings, overrides)
+    }
+
+    val appVersion: String get() = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
 
     /** Local app settings (iOS UserDefaults / @AppStorage). */
     val settings: KeyValueStore by lazy { PrefsKeyValueStore.of(this) }

@@ -220,6 +220,7 @@ class WebCommunityStore(
                 "invalid_stars" -> CommunityError.InvalidStars()
                 else -> when (http) {
                     429, 503 -> CommunityError.Busy(retry)
+                    401, 403 -> CommunityError.NotSetUp() // bad/revoked API token (body may be unreadable)
                     else -> CommunityError.Service("Something went wrong. Try again later.")
                 }
             }

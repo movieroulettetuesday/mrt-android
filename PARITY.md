@@ -93,14 +93,14 @@ _Last updated 2026-10-21 (ET) after merging the shared contract (`feature/shared
 | iOS | Android | Effort | Status |
 |---|---|---|---|
 | `SuggestMovieSheet.swift`, `MovieSuggestion` (mailto `theMrtPodcast@gmail.com`, subject "Movie suggestion: …", body template) | `suggest/SuggestMovieSheet.kt` + `MovieSuggestion.kt`: same fields/limits/prompts; `ACTION_SENDTO mailto:` with same subject/body plus EXTRA_SUBJECT/TEXT; credit name added as "From: …" like iOS `asEmail`; copies the address + "Email address copied" if no mail app | S | ✅ 5 + 3 Compose tests |
-| `InAppSuggestion` → CloudKit `Suggestion` record (title ≤120, note ≤280, credit ≤60, 1 per 10 min) | Needs backend | M | ⏸ backend decision |
+| `InAppSuggestion` → CloudKit `Suggestion` record (title ≤120, note ≤280, credit ≤60, 1 per 10 min) | `CommunityService.submitSuggestion` → relay `/v1/suggestion` (relay writes `suggestion-<UUID>` with the 5 iOS fields); the sheet's in-app send appears only when the relay is configured, email stays the fallback | M | ✅ code + tests; live once keys exist (KEYS_SETUP.md) |
 
 ## 9. Polls (CloudKit) and 10. Shared ratings (CloudKit)
 | iOS | Android | Effort | Status |
 |---|---|---|---|
-| `Community.swift` (`PollFactory` default poll per episode via FNV-1a: good/bad, recommend, who won the argument; `polls.json` overrides; `PollResults`, `RatingAggregate`, `CommunityBackoff`, `TimedCache`) | Pure Kotlin port (no backend needed) | M | ⬜ |
-| `CloudKitCommunityStore.swift`, `CommunityService.swift`, `EpisodePollSection.swift`, `ListenerRatingSection.swift` (`PollVote`, `ListenerRating` stars + halfStars; record names hash iCloud user id) | `CommunityStore` interface + backend adapter | L | ⏸ see `backend-options.md` |
-| `-MRTMockCommunity` in-memory store | Fake store for tests/previews | S | ⬜ |
+| `Community.swift` (`PollFactory` default poll per episode via FNV-1a: good/bad, recommend, who won the argument; `polls.json` overrides; `PollResults`, `RatingAggregate`, `CommunityBackoff`, `TimedCache`, record names) | `community/Community.kt` (pure port; cloudkit.json + pollTally + ratingAggregate vectors pass) | M | ✅ 7 tests |
+| `CloudKitCommunityStore.swift`, `CommunityService.swift`, `EpisodePollSection.swift`, `ListenerRatingSection.swift` (`PollVote`, `ListenerRating` stars + halfStars; record names hash iCloud user id) | Option A: `community/CommunityStore.kt` (`WebCommunityStore`: CloudKit Web Services `records/query` reads with a read-only API token; relay writes), `CommunityService.kt` (same flows, keys, cache/backoff), `CommunityUi.kt` (Listener Poll in episode detail, Listener Rating under Your Rating, auto-share toggle). Hidden unless `MRT_CLOUDKIT_API_TOKEN` is set at build time; read-only without `MRT_RELAY_URL`. Android voter = random install id (one vote per install, not per account) | L | ✅ code + 22 tests (mock server); 🔑 live once keys + relay exist |
+| `-MRTMockCommunity` in-memory store | `FakeCommunityStore` (tests) | S | ✅ |
 
 ## Shared contract (mrt-shared)
 | Item | Android | Status |
