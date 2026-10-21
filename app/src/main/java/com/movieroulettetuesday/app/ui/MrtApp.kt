@@ -28,6 +28,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.movieroulettetuesday.app.R
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.navigation
+import com.movieroulettetuesday.app.MrtApplication
+import com.movieroulettetuesday.app.catalog.CatalogRepository
+import com.movieroulettetuesday.app.episodes.EpisodeDetailScreen
+import com.movieroulettetuesday.app.episodes.EpisodesScreen
 import com.movieroulettetuesday.app.roulette.RouletteRoute
 
 /** The four iOS tabs (ContentView.swift): Roulette, Episodes, Movies, Stats. */
@@ -43,6 +54,8 @@ fun MrtApp() {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val current = backStack?.destination
+    val app = LocalContext.current.applicationContext as MrtApplication
+    val episodesState by app.episodeRepository.state.collectAsStateWithLifecycle()
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -57,7 +70,16 @@ fun MrtApp() {
                                 restoreState = true
                             }
                         },
-                        icon = { Icon(dest.icon, contentDescription = null) },
+                        icon = {
+                            val badge = if (dest == TopLevelDestination.Episodes) episodesState.newEpisodeCount else 0
+                            if (badge > 0) {
+                                BadgedBox(badge = { Badge(Modifier.testTag("episodes-badge")) { Text("$badge") } }) {
+                                    Icon(dest.icon, contentDescription = null)
+                                }
+                            } else {
+                                Icon(dest.icon, contentDescription = null)
+                            }
+                        },
                         label = { Text(stringResource(dest.label)) },
                         modifier = Modifier.testTag("tab-${dest.route}"),
                     )
@@ -73,7 +95,8 @@ fun MrtApp() {
             composable(TopLevelDestination.Roulette.route) {
                 RouletteRoute(Modifier.testTag("screen-roulette"))
             }
-            TopLevelDestination.entries.filter { it != TopLevelDestination.Roulette }.forEach { dest ->
+            episodesGraph(navController, app)
+            TopLevelDestination.entries.filter { it == TopLevelDestination.Movies || it == TopLevelDestination.Stats }.forEach { dest ->
                 composable(dest.route) { PlaceholderScreen(dest) }
             }
         }
@@ -84,5 +107,31 @@ fun MrtApp() {
 fun PlaceholderScreen(dest: TopLevelDestination) {
     Box(Modifier.fillMaxSize().testTag("screen-${dest.route}"), contentAlignment = Alignment.Center) {
         Text(stringResource(dest.label))
+    }
+}
+
+private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplication) {
+    navigation(startDestination = "episodes/list", route = TopLevelDestination.Episodes.route) {
+        composable("episodes/list") {
+            val catalog = app.catalogRepository.state.collectAsStateWithLifecycle().value
+            EpisodesScreen(
+                repository = app.episodeRepository,
+                catalog = (catalog as? CatalogRepository.State.Loaded)?.catalog,
+                settings = app.settings,
+                onOpenEpisode = { nav.navigate("episodes/episode/${android.net.Uri.encode(it)}") },
+                modifier = Modifier.testTag("screen-episodes"),
+            )
+        }
+        composable("episodes/episode/{guid}") { entry ->
+            val catalog = app.catalogRepository.state.collectAsStateWithLifecycle().value
+            EpisodeDetailScreen(
+                guid = entry.arguments?.getString("guid").orEmpty(),
+                repository = app.episodeRepository,
+                appleLinks = app.appleEpisodeLinks,
+                catalog = (catalog as? CatalogRepository.State.Loaded)?.catalog,
+                onBack = { nav.popBackStack() },
+                onOpenMovie = null,
+            )
+        }
     }
 }

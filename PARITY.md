@@ -13,7 +13,7 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | iOS (SwiftUI) | Android (Compose) | Effort | Status |
 |---|---|---|---|
 | `MovieRouletteTuesdayApp.swift`, `ContentView.swift` (TabView: Roulette, Episodes, Movies, Stats) | `MainActivity.kt`, `ui/MrtApp.kt` (single activity, `NavigationBar` + `NavHost`, same tab order) | S | ✅ |
-| Episodes tab badge (new since last viewed, `NewEpisodeBadge.swift`) | `NavigationBar` `BadgedBox` + DataStore timestamp | S | ⬜ |
+| Episodes tab badge (new since last viewed, `NewEpisodeBadge.swift`) | `NavigationBar` `BadgedBox` + `EpisodeRepository.markViewed` (SharedPreferences `episodes.lastViewedAt`, first-load baseline) | S | ✅ tested |
 | `Shared/Brand.swift`, `CleanPro.swift`, `Color+Hex.swift`, asset colors (BrandTeal/Peach, WheelRim, LaunchBackground) | `ui/theme/Theme.kt` (`BrandColors`, M3 light/dark schemes), `catalog/HexColor.kt` | S | 🟡 colors ported; CleanPro card styling not yet |
 | `AppearancePreference.swift`, `Appearance.swift` (System/Light/Dark) | DataStore pref + `MrtTheme(darkTheme=…)` | S | ⬜ |
 | `LaunchSplash.swift`, `LaunchSplashView.swift` (cold-launch animation, skippable, Reduce Motion crossfade) | `androidx.core:core-splashscreen` + Compose intro | M | ⬜ |
@@ -57,16 +57,16 @@ _Last updated 2026-10-21 (ET) after merging skeleton `a323430`, secret-scan fix 
 | Where to Watch (`WhereToWatchDisplay`, `StreamingCatalog`, logos from image.tmdb.org, JustWatch/TMDB attribution, always visible with empty message) | Section on movie page (Coil for logos or plain `ImageBitmap` loader) | M | 🟡 model ✅, UI ⬜ |
 | My Services (`MyServices`, "on my services", "available first") | DataStore + filter | S | ⬜ |
 | `PersonalRatings.swift`, `PersonalRatingsStore.swift`, `StarRatingView.swift` (½–5 stars, Want to Watch / Watched) | Local store + star composable | M | ⬜ |
-| `Artwork.swift`, `ArtworkLoader.swift`, `ArtworkImage.swift` | Image loading (Coil 3 or tiny cache) | M | ⬜ |
+| `Artwork.swift`, `ArtworkLoader.swift`, `ArtworkImage.swift` | `ui/Artwork.kt`: dependency-free loader (memory LRU + disk cache, HTTPS-only, candidates best-first: episode art → poster → show art); `ArtworkResolver` port | M | ✅ (http artwork upgraded to https) |
 | Host Rating (feature-flagged off on iOS) | Keep hidden | – | ⏸ off on iOS |
 
 ## 3. Episodes
 | iOS | Android | Effort | Status |
 |---|---|---|---|
-| `RSSFeedParser.swift` (Buzzsprout `https://rss.buzzsprout.com/2117292.rss`, itunes:season/episode/image, fan-mail link strip) | `XmlPullParser` port + fixture `feed-snippet.xml` tests | M | ⬜ |
-| `EpisodeStoreCore.swift`, `Episodes/EpisodeStore.swift` (cache, refresh) | Repository + file cache | M | ⬜ |
-| `EpisodesView.swift` (season sections), `EpisodeDetailView.swift` (About, Movie Discussed) | Screens | M | ⬜ |
-| `ListenCard.swift`, `ShowLinks.swift`, `AppleEpisodeLinks.swift` (Apple exact episode via iTunes lookup, Spotify search, Overcast, Buzzsprout) | Intents to browser/apps; consider adding Pocket Casts / YouTube Music | M | ⬜ |
+| `RSSFeedParser.swift` (Buzzsprout `https://rss.buzzsprout.com/2117292.rss`, itunes:season/episode/image, fan-mail link strip) | `episodes/RssFeedParser.kt` (`XmlPullParser`; same fields, fullest notes, fan-mail strip, guid→link fallback, dedupe, RFC 822 variants); iOS fixture + trimmed live-feed fixture | M | ✅ 5 tests; the live feed parses all 184 episodes, 180 linked to the catalog |
+| `EpisodeStoreCore.swift`, `Episodes/EpisodeStore.swift` (cache, refresh) | `episodes/EpisodeRepository.kt` (cache-first, 20 s timeout, 5-min freshness, shared in-flight load, soft offline error, `episodes-cache.json`), `EpisodeGrouper`/`EpisodeGroupExpansion` (same serialized format) | M | ✅ 5 + 6 tests |
+| `EpisodesView.swift` (season sections), `EpisodeDetailView.swift` (About, Movie Discussed) | `episodes/EpisodesScreen.kt` (Season/Year/All segmented, collapsible remembered headers, pull-to-refresh, Offline label, footer count + updated), `EpisodeDetailScreen.kt` (artwork, About, fan mail, Movie Discussed, Listen) | M | ✅ 2 Compose tests (phone layout; no split view yet) |
+| `ListenCard.swift`, `ShowLinks.swift`, `AppleEpisodeLinks.swift` (Apple exact episode via iTunes lookup, Spotify search, Overcast, Buzzsprout) | `episodes/PodcastLinks.kt` (`PodcastLinks`, `AppleEpisodeLookup` hourly-throttled cache, Spotify search cleaner, `ListenLinks`) → `ACTION_VIEW` | M | ✅ 5 tests (iOS title cases ported) |
 | `EpisodeLabel.swift` ("Discussed on …") | `roulette/Share.kt` `EpisodeLabel` (catalog-only until feed lands) | S | 🟡 |
 
 ## 4. Stats
