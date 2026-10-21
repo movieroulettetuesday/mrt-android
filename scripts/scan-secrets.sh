@@ -69,7 +69,8 @@ scan_commit() {
   while IFS= read -r f; do
     [ -z "$f" ] && continue
     [[ "$f" =~ $ALLOW_FILES ]] && continue
-    { git show --format= --unified=0 --no-color "$c" -- "$f" | grep -E '^\+' | grep -v -E '^\+\+\+ ' || true; } | sed 's/^+//' | check_text "${c:0:9}:$f"
+    added="$(git show --format= --unified=0 --no-color "$c" -- "$f" | grep -E '^\+' | grep -v -E '^\+\+\+ ' | sed 's/^+//' || true)"
+    check_text "${c:0:9}:$f" <<< "$added"
   done < <(git diff-tree --no-commit-id --name-only --diff-filter=ACMR -r --root "$c")
 }
 
