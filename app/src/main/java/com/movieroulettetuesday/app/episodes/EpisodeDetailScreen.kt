@@ -54,7 +54,7 @@ fun EpisodeDetailScreen(
     repository: EpisodeRepository,
     appleLinks: AppleEpisodeLinks,
     catalog: MovieCatalog?,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenMovie: ((String) -> Unit)?,
     modifier: Modifier = Modifier,
     /** Community poll section (Option A), when configured. */
@@ -67,7 +67,7 @@ fun EpisodeDetailScreen(
     Column(modifier.fillMaxSize().testTag("episode-detail")) {
         TopAppBar(
             title = { Text(episode?.seasonEpisodeLabel ?: "Episode") },
-            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
+            navigationIcon = { if (onBack != null) IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
         )
         if (episode == null) {
             Text("Episode Not Found", Modifier.padding(24.dp))

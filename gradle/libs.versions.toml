@@ -12,6 +12,7 @@ junit = "4.13.2"
 robolectric = "4.17"
 work = "2.12.0" # minCompileSdk 35
 glance = "1.2.0" # minCompileSdk 35
+windowCore = "1.5.1" # WindowSizeClass breakpoints; minCompileSdk 34
 androidxTestCore = "1.7.0"
 androidxTestExtJunit = "1.3.0"
 
@@ -31,6 +32,7 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "work" }
+androidx-window-core = { module = "androidx.window:window-core", version.ref = "windowCore" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
 androidx-glance-appwidget-testing = { module = "androidx.glance:glance-appwidget-testing", version.ref = "glance" }
 androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "work" }

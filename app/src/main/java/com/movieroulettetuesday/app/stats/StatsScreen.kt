@@ -41,6 +41,11 @@ import com.movieroulettetuesday.app.movies.PersonalRatings
 import com.movieroulettetuesday.app.movies.PersonalRatingsSummary
 import com.movieroulettetuesday.app.roulette.SpinHistoryStore
 import com.movieroulettetuesday.app.ui.MrtSection
+import com.movieroulettetuesday.app.ui.LocalWindowLayout
+import com.movieroulettetuesday.app.ui.StatsGridLayout
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Constraints
 import com.movieroulettetuesday.app.ui.StarRating
 
 /** Stats tab (iOS StatsView): this device's spins, favorites, your ratings, breakdowns, recent spins. */
@@ -67,11 +72,14 @@ fun StatsScreen(
             }
             return@Column
         }
-        Column(
+        val window = LocalWindowLayout.current
+        BoxWithConstraints(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            contentAlignment = Alignment.TopCenter,
         ) {
-            Column(Modifier.widthIn(max = 700.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            // iOS StatsGridLayout: a card grid in regular width (2 columns ≥ 640, 3 ≥ 1100), else one column.
+            val columns = StatsGridLayout.columnCount(maxWidth.value.toDouble(), window.isRegularWidth)
+            StatsGrid(columns, if (columns == 1) Modifier.widthIn(max = 700.dp) else Modifier.fillMaxWidth()) {
                 fun catColor(id: String): Color =
                     Color((catalog?.category(id)?.displayColor ?: HexColor.parse(com.movieroulettetuesday.app.catalog.CategoryPalette.hex(id))!!).argb)
                 if (snap.totalSpins > 0) {
@@ -143,6 +151,27 @@ fun StatsScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+/** Row-major card grid: each row is as tall as its tallest card, cards top-aligned (iOS LazyVGrid). */
+@Composable
+private fun StatsGrid(columns: Int, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val gap = 20.dp
+    Layout(content, modifier.testTag("stats-grid-$columns")) { measurables, constraints ->
+        val gapPx = gap.roundToPx()
+        val width = constraints.maxWidth
+        val colWidth = ((width - gapPx * (columns - 1)) / columns).coerceAtLeast(0)
+        val placeables = measurables.map { it.measure(Constraints.fixedWidth(colWidth)) }
+        val rows = placeables.chunked(columns)
+        val height = rows.sumOf { r -> r.maxOf { it.height } } + gapPx * (rows.size - 1).coerceAtLeast(0)
+        layout(width, height) {
+            var y = 0
+            for (row in rows) {
+                row.forEachIndexed { i, p -> p.place(i * (colWidth + gapPx), y) }
+                y += row.maxOf { it.height } + gapPx
             }
         }
     }

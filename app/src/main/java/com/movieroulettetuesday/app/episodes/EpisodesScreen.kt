@@ -1,5 +1,7 @@
 package com.movieroulettetuesday.app.episodes
 
+import com.movieroulettetuesday.app.ui.selectedRow
+
 import android.text.format.DateUtils
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -71,6 +73,8 @@ fun EpisodesScreen(
     settings: KeyValueStore,
     onOpenEpisode: (String) -> Unit,
     modifier: Modifier = Modifier,
+    /** Highlighted row in the two-pane (regular width) layout. */
+    selectedGuid: String? = null,
 ) {
     val state by repository.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -149,7 +153,7 @@ fun EpisodesScreen(
                         }
                         if (expanded) {
                             items(group.episodes, key = { "${group.id}/${it.guid}" }) { ep ->
-                                EpisodeRow(ep, catalog, state.showArtworkURL) { onOpenEpisode(ep.guid) }
+                                EpisodeRow(ep, catalog, state.showArtworkURL, selected = ep.guid == selectedGuid) { onOpenEpisode(ep.guid) }
                                 HorizontalDivider(Modifier.padding(start = 84.dp))
                             }
                         }
@@ -188,9 +192,9 @@ private fun GroupHeader(group: EpisodeGroup, expanded: Boolean, onToggle: () -> 
 }
 
 @Composable
-private fun EpisodeRow(episode: PodcastEpisode, catalog: MovieCatalog?, showArtwork: String?, onClick: () -> Unit) {
+private fun EpisodeRow(episode: PodcastEpisode, catalog: MovieCatalog?, showArtwork: String?, selected: Boolean = false, onClick: () -> Unit) {
     val movie = catalog?.movieForEpisodeGuid(episode.guid)
-    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(16.dp, 10.dp).testTag("episode-row-${episode.guid}")) {
+    Row(Modifier.fillMaxWidth().selectedRow(selected, MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)).clickable(onClick = onClick).padding(16.dp, 10.dp).testTag("episode-row-${episode.guid}")) {
         ArtworkImage(ArtworkResolver.candidates(episode, showArtwork), 56.dp, Icons.Filled.Mic, cornerRadius = 10.dp)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {

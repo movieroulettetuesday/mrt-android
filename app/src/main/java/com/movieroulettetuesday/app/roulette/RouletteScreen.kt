@@ -11,9 +11,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import com.movieroulettetuesday.app.ui.LocalWindowLayout
+import com.movieroulettetuesday.app.ui.RouletteLayout
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -49,71 +57,138 @@ fun RouletteScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    Column(
-        modifier.fillMaxSize().padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        topBar()
-        Spacer(Modifier.height(16.dp))
-        Text("Movie Roulette Tuesday", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text(
-            "Dinner, discussion, and the wheel",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(Modifier.height(20.dp))
-        val catalog = state.catalog
-        when {
-            catalog != null -> Box(Modifier.widthIn(max = 520.dp), contentAlignment = Alignment.Center) {
-                RouletteWheel(
-                    categories = catalog.categories,
-                    geometry = state.geometry,
-                    rotation = state.rotation,
-                    spin = state.spin,
-                    canSpin = state.canSpin,
-                    onSpin = viewModel::spin,
-                    onSpinFinished = viewModel::spinAnimationEnded,
-                    haptics = haptics,
-                    onStop = viewModel::stopEarly,
-                )
-                state.rareBanner?.let {
-                    Text(
-                        it,
-                        Modifier
-                            .background(Color.Black.copy(alpha = 0.75f), RoundedCornerShape(12.dp))
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .testTag("rare-banner"),
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Black,
-                    )
+    val window = LocalWindowLayout.current
+    val share: (RouletteViewModel.Reveal) -> Unit = { reveal ->
+        onShare(reveal)
+        SpinShare.share(context, reveal.movie)
+    }
+    val openMovie: ((RouletteViewModel.Reveal) -> Unit)? = onOpenMovie?.let { open -> { r -> viewModel.dismissReveal(); open(r.movie.id) } }
+    BoxWithConstraints(modifier.fillMaxSize()) {
+        val w = maxWidth.value.toDouble()
+        val arrangement = RouletteLayout.arrangement(w, maxHeight.value.toDouble(), window.isRegularWidth)
+        if (arrangement == RouletteLayout.Arrangement.SideBySide) {
+            // iOS sideBySide: wheel + hint on the left, header on the right. The reveal sits in the
+            // right column next to the wheel instead of covering it.
+            Row(Modifier.fillMaxSize().testTag("roulette-side-by-side")) {
+                WheelSlot(state, viewModel, haptics, arrangement, isRegularWidth = true, Modifier.weight(1f).fillMaxHeight())
+                Column(
+                    Modifier
+                        .width(RouletteLayout.sideBySideControlsWidth(w).dp)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .padding(end = 20.dp, bottom = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    topBar()
+                    RouletteHeader()
+                    state.reveal?.let { reveal ->
+                        Spacer(Modifier.height(24.dp))
+                        Card(Modifier.fillMaxWidth().testTag("reveal-inline")) {
+                            RevealContent(
+                                reveal, episodesByGUID,
+                                onDismiss = viewModel::dismissReveal,
+                                onSpinAgain = viewModel::spinAgain,
+                                onShare = { share(reveal) },
+                                onOpenMovie = openMovie?.let { { it(reveal) } },
+                            )
+                        }
+                    }
                 }
             }
-            state.load is CatalogRepository.State.Failed ->
-                Text((state.load as CatalogRepository.State.Failed).message, textAlign = TextAlign.Center)
-            else -> CircularProgressIndicator()
+        } else {
+            Column(Modifier.fillMaxSize().testTag("roulette-stacked"), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(Modifier.padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    topBar()
+                    RouletteHeader()
+                }
+                WheelSlot(state, viewModel, haptics, arrangement, window.isRegularWidth, Modifier.weight(1f).fillMaxWidth())
+            }
+            state.reveal?.let { reveal ->
+                RevealSheet(
+                    reveal = reveal,
+                    onDismiss = viewModel::dismissReveal,
+                    onSpinAgain = viewModel::spinAgain,
+                    onShare = { share(reveal) },
+                    episodesByGUID = episodesByGUID,
+                    onOpenMovie = openMovie?.let { { it(reveal) } },
+                )
+            }
         }
-        Spacer(Modifier.height(16.dp))
-        val status = state.notice ?: when {
-            state.isSpinning -> "Spinning…"
-            state.lastCategory != null -> "Landed on ${state.lastCategory!!.displayName}"
-            else -> "Tap to spin"
-        }
-        Text(status, Modifier.testTag("roulette-status"), style = MaterialTheme.typography.titleMedium)
     }
+}
 
-    state.reveal?.let { reveal ->
-        RevealSheet(
-            reveal = reveal,
-            onDismiss = viewModel::dismissReveal,
-            onSpinAgain = viewModel::spinAgain,
-            onShare = {
-                onShare(reveal)
-                SpinShare.share(context, reveal.movie)
-            },
-            episodesByGUID = episodesByGUID,
-            onOpenMovie = onOpenMovie?.let { open -> { viewModel.dismissReveal(); open(reveal.movie.id) } },
+@Composable
+private fun RouletteHeader() {
+    Spacer(Modifier.height(16.dp))
+    Text("Movie Roulette Tuesday", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    Text(
+        "Dinner, discussion, and the wheel",
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+    )
+    Spacer(Modifier.height(6.dp))
+}
+
+/** Wheel sized by iOS `RouletteLayout.wheelDiameter` for the slot it gets, with the hint under it. */
+@Composable
+private fun WheelSlot(
+    state: RouletteViewModel.RouletteState,
+    viewModel: RouletteViewModel,
+    haptics: Boolean,
+    arrangement: RouletteLayout.Arrangement,
+    isRegularWidth: Boolean,
+    modifier: Modifier,
+) {
+    BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
+        val d = RouletteLayout.wheelDiameter(
+            maxWidth.value.toDouble(), maxHeight.value.toDouble(), arrangement, isRegularWidth, RouletteLayout.HINT_HEIGHT,
         )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(Modifier.height(RouletteLayout.TOP_GAP.dp))
+            val catalog = state.catalog
+            Box(Modifier.size(d.dp).testTag("wheel-slot"), contentAlignment = Alignment.Center) {
+                when {
+                    catalog != null -> {
+                        RouletteWheel(
+                            categories = catalog.categories,
+                            geometry = state.geometry,
+                            rotation = state.rotation,
+                            spin = state.spin,
+                            canSpin = state.canSpin,
+                            onSpin = viewModel::spin,
+                            onSpinFinished = viewModel::spinAnimationEnded,
+                            haptics = haptics,
+                            onStop = viewModel::stopEarly,
+                        )
+                        state.rareBanner?.let {
+                            Text(
+                                it,
+                                Modifier
+                                    .background(Color.Black.copy(alpha = 0.75f), RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .testTag("rare-banner"),
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Black,
+                            )
+                        }
+                    }
+                    state.load is CatalogRepository.State.Failed ->
+                        Text((state.load as CatalogRepository.State.Failed).message, textAlign = TextAlign.Center)
+                    else -> CircularProgressIndicator()
+                }
+            }
+            Spacer(Modifier.height(RouletteLayout.HINT_SPACING.dp))
+            val status = state.notice ?: when {
+                state.isSpinning -> "Spinning…"
+                state.lastCategory != null -> "Landed on ${state.lastCategory!!.displayName}"
+                else -> "Tap to spin"
+            }
+            Box(Modifier.height(RouletteLayout.HINT_HEIGHT.dp), contentAlignment = Alignment.TopCenter) {
+                Text(status, Modifier.testTag("roulette-status"), style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+            }
+        }
     }
 }
 
@@ -130,6 +205,21 @@ fun RevealSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, modifier = Modifier.testTag("reveal-sheet")) {
+        RevealContent(reveal, episodesByGUID, onDismiss, onSpinAgain, onShare, onOpenMovie)
+    }
+}
+
+/** The reveal itself: in the bottom sheet (stacked) or next to the wheel (side by side). */
+@Composable
+fun RevealContent(
+    reveal: RouletteViewModel.Reveal,
+    episodesByGUID: Map<String, com.movieroulettetuesday.app.episodes.PodcastEpisode>,
+    onDismiss: () -> Unit,
+    onSpinAgain: () -> Unit,
+    onShare: () -> Unit,
+    onOpenMovie: (() -> Unit)?,
+) {
+    run {
         Column(
             Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

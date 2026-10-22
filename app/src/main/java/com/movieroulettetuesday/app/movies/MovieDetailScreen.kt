@@ -73,7 +73,7 @@ fun MovieDetailScreen(
     movieId: String,
     inputs: MoviesInputs,
     ratingsStore: PersonalRatingsStore,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenEpisode: ((String) -> Unit)?,
     modifier: Modifier = Modifier,
     /** Footer for Your Rating (changes when auto-share is on). */
@@ -88,7 +88,7 @@ fun MovieDetailScreen(
     Column(modifier.fillMaxSize().testTag("movie-detail")) {
         TopAppBar(
             title = { Text(movie?.title ?: "Movie", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
+            navigationIcon = { if (onBack != null) IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
         )
         if (movie == null || catalog == null) {
             Text("Movie Not Found", Modifier.padding(24.dp))

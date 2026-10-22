@@ -9,6 +9,13 @@ import com.movieroulettetuesday.app.notifications.NewEpisodeAlertToggle
 import com.movieroulettetuesday.app.notifications.NewEpisodeSchedule
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.key
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -108,76 +115,89 @@ fun rememberMoviesInputs(app: MrtApplication): MoviesInputs {
     )
 }
 
+/** Selection shown in the detail pane of the two-pane Episodes / Movies layouts (regular width). */
+class PaneSelection(episode: String? = null, movie: String? = null) {
+    var episode by mutableStateOf(episode)
+    var movie by mutableStateOf(movie)
+
+    companion object {
+        val Saver = androidx.compose.runtime.saveable.listSaver<PaneSelection, String?>(
+            save = { listOf(it.episode, it.movie) },
+            restore = { PaneSelection(it[0], it[1]) },
+        )
+    }
+}
+
 @Composable
 fun MrtApp() {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val layout = remember(maxWidth, maxHeight) { WindowLayout(maxWidth.value, maxHeight.value) }
+        CompositionLocalProvider(LocalWindowLayout provides layout) { MrtAppContent(layout) }
+    }
+}
+
+@Composable
+private fun MrtAppContent(layout: WindowLayout) {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val current = backStack?.destination
     val app = LocalContext.current.applicationContext as MrtApplication
     val episodesState by app.episodeRepository.state.collectAsStateWithLifecycle()
     var suggestOpen by remember { mutableStateOf(false) }
+    val panes = rememberSaveable(saver = PaneSelection.Saver) { PaneSelection() }
+    val regular = layout.isRegularWidth
     LaunchedEffect(Unit) {
         app.catalogRepository.load()
         app.episodeRepository.load()
         if (app.catalogRepository.refresh()) app.widgetBridge.catalogUpdated()
     }
-    val pendingMovie by app.pendingMovie.collectAsStateWithLifecycle()
-    LaunchedEffect(pendingMovie) {
-        val id = pendingMovie ?: return@LaunchedEffect
-        app.pendingMovie.value = null
-        navController.navigate(TopLevelDestination.Movies.route) {
+    fun openTab(dest: TopLevelDestination) {
+        navController.navigate(dest.route) {
             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
             launchSingleTop = true
             restoreState = true
         }
-        navController.navigate(Routes.movie("movies", id))
+    }
+    // Deep links (widget, notification): a pushed page on phones, the detail pane on tablets.
+    val pendingMovie by app.pendingMovie.collectAsStateWithLifecycle()
+    LaunchedEffect(pendingMovie) {
+        val id = pendingMovie ?: return@LaunchedEffect
+        app.pendingMovie.value = null
+        openTab(TopLevelDestination.Movies)
+        if (regular) {
+            navController.popBackStack("movies/list", inclusive = false)
+            panes.movie = id
+        } else {
+            navController.navigate(Routes.movie("movies", id))
+        }
     }
     val pendingEpisode by app.pendingEpisode.collectAsStateWithLifecycle()
     LaunchedEffect(pendingEpisode) {
         val guid = pendingEpisode ?: return@LaunchedEffect
         app.pendingEpisode.value = null
-        navController.navigate(TopLevelDestination.Episodes.route) {
-            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-            launchSingleTop = true
-            restoreState = true
+        openTab(TopLevelDestination.Episodes)
+        if (regular) {
+            navController.popBackStack("episodes/list", inclusive = false)
+            panes.episode = guid
+        } else {
+            navController.navigate(Routes.episode("episodes", guid))
         }
-        navController.navigate(Routes.episode("episodes", guid))
     }
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                TopLevelDestination.entries.forEach { dest ->
-                    val selected = current?.hierarchy?.any { it.route == dest.route } == true
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            navController.navigate(dest.route) {
-                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = {
-                            val badge = if (dest == TopLevelDestination.Episodes) episodesState.newEpisodeCount else 0
-                            if (badge > 0) {
-                                BadgedBox(badge = { Badge(Modifier.testTag("episodes-badge")) { Text("$badge") } }) {
-                                    Icon(dest.icon, contentDescription = null)
-                                }
-                            } else {
-                                Icon(dest.icon, contentDescription = null)
-                            }
-                        },
-                        label = { Text(stringResource(dest.label)) },
-                        modifier = Modifier.testTag("tab-${dest.route}"),
-                    )
-                }
-            }
-        },
-    ) { padding ->
+    // iOS keeps the selection when the size class changes: a split-view pick becomes a pushed page.
+    LaunchedEffect(regular) {
+        if (regular) return@LaunchedEffect
+        val route = navController.currentDestination?.route
+        if (route == "movies/list") panes.movie?.let { navController.navigate(Routes.movie("movies", it)) }
+        if (route == "episodes/list") panes.episode?.let { navController.navigate(Routes.episode("episodes", it)) }
+        panes.movie = null
+        panes.episode = null
+    }
+    val badge = episodesState.newEpisodeCount
+    val host: @Composable (Modifier) -> Unit = { mod ->
         NavHost(
             navController = navController,
             startDestination = TopLevelDestination.Roulette.route,
-            modifier = Modifier.padding(padding),
+            modifier = mod,
         ) {
             navigation(startDestination = "roulette/home", route = TopLevelDestination.Roulette.route) {
                 composable("roulette/home") {
@@ -197,14 +217,49 @@ fun MrtApp() {
                 movieDetail("roulette", navController, app, linkEpisodes = true)
                 episodeDetail("roulette", navController, app, linkMovie = false)
             }
-            episodesGraph(navController, app)
-            moviesGraph(navController, app, onSuggest = { suggestOpen = true })
+            episodesGraph(navController, app, panes, regular)
+            moviesGraph(navController, app, onSuggest = { suggestOpen = true }, panes, regular)
             composable(TopLevelDestination.Stats.route) {
                 val inputs = rememberMoviesInputs(app)
                 val log by app.spinHistory.log.collectAsStateWithLifecycle()
                 StatsScreen(log, inputs.ratings, inputs.catalog, Modifier.testTag("screen-stats"))
             }
         }
+    }
+    if (regular) {
+        // Medium / expanded: navigation rail (Android's counterpart of the iPad tab bar).
+        Row(Modifier.fillMaxSize()) {
+            NavigationRail(Modifier.testTag("nav-rail")) {
+                Spacer(Modifier.weight(1f))
+                TopLevelDestination.entries.forEach { dest ->
+                    NavigationRailItem(
+                        selected = current?.hierarchy?.any { it.route == dest.route } == true,
+                        onClick = { openTab(dest) },
+                        icon = { TabIcon(dest, badge) },
+                        label = { Text(stringResource(dest.label)) },
+                        modifier = Modifier.testTag("tab-${dest.route}"),
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+            }
+            Scaffold(Modifier.weight(1f)) { padding -> host(Modifier.padding(padding)) }
+        }
+    } else {
+        Scaffold(
+            bottomBar = {
+                NavigationBar(Modifier.testTag("nav-bar")) {
+                    TopLevelDestination.entries.forEach { dest ->
+                        NavigationBarItem(
+                            selected = current?.hierarchy?.any { it.route == dest.route } == true,
+                            onClick = { openTab(dest) },
+                            icon = { TabIcon(dest, badge) },
+                            label = { Text(stringResource(dest.label)) },
+                            modifier = Modifier.testTag("tab-${dest.route}"),
+                        )
+                    }
+                }
+            },
+        ) { padding -> host(Modifier.padding(padding)) }
     }
     if (suggestOpen) {
         val catalog = rememberMoviesInputs(app).catalog
@@ -216,6 +271,17 @@ fun MrtApp() {
             rateLimit = { SuggestionRateLimit(app.settings.getLong(SuggestionRateLimit.STORAGE_KEY)) },
             recordSend = { app.settings.putLong(SuggestionRateLimit.STORAGE_KEY, System.currentTimeMillis()) },
         )
+    }
+}
+
+@Composable
+private fun TabIcon(dest: TopLevelDestination, newEpisodes: Int) {
+    if (dest == TopLevelDestination.Episodes && newEpisodes > 0) {
+        BadgedBox(badge = { Badge(Modifier.testTag("episodes-badge")) { Text("$newEpisodes") } }) {
+            Icon(dest.icon, contentDescription = null)
+        }
+    } else {
+        Icon(dest.icon, contentDescription = null)
     }
 }
 
@@ -279,52 +345,92 @@ private fun NavGraphBuilder.settingsRoutes(nav: NavHostController, app: MrtAppli
 
 private fun NavGraphBuilder.movieDetail(prefix: String, nav: NavHostController, app: MrtApplication, linkEpisodes: Boolean) {
     composable("$prefix/movie/{id}") { entry ->
-        val inputs = rememberMoviesInputs(app)
-        val community = app.community
-        val autoShare by app.preferences.autoShareRatings.collectAsStateWithLifecycle()
-        val sharing = autoShare && community?.canWrite == true
-        val scope = rememberCoroutineScope()
-        val movieId = entry.arguments?.getString("id").orEmpty()
-        MovieDetailScreen(
-            movieId = movieId,
-            inputs = inputs,
-            ratingsStore = app.personalRatings,
+        MovieDetailContent(
+            app,
+            movieId = entry.arguments?.getString("id").orEmpty(),
             onBack = { nav.popBackStack() },
             onOpenEpisode = if (linkEpisodes) ({ nav.navigate(Routes.episode(prefix, it)) }) else null,
-            ratingFooter = if (sharing) CommunityCopy.AUTO_SHARE_FOOTER else "Saved on this device.",
-            onRated = { half -> if (sharing && half != null) scope.launch { community?.submitListenerRating(movieId, half) } },
-            extra = { movie -> community?.let { ListenerRatingSection(movie.id, inputs.ratings.halfStars(movie.id), it) } },
         )
     }
+}
+
+/** Movie page with the community sections; a pushed route on phones, the detail pane on tablets. */
+@Composable
+private fun MovieDetailContent(app: MrtApplication, movieId: String, onBack: (() -> Unit)?, onOpenEpisode: ((String) -> Unit)?) {
+    val inputs = rememberMoviesInputs(app)
+    val community = app.community
+    val autoShare by app.preferences.autoShareRatings.collectAsStateWithLifecycle()
+    val sharing = autoShare && community?.canWrite == true
+    val scope = rememberCoroutineScope()
+    MovieDetailScreen(
+        movieId = movieId,
+        inputs = inputs,
+        ratingsStore = app.personalRatings,
+        onBack = onBack,
+        onOpenEpisode = onOpenEpisode,
+        ratingFooter = if (sharing) CommunityCopy.AUTO_SHARE_FOOTER else "Saved on this device.",
+        onRated = { half -> if (sharing && half != null) scope.launch { community?.submitListenerRating(movieId, half) } },
+        extra = { movie -> community?.let { ListenerRatingSection(movie.id, inputs.ratings.halfStars(movie.id), it) } },
+    )
 }
 
 private fun NavGraphBuilder.episodeDetail(prefix: String, nav: NavHostController, app: MrtApplication, linkMovie: Boolean) {
     composable("$prefix/episode/{guid}") { entry ->
-        val inputs = rememberMoviesInputs(app)
-        EpisodeDetailScreen(
+        EpisodeDetailContent(
+            app,
             guid = entry.arguments?.getString("guid").orEmpty(),
-            repository = app.episodeRepository,
-            appleLinks = app.appleEpisodeLinks,
-            catalog = inputs.catalog,
             onBack = { nav.popBackStack() },
             onOpenMovie = if (linkMovie) ({ nav.navigate(Routes.movie(prefix, it)) }) else null,
-            extra = { episode ->
-                app.community?.let { c -> EpisodePollSection(c.poll(episode.guid, inputs.catalog?.showInfo ?: ShowInfo.MRT), c) }
-            },
         )
     }
 }
 
-private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplication) {
+/** Episode page with the listener poll; a pushed route on phones, the detail pane on tablets. */
+@Composable
+private fun EpisodeDetailContent(app: MrtApplication, guid: String, onBack: (() -> Unit)?, onOpenMovie: ((String) -> Unit)?) {
+    val inputs = rememberMoviesInputs(app)
+    EpisodeDetailScreen(
+        guid = guid,
+        repository = app.episodeRepository,
+        appleLinks = app.appleEpisodeLinks,
+        catalog = inputs.catalog,
+        onBack = onBack,
+        onOpenMovie = onOpenMovie,
+        extra = { episode ->
+            app.community?.let { c -> EpisodePollSection(c.poll(episode.guid, inputs.catalog?.showInfo ?: ShowInfo.MRT), c) }
+        },
+    )
+}
+
+private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplication, panes: PaneSelection, regular: Boolean) {
     navigation(startDestination = "episodes/list", route = TopLevelDestination.Episodes.route) {
         composable("episodes/list") {
-            EpisodesScreen(
-                repository = app.episodeRepository,
-                catalog = rememberMoviesInputs(app).catalog,
-                settings = app.settings,
-                onOpenEpisode = { nav.navigate(Routes.episode("episodes", it)) },
-                modifier = Modifier.testTag("screen-episodes"),
-            )
+            val list: @Composable () -> Unit = {
+                EpisodesScreen(
+                    repository = app.episodeRepository,
+                    catalog = rememberMoviesInputs(app).catalog,
+                    settings = app.settings,
+                    onOpenEpisode = { if (regular) panes.episode = it else nav.navigate(Routes.episode("episodes", it)) },
+                    modifier = Modifier.testTag("screen-episodes"),
+                    selectedGuid = if (regular) panes.episode else null,
+                )
+            }
+            if (regular) {
+                val guid = panes.episode
+                ListDetailPane(
+                    list = list,
+                    detail = guid?.let { g ->
+                        {
+                            key(g) {
+                                EpisodeDetailContent(app, g, onBack = null, onOpenMovie = { nav.navigate(Routes.movie("episodes", it)) })
+                            }
+                        }
+                    },
+                    empty = { EmptyDetail("Pick an Episode", Icons.Filled.Mic, "Choose an episode to see its details and the listener poll.") },
+                )
+            } else {
+                list()
+            }
         }
         // Episode -> its movie; that movie page doesn't link back to episodes (no endless push loop).
         episodeDetail("episodes", nav, app, linkMovie = true)
@@ -332,16 +438,41 @@ private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplic
     }
 }
 
-private fun NavGraphBuilder.moviesGraph(nav: NavHostController, app: MrtApplication, onSuggest: () -> Unit) {
+private fun NavGraphBuilder.moviesGraph(
+    nav: NavHostController,
+    app: MrtApplication,
+    onSuggest: () -> Unit,
+    panes: PaneSelection,
+    regular: Boolean,
+) {
     navigation(startDestination = "movies/list", route = TopLevelDestination.Movies.route) {
         composable("movies/list") {
-            MoviesScreen(
-                inputs = rememberMoviesInputs(app),
-                onOpenMovie = { nav.navigate(Routes.movie("movies", it)) },
-                onSuggest = onSuggest,
-                onRefresh = { app.catalogRepository.refresh() },
-                modifier = Modifier.testTag("screen-movies"),
-            )
+            val list: @Composable () -> Unit = {
+                MoviesScreen(
+                    inputs = rememberMoviesInputs(app),
+                    onOpenMovie = { if (regular) panes.movie = it else nav.navigate(Routes.movie("movies", it)) },
+                    onSuggest = onSuggest,
+                    onRefresh = { app.catalogRepository.refresh() },
+                    modifier = Modifier.testTag("screen-movies"),
+                    selectedMovieId = if (regular) panes.movie else null,
+                )
+            }
+            if (regular) {
+                val id = panes.movie
+                ListDetailPane(
+                    list = list,
+                    detail = id?.let { m ->
+                        {
+                            key(m) {
+                                MovieDetailContent(app, m, onBack = null, onOpenEpisode = { nav.navigate(Routes.episode("movies", it)) })
+                            }
+                        }
+                    },
+                    empty = { EmptyDetail("Pick a Movie", Icons.Filled.Movie, "Choose a film from the list to see its page, episodes and ratings.") },
+                )
+            } else {
+                list()
+            }
         }
         movieDetail("movies", nav, app, linkEpisodes = true)
         episodeDetail("movies", nav, app, linkMovie = false)

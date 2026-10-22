@@ -1,5 +1,7 @@
 package com.movieroulettetuesday.app.movies
 
+import com.movieroulettetuesday.app.ui.selectedRow
+
 import com.movieroulettetuesday.app.catalog.displayColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,6 +88,8 @@ fun MoviesScreen(
     onSuggest: () -> Unit,
     onRefresh: suspend () -> Unit,
     modifier: Modifier = Modifier,
+    /** Highlighted row in the two-pane (regular width) layout. */
+    selectedMovieId: String? = null,
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var categoryId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -162,7 +166,7 @@ fun MoviesScreen(
                     }
                 }
                 items(rows, key = { it.id }) { movie ->
-                    MovieRow(movie, catalog, inputs, onClick = { onOpenMovie(movie.id) })
+                    MovieRow(movie, catalog, inputs, selected = movie.id == selectedMovieId, onClick = { onOpenMovie(movie.id) })
                     HorizontalDivider(Modifier.padding(start = 80.dp))
                 }
                 if (rows.isEmpty()) item { EmptyState(query, listFilter) }
@@ -197,12 +201,12 @@ private fun EmptyState(query: String, filter: MovieListFilter) {
 }
 
 @Composable
-private fun MovieRow(movie: Movie, catalog: MovieCatalog, inputs: MoviesInputs, onClick: () -> Unit) {
+private fun MovieRow(movie: Movie, catalog: MovieCatalog, inputs: MoviesInputs, selected: Boolean = false, onClick: () -> Unit) {
     val entry = inputs.ratings.entry(movie.id)
     val spins = inputs.stats.spinCount(movie.id)
     val service = StreamingCatalog.matchingServices(movie, inputs.services).firstOrNull()
     Row(
-        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(16.dp, 8.dp).testTag("movie-row-${movie.id}"),
+        Modifier.fillMaxWidth().selectedRow(selected, MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)).clickable(onClick = onClick).padding(16.dp, 8.dp).testTag("movie-row-${movie.id}"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ArtworkImage(ArtworkResolver.candidates(movie, inputs.episodesByGUID, inputs.showArtwork), 52.dp, Icons.Filled.Movie, cornerRadius = 10.dp)

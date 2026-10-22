@@ -43,7 +43,9 @@ import org.robolectric.annotation.GraphicsMode
 /**
  * Robolectric renders of every main screen for a visual review (not a test of behavior; JVM
  * graphics, placeholder artwork, fake community data). Skipped unless `-Pmrt.screenshots=<dir>`.
- * Phone = 360x800 dp @ 3x = 1080x2400 px; tablet = 10" 800x1280 dp @ 2x = 1600x2560 px.
+ * Phone = 360x800 dp @ 3x = 1080x2400 px; 7" tablet = 600x960 dp @ 2x = 1200x1920 px; 10" tablet =
+ * 800x1280 dp @ 2x = 1600x2560 px (also landscape 2560x1600, where the roulette goes side by side).
+ * Artwork is the placeholder: no posters are bundled or cached on the box, and tests never fetch.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -56,8 +58,12 @@ class ScreenshotTour {
 
     @Test @Config(qualifiers = "w360dp-h800dp-port-notnight-xxhdpi") fun phoneLight() = tour("phone", dark = false)
     @Test @Config(qualifiers = "w360dp-h800dp-port-night-xxhdpi") fun phoneDark() = tour("phone", dark = true)
-    @Test @Config(qualifiers = "w800dp-h1280dp-port-notnight-xhdpi") fun tabletLight() = tour("tablet10", dark = false)
-    @Test @Config(qualifiers = "w800dp-h1280dp-port-night-xhdpi") fun tabletDark() = tour("tablet10", dark = true)
+    @Test @Config(qualifiers = "w600dp-h960dp-port-notnight-xhdpi") fun tablet7Light() = tour("tablet7", dark = false)
+    @Test @Config(qualifiers = "w600dp-h960dp-port-night-xhdpi") fun tablet7Dark() = tour("tablet7", dark = true)
+    @Test @Config(qualifiers = "w800dp-h1280dp-port-notnight-xhdpi") fun tablet10Light() = tour("tablet10", dark = false)
+    @Test @Config(qualifiers = "w800dp-h1280dp-port-night-xhdpi") fun tablet10Dark() = tour("tablet10", dark = true)
+    @Test @Config(qualifiers = "w1280dp-h800dp-land-notnight-xhdpi") fun tablet10LandLight() = tour("tablet10-landscape", dark = false)
+    @Test @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi") fun tablet10LandDark() = tour("tablet10-landscape", dark = true)
 
     private lateinit var dir: File
     private var dark = false
@@ -81,6 +87,10 @@ class ScreenshotTour {
 
         compose.onNodeWithTag("tab-episodes").performClick(); compose.waitForIdle()
         shot("03-episodes")
+
+        app.pendingEpisode.value = "Buzzsprout-19980357" // phone: pushed page; tablet: detail pane
+        compose.waitForIdle()
+        shot("03b-episode-detail")
 
         compose.onNodeWithTag("tab-movies").performClick(); compose.waitForIdle()
         shot("04-movies-list")
