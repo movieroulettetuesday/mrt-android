@@ -203,22 +203,22 @@ class SelectionVectorsTest {
 
     @Test
     fun ratingWeightedJackpotVectors() {
-        fun w(avgs: List<Double?>, infamous: Set<Int> = emptySet()) = avgs.mapIndexed { i, a -> RatingWeightedSelector.weight(i in infamous, a) }
+        fun w(avgs: List<Double?>) = avgs.map { RatingWeightedSelector.weight(it) }
         val units = listOf(0.0, 0.25, 0.5, 0.75, 0.999)
         val cases = listOf(
             Triple(w(listOf(1.0, 5.0)), listOf(4.5, 0.5), listOf(0, 0, 0, 0, 1)),
             Triple(w(listOf(1.0, 3.0, 5.0, null)), listOf(4.5, 2.5, 0.5, 2.5), listOf(0, 0, 1, 3, 3)),
             Triple(w(List(4) { null }), List(4) { 2.5 }, listOf(0, 1, 2, 3, 3)),
             Triple(w(listOf(0.5, 2.5, 4.5)), listOf(5.0, 3.0, 1.0), listOf(0, 0, 0, 1, 2)),
-            Triple(w(listOf(5.0, 2.0, null), setOf(0)), listOf(5.0, 3.5, 2.5), listOf(0, 0, 1, 1, 2)),
+            Triple(w(listOf(5.0, 2.0, null)), listOf(0.5, 3.5, 2.5), listOf(0, 1, 1, 2, 2)), // V5 after 5d459a0 (no flag)
         )
         cases.forEachIndexed { i, (got, weights, idx) ->
             assertEquals("V${i + 1} weights", weights, got)
             assertEquals("V${i + 1} picks", idx, units.map { RatingWeightedSelector.pickIndex(got, it) })
         }
-        assertEquals(2.5, RatingWeightedSelector.weight(false, Double.NaN), 0.0)
-        assertEquals(0.5, RatingWeightedSelector.weight(false, 9.0), 0.0)
-        assertEquals(5.0, RatingWeightedSelector.weight(false, 0.0), 0.0)
+        assertEquals(2.5, RatingWeightedSelector.weight(Double.NaN), 0.0)
+        assertEquals(0.5, RatingWeightedSelector.weight(9.0), 0.0)
+        assertEquals(5.0, RatingWeightedSelector.weight(0.0), 0.0)
 
         val v1 = cases[0].first
         val v2 = cases[1].first
@@ -227,5 +227,20 @@ class SelectionVectorsTest {
         assertEquals(listOf(2, 1, 1, 3, 3, 0, 0, 1, 0, 1), picks(v2, 10))
         assertEquals(listOf(89969, 10031), picks(v1, 100_000).groupingBy { it }.eachCount().toSortedMap().values.toList())
         assertEquals(listOf(44723, 25147, 5102, 25028), picks(v2, 100_000).groupingBy { it }.eachCount().toSortedMap().values.toList())
+        fun counts(ws: List<Double>) = picks(ws, 100_000).groupingBy { it }.eachCount().toSortedMap().values.toList()
+        assertEquals(listOf(24728, 25004, 25240, 25028), counts(cases[2].first))
+        assertEquals(listOf(55284, 33586, 11130), counts(cases[3].first))
+        assertEquals(listOf(7644, 53594, 38762), counts(cases[4].first))
+    }
+
+    /** A legacy `"isInfamous": true` entry weighs exactly what it would without the key (V5 note). */
+    @Test
+    fun legacyInfamousKeyHasNoWeight() {
+        val catalog = com.movieroulettetuesday.app.catalog.CatalogJson.decode(com.movieroulettetuesday.app.catalog.CatalogFixtures.bundledBytes)
+        val movies = catalog.movies.take(3)
+        val flagged = listOf(movies[0].copy(isInfamous = true)) + movies.drop(1)
+        val avgs = mapOf(movies[0].id to 5.0, movies[1].id to 2.0)
+        assertEquals(listOf(0.5, 3.5, 2.5), RatingWeightedSelector.weights(flagged, avgs))
+        assertEquals(RatingWeightedSelector.weights(movies, avgs), RatingWeightedSelector.weights(flagged, avgs))
     }
 }

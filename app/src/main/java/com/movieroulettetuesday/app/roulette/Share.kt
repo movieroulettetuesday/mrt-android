@@ -54,9 +54,8 @@ object EpisodeLabel {
             val t = title(id, movie, episodesByGUID)
             return episodesByGUID[id]?.seasonEpisodeLabel?.let { "$t ($it)" } ?: t
         }
-        // Identical labels collapse ("X & X" -> "X"; 3+ counts distinct labels), per MRT App's
-        // answers-from-ios.md Q9 (iOS 1.0.1 candidate).
-        val labels = ids.map(::label).distinct()
+        // iOS main: one label per id, no collapse ("X & X" stays). The Q9 collapse is not in iOS 1.0.1.
+        val labels = ids.map(::label)
         return when (labels.size) {
             1 -> "Discussed on ${labels[0]}"
             2 -> "Discussed on ${labels[0]} & ${labels[1]}"

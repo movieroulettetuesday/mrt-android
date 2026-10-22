@@ -93,17 +93,19 @@ class RatingWeightedSelector(private val averages: () -> Map<String, Double>) : 
     }
 
     companion object {
-        const val INFAMOUS_WEIGHT = 5.0
         const val UNRATED_WEIGHT = 2.5
 
-        fun weight(isInfamous: Boolean, average: Double?): Double = when {
-            isInfamous -> INFAMOUS_WEIGHT
+        /**
+         * infamous-selection.md (iOS 5d459a0): no per-movie flags. The legacy `isInfamous` catalog
+         * key carries no weight here; only the cached listener average counts.
+         */
+        fun weight(average: Double?): Double = when {
             average == null || !average.isFinite() -> UNRATED_WEIGHT
             else -> 5.5 - average.coerceIn(0.5, 5.0)
         }
 
         fun weights(movies: List<Movie>, averages: Map<String, Double>): List<Double> =
-            movies.map { weight(it.isInfamous, averages[it.id]) }
+            movies.map { weight(averages[it.id]) }
 
         /** One unit draw; half-open cumulative intervals; slack -> last index; empty -> null. */
         fun pickIndex(weights: List<Double>, unit: Double): Int? {

@@ -113,13 +113,7 @@ class RssVectorsTest {
         for (c in m.arr("discussedText").objs()) {
             val movie = catalog.movie(c.str("movieId")!!) ?: catalog.movies[0].copy(id = c.str("movieId")!!, episodeIds = emptyList())
             val got = EpisodeLabel.discussedText(movie, if (c.bool("feedLoaded") == true) byGuid else emptyMap())
-            // answers-from-ios.md Q9: identical labels collapse (iOS b673df1 still prints "X & X").
-            val collapsed = mapOf(
-                "Discussed on Double Feature & Double Feature" to "Discussed on Double Feature",
-                "Discussed on Triple + 2 more" to "Discussed on Triple", // 3 ids, one distinct label
-                "Discussed on Second (S1E2) + 2 more" to "Discussed on Second (S1E2) & Triple", // 3 ids, two distinct
-            )
-            val expected = collapsed[c.str("expected")] ?: c.str("expected")
+            val expected = c.str("expected") // iOS main; no Q9 collapse (not in iOS 1.0.1)
             assertEquals("${movie.id} loaded=${c.bool("feedLoaded")}", expected, got)
         }
         val totals = m.obj("episodeTotals")

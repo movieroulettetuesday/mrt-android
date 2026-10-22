@@ -36,7 +36,8 @@ import org.robolectric.RobolectricTestRunner
 
 /**
  * Sections added in SPEC revision 2 (flows.json, rss/catalog/stats additions). Where a case has both
- * `iosB673df1…` and `expected…`, Android implements `expected` (the shared rule).
+ * `iosB673df1…` and `expected…`, Android implements `expected` (the shared rule), except discussedFormats,
+ * which follows iOS main (the Q9 collapse is not in iOS 1.0.1).
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -45,7 +46,7 @@ class SpecRev2VectorsTest {
     private val flows = SharedVectors.load("flows.json")
 
     @Test
-    fun discussedFormatsFollowTheSharedRule() {
+    fun discussedFormatsMatchIosMain() {
         val d = rss.obj("discussedFormats")
         val feed = d.arr("feed").objs().map { PodcastEpisode(guid = it.str("guid")!!, title = it.str("title")!!, season = it.int("season"), episode = it.int("episode")) }
         val byGuid = PodcastEpisode.byGUID(feed)
@@ -54,8 +55,11 @@ class SpecRev2VectorsTest {
         for (c in cases) {
             val movie = Movie(id = "m", title = "T", year = 2000, genre = "g", episodeIds = c["episodeIds"]!!.strings(), episodeTitle = c.str("episodeTitle"))
             val got = EpisodeLabel.discussedText(movie, if (c.bool("feedLoaded") == true) byGuid else emptyMap())
-            assertEquals(c.str("name"), c.str("expected"), got)
+            // Q9 collapse is not in iOS 1.0.1 (MRT App, Oct 21): Android follows iOS main here, so the
+            // cases whose `expected` collapses (8, 9, 10) are checked against `iosB673df1`.
+            assertEquals(c.str("name"), c.str("iosB673df1") ?: c.str("expected"), got)
         }
+        assertEquals(listOf(8, 9, 10), cases.indices.filter { cases[it].str("iosB673df1") != cases[it].str("expected") })
     }
 
     @Test
