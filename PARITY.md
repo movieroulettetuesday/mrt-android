@@ -123,6 +123,8 @@ _Last updated 2026-10-21 (ET) after merging the shared contract (`feature/shared
 |---|---|
 | Release signing from env vars only; unsigned when absent | ✅ |
 | Public-repo secret scan (pre-push hook + `scripts/scan-secrets.sh` + self-test) | ✅ |
-| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 175 tests |
+| Robolectric unit + Compose UI tests; lint 0 errors | ✅ 227 tests (+4 opt-in screenshot renders) |
 | Play: targetSdk 36, minSdk 26, AAB, Data safety, AD_ID absent | 🟡 build side done; no AAB/upload key yet |
+| Screenshot tour (`ScreenshotTour`, opt-in `-Pmrt.screenshots=<dir>`): 8 screens + widget S/M/L, phone 1080x2400 and 10" tablet 1600x2560, light/dark; PNGs kept out of git | ✅ JVM renders, placeholder artwork |
+| Tablet layout (adaptive) | ⏳ phone layout stretches on tablets (see tablet renders) |
 | Device/emulator testing | ⏸ KVM on this box crashes the host kernel (see NOTES.md) |

@@ -109,6 +109,10 @@ tasks.withType<Test>().configureEach {
     inputs.dir(rootProject.layout.projectDirectory.dir("shared")).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName("sharedContract")
     // Robolectric 4.17 + API 36 touches FileDescriptor internals.
     jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED")
+    // ScreenshotTour renders PNGs only when asked: ./gradlew testDebugUnitTest -Pmrt.screenshots=/abs/dir --tests '*ScreenshotTour*'
+    val screenshots = providers.gradleProperty("mrt.screenshots").orElse("")
+    inputs.property("mrtScreenshots", screenshots)
+    systemProperty("mrt.screenshots", screenshots.get())
 }
 
 dependencies {
