@@ -6,7 +6,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.doubleOrNull
 
 /** Thrown when movies.json doesn't decode (malformed JSON, a missing required key, a wrong type). */
@@ -70,10 +69,7 @@ object CatalogJson {
         episodeIds = o.optStringList("episodeIds") ?: emptyList(),
         episodeTitle = o.optString("episodeTitle"),
         posterURL = o.optURL("posterURL"),
-        isInfamous = o.opt("isInfamous")?.let {
-            (it as? JsonPrimitive)?.takeUnless { p -> p.isString }?.booleanOrNull
-                ?: throw CatalogDecodingException("'isInfamous' must be a boolean")
-        } ?: false,
+        // A legacy `isInfamous` key (still in movies.json) is ignored, whatever its value (iOS 1.0.1, 5d459a0).
         hostRating = o.optDouble("hostRating"),
         tmdbId = runCatching { o.optInt("tmdbId") }.getOrNull(),
         streaming = runCatching { o.opt("streaming")?.let { streaming(it.obj("streaming")) } }.getOrNull(),

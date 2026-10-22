@@ -11,11 +11,9 @@ data class SelectionPolicy(
     val recentWindow: Int = 5,
     /** Weight multiplier for the very last spin's movie; recovers linearly toward 1 across the window. */
     val mostRecentMultiplier: Double = 0.1,
-    val infamousBoost: Double = 1.25,
 ) {
     val window: Int get() = recentWindow.coerceAtLeast(0)
     val recentMultiplier: Double get() = mostRecentMultiplier.coerceIn(0.0, 1.0)
-    val boost: Double get() = infamousBoost.coerceAtLeast(0.0)
 }
 
 /** Resolves a category to a movie with weighted randomness. All randomness comes from the injected [Random]. */
@@ -41,13 +39,11 @@ class MovieSelector(val policy: SelectionPolicy = SelectionPolicy()) {
         return policy.recentMultiplier + (1 - policy.recentMultiplier) * recovered
     }
 
-    /** History is chronological (oldest first). */
+    /** History is chronological (oldest first). iOS 1.0.1 (5d459a0): recency only, no infamous boost. */
     fun weight(movie: Movie, history: List<SpinResult>): Double {
-        var weight = 1.0
-        if (movie.isInfamous) weight *= policy.boost
         val recent = history.takeLast(policy.window).asReversed()
         val idx = recent.indexOfFirst { it.movieId == movie.id }
-        return weight * recencyMultiplier(if (idx >= 0) idx + 1 else null)
+        return recencyMultiplier(if (idx >= 0) idx + 1 else null)
     }
 
     fun selectMovie(category: RouletteCategory, catalog: MovieCatalog, history: List<SpinResult>, random: Random): Movie? {

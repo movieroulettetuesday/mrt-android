@@ -5,7 +5,12 @@ import com.movieroulettetuesday.app.catalog.MovieCatalog
 import com.movieroulettetuesday.app.catalog.RouletteCategory
 
 object RouletteFixtures {
-    /** Four categories, two movies each; m-infamous is infamous and in "d". */
+    /** Four categories (a-d), two movies each ("<c>-1", "<c>-2"), in category order. */
+    /** Listener averages that make d-2 the clear jackpot favourite (weight 5.0 vs 0.5 for the rest). */
+    val jackpotAverages: Map<String, Double> = catalogIds().associateWith { if (it == "d-2") 0.5 else 5.0 }
+
+    private fun catalogIds() = listOf("a", "b", "c", "d").flatMap { listOf("$it-1", "$it-2") }
+
     val catalog: MovieCatalog = run {
         val cats = listOf("a", "b", "c", "d")
         val movies = cats.flatMap { c ->
@@ -23,7 +28,4 @@ object RouletteFixtures {
         )
     }
 
-    fun withInfamous(): MovieCatalog = catalog.copy(
-        movies = catalog.movies.map { if (it.id == "d-2") it.copy(isInfamous = true) else it },
-    )
 }

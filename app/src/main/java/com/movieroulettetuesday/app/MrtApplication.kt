@@ -67,7 +67,7 @@ class MrtApplication : Application() {
         c.refreshListenerAverages(catalog.movies.map { it.id })
     }
 
-    /** Listener averages for `RatingWeightedSelector` (swap in when iOS 1.0.1 ships; default stays iOS main). */
+    /** Listener averages (movie id -> stars) for the Infamous Jackpot's `RatingWeightedSelector` (iOS 1.0.1). */
     val listenerAverages: () -> Map<String, Double> = { community?.knownAverages().orEmpty() }
 
     /**

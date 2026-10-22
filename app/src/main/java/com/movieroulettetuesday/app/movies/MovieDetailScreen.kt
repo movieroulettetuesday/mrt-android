@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -109,12 +108,6 @@ fun MovieDetailScreen(
                     }
                     Text(catalog.subtitle(movie), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center)
-                    if (movie.isInfamous) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Filled.LocalFireDepartment, null, tint = Color(0xFFF39C12))
-                            Text("Infamous", color = Color(0xFFF39C12))
-                        }
-                    }
                     if (spins > 0) {
                         Text(if (spins == 1) "Spun 1 time" else "Spun $spins times", style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.testTag("movie-spin-count"))

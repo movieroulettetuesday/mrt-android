@@ -1,8 +1,10 @@
 {
   "_generated" : {
+    "bundledCatalogCommit" : "b673df1",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "b673df1",
-    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+    "iosCommit" : "a0dffcc",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
+    "rules" : "iOS 1.0.1 (branch fix/notification-tap-main-thread @ a0dffcc: 5d459a0, f39fbb9, 867e024, a0dffcc)"
   },
   "catalogForGenres" : {
     "categories" : [
@@ -62,7 +64,6 @@
         "episodeTitle" : "Ep a",
         "genre" : "Horror",
         "id" : "a-1",
-        "isInfamous" : false,
         "title" : "Movie a 1",
         "year" : 2001
       },
@@ -76,7 +77,6 @@
         "episodeTitle" : null,
         "genre" : "Horror",
         "id" : "a-2",
-        "isInfamous" : false,
         "title" : "Movie a 2",
         "year" : 2002
       },
@@ -90,7 +90,6 @@
         "episodeTitle" : "Ep b",
         "genre" : "Comedy",
         "id" : "b-1",
-        "isInfamous" : false,
         "title" : "Movie b 1",
         "year" : 2001
       },
@@ -104,7 +103,6 @@
         "episodeTitle" : null,
         "genre" : "Comedy",
         "id" : "b-2",
-        "isInfamous" : false,
         "title" : "Movie b 2",
         "year" : 2002
       },
@@ -118,7 +116,6 @@
         "episodeTitle" : "Ep c",
         "genre" : "Drama",
         "id" : "c-1",
-        "isInfamous" : false,
         "title" : "Movie c 1",
         "year" : 2001
       },
@@ -132,7 +129,6 @@
         "episodeTitle" : null,
         "genre" : "Drama",
         "id" : "c-2",
-        "isInfamous" : false,
         "title" : "Movie c 2",
         "year" : 2002
       },
@@ -146,7 +142,6 @@
         "episodeTitle" : "Ep d",
         "genre" : "Drama",
         "id" : "d-1",
-        "isInfamous" : false,
         "title" : "Movie d 1",
         "year" : 2001
       },
@@ -160,7 +155,6 @@
         "episodeTitle" : null,
         "genre" : "Drama",
         "id" : "d-2",
-        "isInfamous" : false,
         "title" : "Movie d 2",
         "year" : 2002
       }
@@ -940,21 +934,42 @@
     "creditLine" : {
       "cases" : [
         {
+          "category" : "",
           "creditName" : "Laura from Ohio",
           "expectedBody" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nFrom: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
-          "iosB673df1Body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: From: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
           "note" : "",
           "title" : "Tremors"
         },
         {
+          "category" : "",
           "creditName" : "Laura from Ohio",
           "expectedBody" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: Worms\nFrom: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
-          "iosB673df1Body" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: Worms\nFrom: Laura from Ohio\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
           "note" : "Worms",
+          "title" : "Tremors"
+        },
+        {
+          "category" : "Horror",
+          "creditName" : "Laura from Ohio",
+          "expectedBody" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nWhy: Worms\nFrom: Laura from Ohio\nCategory: Horror\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+          "note" : "Worms",
+          "title" : "Tremors"
+        },
+        {
+          "category" : "Horror",
+          "creditName" : "",
+          "expectedBody" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\nCategory: Horror\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+          "note" : "",
+          "title" : "Tremors"
+        },
+        {
+          "category" : "",
+          "creditName" : "  ",
+          "expectedBody" : "Hi MRT Crew,\n\nI’d love to hear you cover:\n\nMovie: Tremors\n\nThanks for the show!\n\nSent from the Movie Roulette Tuesday app",
+          "note" : "  ",
           "title" : "Tremors"
         }
       ],
-      "description" : "E17 / Q8: every email from the app (Mail compose and mailto) uses InAppSuggestion.asEmail, so the credit is included when filled in. iOS b673df1 appends the credit INTO `why`, so an empty note renders `Why: From: <name>` (bug, 1.0.1 candidate). Shared rule: `From: <credit>` is its own line after `Why:`, or replaces it when the note is empty. Android follows the shared rule."
+      "description" : "iOS 1.0.1 (867e024): every email from the app uses InAppSuggestion.asEmail. The credit is its own `From: <credit>` line after `Why:` (and before `Category:`); an empty note gives no `Why:` line at all."
     },
     "limits" : {
       "creditName" : 60,
@@ -1667,7 +1682,6 @@
             "episodeTitle" : null,
             "genre" : "g",
             "id" : "m1",
-            "isInfamous" : false,
             "title" : "M1",
             "year" : 2000
           },
@@ -1681,7 +1695,6 @@
             "episodeTitle" : null,
             "genre" : "g",
             "id" : "m2",
-            "isInfamous" : false,
             "title" : "M2",
             "year" : 2000
           },
@@ -1695,7 +1708,6 @@
             "episodeTitle" : null,
             "genre" : "g",
             "id" : "m3",
-            "isInfamous" : false,
             "title" : "M3",
             "year" : 2000
           }

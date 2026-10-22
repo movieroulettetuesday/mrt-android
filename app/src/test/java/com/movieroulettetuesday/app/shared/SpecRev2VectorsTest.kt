@@ -35,9 +35,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 /**
- * Sections added in SPEC revision 2 (flows.json, rss/catalog/stats additions). Where a case has both
- * `iosB673df1…` and `expected…`, Android implements `expected` (the shared rule), except discussedFormats,
- * which follows iOS main (the Q9 collapse is not in iOS 1.0.1).
+ * Sections added in SPEC revision 2 (flows.json, rss/catalog/stats additions). Since the iOS 1.0.1
+ * regeneration (a0dffcc) `expected…` is always the iOS output; discussedFormats also carries the
+ * unadopted Q9 collapse as `q9CollapseProposal`, which Android does not implement.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -46,7 +46,7 @@ class SpecRev2VectorsTest {
     private val flows = SharedVectors.load("flows.json")
 
     @Test
-    fun discussedFormatsMatchIosMain() {
+    fun discussedFormatsMatchIos() {
         val d = rss.obj("discussedFormats")
         val feed = d.arr("feed").objs().map { PodcastEpisode(guid = it.str("guid")!!, title = it.str("title")!!, season = it.int("season"), episode = it.int("episode")) }
         val byGuid = PodcastEpisode.byGUID(feed)
@@ -55,11 +55,10 @@ class SpecRev2VectorsTest {
         for (c in cases) {
             val movie = Movie(id = "m", title = "T", year = 2000, genre = "g", episodeIds = c["episodeIds"]!!.strings(), episodeTitle = c.str("episodeTitle"))
             val got = EpisodeLabel.discussedText(movie, if (c.bool("feedLoaded") == true) byGuid else emptyMap())
-            // Q9 collapse is not in iOS 1.0.1 (MRT App, Oct 21): Android follows iOS main here, so the
-            // cases whose `expected` collapses (8, 9, 10) are checked against `iosB673df1`.
-            assertEquals(c.str("name"), c.str("iosB673df1") ?: c.str("expected"), got)
+            // Q9 collapse is not in iOS 1.0.1 (MRT App, Oct 21): `expected` keeps identical labels.
+            assertEquals(c.str("name"), c.str("expected"), got)
         }
-        assertEquals(listOf(8, 9, 10), cases.indices.filter { cases[it].str("iosB673df1") != cases[it].str("expected") })
+        assertEquals(listOf(8, 9, 10), cases.indices.filter { cases[it].str("q9CollapseProposal") != cases[it].str("expected") })
     }
 
     @Test
@@ -79,17 +78,25 @@ class SpecRev2VectorsTest {
         val io = UnconfinedTestDispatcher(testScheduler)
         val dir: File = Files.createTempDirectory("rev2").toFile()
         val cases = rss.obj("refreshRule").arr("cases").objs()
-        val bodies = listOf(listOf("empty-channel"), listOf("not-xml", "truncated rss"), listOf("buzzsprout-fixture"))
-        assertEquals(bodies.size, cases.size)
+        // iOS 1.0.1 (f39fbb9): 0 episodes (empty channel, or a well-formed non-RSS 200 like a captive
+        // portal) throws noEpisodes before the cache write; a parse error fails the same way.
+        assertEquals(listOf("empty-channel", "html captive portal", "not-xml", "buzzsprout-fixture"), cases.map { it.str("feed")!!.substringBefore(" (") })
         cases.forEachIndexed { i, c ->
             val e = c.obj("expected")
-            for (name in bodies[i]) {
-                val cache = File(dir, "c$i-${name.length}.json")
+            val feed = c.str("feed")!!
+            val bodies = when {
+                feed.startsWith("buzzsprout-fixture") -> listOf(feedBody("buzzsprout-fixture"))
+                feed.startsWith("not-xml") -> listOf(c.str("input")!!, feedBody("truncated rss"))
+                else -> listOf(c.str("input")!!)
+            }
+            for ((j, body) in bodies.withIndex()) {
+                val name = "$feed #$j"
+                val cache = File(dir, "c$i-$j.json")
                 // Seed the cache with a different 1-episode feed so "changed" is observable.
                 val seed = "<rss><channel><title>T</title><item><title>Old</title><guid>old-1</guid></item></channel></rss>"
                 EpisodeRepository(cache, InMemoryKeyValueStore(), { seed.toByteArray() }, io = io).load()
                 val before = cache.readBytes()
-                val repo = EpisodeRepository(cache, InMemoryKeyValueStore(), { feedBody(name).toByteArray() }, io = io)
+                val repo = EpisodeRepository(cache, InMemoryKeyValueStore(), { body.toByteArray() }, io = io)
                 repo.load()
                 val failed = repo.state.value.loadState is EpisodeRepository.LoadState.Failed || repo.state.value.lastError != null
                 assertEquals(name, e.str("refresh") == "failed", failed)
@@ -114,9 +121,9 @@ class SpecRev2VectorsTest {
     }
 
     @Test
-    fun suggestionCreditLineUsesExpectedNotIosBody() {
+    fun suggestionCreditLineMatchesIos101() {
         for (c in SharedVectors.load("stats.json").obj("inAppSuggestion").obj("creditLine").arr("cases").objs()) {
-            val s = InAppSuggestion(c.str("title")!!, null, c.str("note")!!, c.str("creditName")!!)
+            val s = InAppSuggestion(c.str("title")!!, c.str("category")?.takeIf { it.isNotEmpty() }, c.str("note")!!, c.str("creditName")!!)
             assertEquals(c.str("expectedBody"), s.asEmail.body)
         }
     }

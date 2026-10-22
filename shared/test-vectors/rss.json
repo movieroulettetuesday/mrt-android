@@ -1,8 +1,10 @@
 {
   "_generated" : {
+    "bundledCatalogCommit" : "b673df1",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "b673df1",
-    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+    "iosCommit" : "a0dffcc",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
+    "rules" : "iOS 1.0.1 (branch fix/notification-tap-main-thread @ a0dffcc: 5d459a0, f39fbb9, 867e024, a0dffcc)"
   },
   "androidCrossCheck" : {
     "artworkUsableURL" : [
@@ -381,9 +383,8 @@
         "episodeTitle" : null,
         "expected" : "Not discussed on the show yet",
         "feedLoaded" : true,
-        "iosB673df1" : "Not discussed on the show yet",
-        "iosMatchesSharedRule" : true,
-        "name" : "no ids"
+        "name" : "no ids",
+        "q9CollapseProposal" : "Not discussed on the show yet"
       },
       {
         "episodeIds" : [
@@ -392,9 +393,8 @@
         "episodeTitle" : null,
         "expected" : "Discussed on The Outsiders (S4E34)",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on The Outsiders (S4E34)",
-        "iosMatchesSharedRule" : true,
-        "name" : "1 id in feed with S/E"
+        "name" : "1 id in feed with S/E",
+        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34)"
       },
       {
         "episodeIds" : [
@@ -403,9 +403,8 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Bonus Chat",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on Bonus Chat",
-        "iosMatchesSharedRule" : true,
-        "name" : "1 id in feed without S/E"
+        "name" : "1 id in feed without S/E",
+        "q9CollapseProposal" : "Discussed on Bonus Chat"
       },
       {
         "episodeIds" : [
@@ -414,9 +413,8 @@
         "episodeTitle" : "Ep Title",
         "expected" : "Discussed on Ep Title",
         "feedLoaded" : false,
-        "iosB673df1" : "Discussed on Ep Title",
-        "iosMatchesSharedRule" : true,
-        "name" : "1 id, no feed, episodeTitle"
+        "name" : "1 id, no feed, episodeTitle",
+        "q9CollapseProposal" : "Discussed on Ep Title"
       },
       {
         "episodeIds" : [
@@ -425,9 +423,8 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Buzzsprout-123",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on Buzzsprout-123",
-        "iosMatchesSharedRule" : true,
-        "name" : "1 id not in feed, no episodeTitle -> raw guid"
+        "name" : "1 id not in feed, no episodeTitle -> raw guid",
+        "q9CollapseProposal" : "Discussed on Buzzsprout-123"
       },
       {
         "episodeIds" : [
@@ -437,9 +434,8 @@
         "episodeTitle" : null,
         "expected" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)",
-        "iosMatchesSharedRule" : true,
-        "name" : "2 ids in feed"
+        "name" : "2 ids in feed",
+        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)"
       },
       {
         "episodeIds" : [
@@ -450,9 +446,8 @@
         "episodeTitle" : null,
         "expected" : "Discussed on The Outsiders (S4E34) + 2 more",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 2 more",
-        "iosMatchesSharedRule" : true,
-        "name" : "3 ids in feed"
+        "name" : "3 ids in feed",
+        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) + 2 more"
       },
       {
         "episodeIds" : [
@@ -464,9 +459,8 @@
         "episodeTitle" : "Ep Title",
         "expected" : "Discussed on The Outsiders (S4E34) + 3 more",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 3 more",
-        "iosMatchesSharedRule" : true,
-        "name" : "4 ids, one missing (episodeTitle used)"
+        "name" : "4 ids, one missing (episodeTitle used)",
+        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) + 3 more"
       },
       {
         "episodeIds" : [
@@ -474,11 +468,10 @@
           "g2"
         ],
         "episodeTitle" : "Ep Title",
-        "expected" : "Discussed on Ep Title",
+        "expected" : "Discussed on Ep Title & Ep Title",
         "feedLoaded" : false,
-        "iosB673df1" : "Discussed on Ep Title & Ep Title",
-        "iosMatchesSharedRule" : false,
-        "name" : "2 ids, no feed -> identical labels (Q9)"
+        "name" : "2 ids, no feed -> identical labels (Q9)",
+        "q9CollapseProposal" : "Discussed on Ep Title"
       },
       {
         "episodeIds" : [
@@ -487,11 +480,10 @@
           "g4"
         ],
         "episodeTitle" : "Ep Title",
-        "expected" : "Discussed on Ep Title",
+        "expected" : "Discussed on Ep Title + 2 more",
         "feedLoaded" : false,
-        "iosB673df1" : "Discussed on Ep Title + 2 more",
-        "iosMatchesSharedRule" : false,
-        "name" : "3 ids, no feed -> identical labels (Q9)"
+        "name" : "3 ids, no feed -> identical labels (Q9)",
+        "q9CollapseProposal" : "Discussed on Ep Title"
       },
       {
         "episodeIds" : [
@@ -500,11 +492,10 @@
           "yy"
         ],
         "episodeTitle" : "Ep Title",
-        "expected" : "Discussed on The Outsiders (S4E34) & Ep Title",
+        "expected" : "Discussed on The Outsiders (S4E34) + 2 more",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 2 more",
-        "iosMatchesSharedRule" : false,
-        "name" : "3 ids, 2 distinct labels"
+        "name" : "3 ids, 2 distinct labels",
+        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) & Ep Title"
       },
       {
         "episodeIds" : [
@@ -514,9 +505,8 @@
         "episodeTitle" : "Ep Title",
         "expected" : "Discussed on The Outsiders (S4E34) & Ep Title",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on The Outsiders (S4E34) & Ep Title",
-        "iosMatchesSharedRule" : true,
-        "name" : "2 ids, one in feed one via episodeTitle"
+        "name" : "2 ids, one in feed one via episodeTitle",
+        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) & Ep Title"
       },
       {
         "episodeIds" : [
@@ -525,9 +515,8 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Episode 6 (sample)",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on Episode 6 (sample)",
-        "iosMatchesSharedRule" : true,
-        "name" : "samples 1"
+        "name" : "samples 1",
+        "q9CollapseProposal" : "Discussed on Episode 6 (sample)"
       },
       {
         "episodeIds" : [
@@ -537,9 +526,8 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Episodes 6 & 7 (sample)",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on Episodes 6 & 7 (sample)",
-        "iosMatchesSharedRule" : true,
-        "name" : "samples 2"
+        "name" : "samples 2",
+        "q9CollapseProposal" : "Discussed on Episodes 6 & 7 (sample)"
       },
       {
         "episodeIds" : [
@@ -550,12 +538,11 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Episode 6 + 2 more (sample)",
         "feedLoaded" : true,
-        "iosB673df1" : "Discussed on Episode 6 + 2 more (sample)",
-        "iosMatchesSharedRule" : true,
-        "name" : "samples 3"
+        "name" : "samples 3",
+        "q9CollapseProposal" : "Discussed on Episode 6 + 2 more (sample)"
       }
     ],
-    "description" : "EpisodeLabel.discussedText (SPEC §2.3). Formats: 0 ids -> 'Not discussed on the show yet'; label = title + ' (S4E34)' when the feed has S/E; 1 -> 'Discussed on A'; 2 -> 'Discussed on A & B'; 3+ -> 'Discussed on A + N more'. Title source: feed title, else movie.episodeTitle, else 'Episode n' for sample ids, else the raw guid. `iosB673df1` = what iOS main renders today; `expected` = shared rule decided by MRT App: identical labels collapse and the 1/2/3+ format uses the DISTINCT label count (Q9; iOS fix is a 1.0.1 candidate). Siri always renders with no feed.",
+    "description" : "EpisodeLabel.discussedText (SPEC §2.3). Formats: 0 ids -> 'Not discussed on the show yet'; label = title + ' (S4E34)' when the feed has S/E; 1 -> 'Discussed on A'; 2 -> 'Discussed on A & B'; 3+ -> 'Discussed on A + N more'. Title source: feed title, else movie.episodeTitle, else 'Episode n' for sample ids, else the raw guid. `expected` = what iOS 1.0.1 renders (identical labels are NOT collapsed: \"A & A\" stays). `q9CollapseProposal` = MRT App's Q9 collapse rule, which is NOT in iOS 1.0.1; do not implement it. Siri always renders with no feed.",
     "feed" : [
       {
         "episode" : 34,
@@ -1208,7 +1195,6 @@
           "episodeTitle" : "The Outsiders",
           "genre" : "Drama",
           "id" : "m1",
-          "isInfamous" : false,
           "title" : "One",
           "year" : 1983
         },
@@ -1223,7 +1209,6 @@
           "episodeTitle" : "Double Feature",
           "genre" : "Drama",
           "id" : "m2",
-          "isInfamous" : false,
           "title" : "Two",
           "year" : 1990
         },
@@ -1239,7 +1224,6 @@
           "episodeTitle" : "Triple",
           "genre" : "Drama",
           "id" : "m3",
-          "isInfamous" : false,
           "title" : "Three",
           "year" : 1991
         },
@@ -1254,7 +1238,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "m4",
-          "isInfamous" : false,
           "title" : "Four",
           "year" : 1992
         }
@@ -1368,48 +1351,57 @@
         "expected" : {
           "cacheOverwritten" : false,
           "episodesListChanged" : false,
+          "error" : "noEpisodes",
+          "parse" : {
+            "episodes" : 0,
+            "ok" : true
+          },
           "refresh" : "failed"
         },
         "feed" : "empty-channel (see feeds[])",
-        "iosB673df1" : {
-          "cacheOverwritten" : true,
-          "episodesListChanged" : true,
-          "refresh" : "succeeded"
-        },
-        "parse" : {
-          "episodes" : 0,
-          "ok" : true
-        }
+        "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title></channel></rss>"
       },
       {
         "expected" : {
           "cacheOverwritten" : false,
           "episodesListChanged" : false,
+          "error" : "noEpisodes",
+          "parse" : {
+            "episodes" : 0,
+            "ok" : true
+          },
           "refresh" : "failed"
         },
-        "feed" : "not-xml / truncated rss (see feeds[])",
-        "iosB673df1" : "Linux probe: succeeded with 0 episodes, cache overwritten; Darwin unverified",
-        "parse" : "ok with 0 episodes, or malformed (platform-dependent)"
+        "feed" : "html captive portal (200, not RSS)",
+        "input" : "<html><head><title>Login</title></head><body>Wi-Fi</body></html>"
+      },
+      {
+        "expected" : {
+          "cacheOverwritten" : false,
+          "episodesListChanged" : false,
+          "error" : "parse",
+          "parse" : "throws",
+          "refresh" : "failed"
+        },
+        "feed" : "not-xml",
+        "input" : "not xml at all"
       },
       {
         "expected" : {
           "cacheOverwritten" : true,
           "episodesListChanged" : true,
+          "parse" : {
+            "episodes" : 2,
+            "ok" : true
+          },
           "refresh" : "succeeded"
         },
         "feed" : "buzzsprout-fixture",
-        "iosB673df1" : {
-          "cacheOverwritten" : true,
-          "episodesListChanged" : true,
-          "refresh" : "succeeded"
-        },
-        "parse" : {
-          "episodes" : 2,
-          "ok" : true
-        }
+        "input" : "MovieRouletteTuesdayTests/Fixtures/feed-snippet.xml"
       }
     ],
-    "description" : "Shared rule (MRT App, Q2): the PARSER may return 0 episodes; the REFRESH treats 0 episodes (or a parse error) as a failure: cache file untouched, current list kept, soft error shown. iOS b673df1 instead saves and applies the empty feed (bug, 1.0.1 candidate); Android follows the shared rule."
+    "description" : "iOS 1.0.1 (f39fbb9, EpisodeFeedIO.validated): a refresh whose parse yields 0 episodes (empty channel, or any well-formed non-RSS HTTP 200 such as a captive portal) throws RSSFeedError.noEpisodes BEFORE the cache write: cache file untouched, current list kept, soft error shown. A parse error fails the same way.",
+    "source" : "RouletteCore/EpisodeStoreCore.swift EpisodeFeedIO.validated / refresh"
   },
   "stripFanMail" : [
     {

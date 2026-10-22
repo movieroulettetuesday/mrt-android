@@ -38,15 +38,33 @@ class RareOutcomeTest {
         assertTrue("$jackpots", jackpots in 800..1200)
     }
 
+    /** A [Random] whose doubles come from [units], counting draws. */
+    private class Units(vararg val units: Double) : kotlin.random.Random() {
+        var draws = 0
+        override fun nextBits(bitCount: Int): Int = error("only nextDouble is expected")
+        override fun nextDouble(): Double = units[draws++]
+    }
+
     @Test fun jackpotPick() {
-        val c = RouletteFixtures.withInfamous()
-        assertNull(RareOutcomeRoller.jackpotPick(RouletteFixtures.catalog, c.categories[0], SeededRandom(1)))
-        val (movie, cat) = RareOutcomeRoller.jackpotPick(c, c.category("a")!!, SeededRandom(1))!!
+        val c = RouletteFixtures.catalog
+        val avgs = RouletteFixtures.jackpotAverages // weights: seven movies 0.5 (5-star avg), d-2 5.0 (half-star avg): total 8.5
+        // iOS 1.0.1: every movie is a candidate; no flags needed for the jackpot to be available.
+        assertEquals(c.movies, RareOutcomeRoller.jackpotCandidates(c))
+        assertNull(RareOutcomeRoller.jackpotPick(c.copy(movies = emptyList()), c.categories[0], avgs, Units()))
+        val r = Units(0.99, 0.0, 0.41)
+        val (movie, cat) = RareOutcomeRoller.jackpotPick(c, c.category("a")!!, avgs, r)!!
         assertEquals("d-2", movie.id)
         assertEquals("d", cat.id) // not in the landed category -> its own first category
-        val (_, same) = RareOutcomeRoller.jackpotPick(c, c.category("d")!!, SeededRandom(1))!!
-        assertEquals("d", same.id)
-        assertNotNull(same)
+        assertEquals(1, r.draws) // exactly one unit double per jackpot
+        val (first, credited) = RareOutcomeRoller.jackpotPick(c, c.category("a")!!, avgs, r)!!
+        assertEquals("a-1", first.id)
+        assertEquals("a", credited.id)
+        // 0.41 * 8.5 = 3.485 < 3.5: still the seventh movie (d-1), not d-2.
+        assertEquals("d-1", RareOutcomeRoller.jackpotPick(c, c.category("d")!!, avgs, r)!!.first.id)
+        assertEquals(3, r.draws)
+        // Unrated movies all weigh 2.5 -> uniform.
+        assertEquals(List(8) { 2.5 }, InfamousSelection.weights(c.movies, emptyMap()))
+        assertNotNull(RatingWeightedSelector().pick(c, c.categories[0], SeededRandom(1)))
     }
 
     @Test fun seededRandomMatchesSplitMix64() {

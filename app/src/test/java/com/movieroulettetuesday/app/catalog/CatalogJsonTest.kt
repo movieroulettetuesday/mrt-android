@@ -1,7 +1,6 @@
 package com.movieroulettetuesday.app.catalog
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -14,7 +13,6 @@ class CatalogJsonTest {
         assertEquals(ShowInfo.MRT, c.showInfo)
         val m = c.movies.single()
         assertEquals(emptyList<String>(), m.episodeIds)
-        assertFalse(m.isInfamous)
         assertNull(m.tmdbId)
         assertNull(m.streaming)
         assertEquals("One", c.categories.single().displayName)

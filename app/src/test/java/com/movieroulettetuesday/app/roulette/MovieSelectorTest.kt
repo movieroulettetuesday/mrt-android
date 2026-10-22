@@ -26,7 +26,6 @@ class MovieSelectorTest {
     @Test fun weights() {
         val m = catalog.movie("a-1")!!
         assertEquals(1.0, selector.weight(m, emptyList()), 0.0)
-        assertEquals(1.25, selector.weight(m.copy(isInfamous = true), emptyList()), 1e-9)
         val history = listOf(SpinResult(movieId = "a-1", categoryId = "a"), SpinResult(movieId = "b-1", categoryId = "b"))
         assertEquals(selector.recencyMultiplier(2), selector.weight(m, history), 1e-9)
     }

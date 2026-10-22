@@ -56,7 +56,6 @@ data class Movie(
     val episodeIds: List<String> = emptyList(),
     val episodeTitle: String? = null,
     val posterURL: String? = null,
-    val isInfamous: Boolean = false,
     val hostRating: Double? = null,
     val tmdbId: Int? = null,
     val streaming: StreamingInfo? = null,

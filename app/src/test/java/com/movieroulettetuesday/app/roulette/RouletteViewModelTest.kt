@@ -23,12 +23,14 @@ class RouletteViewModelTest {
         rare: RareOutcomePolicy = RareOutcomePolicy(isEnabled = false),
         seed: Long = 5,
         history: SpinHistoryStore = SpinHistoryStore(null),
+        jackpotAverages: Map<String, Double> = emptyMap(),
     ) = RouletteViewModel(
         catalogState = catalogFlow,
         history = history,
         scope = TestScope(UnconfinedTestDispatcher(testScheduler)).backgroundScope,
         random = SeededRandom(seed),
         rarePolicy = rare,
+        jackpot = RatingWeightedSelector { jackpotAverages },
     )
 
     @Test fun spinLandsOnCategoryThenPicksAMovieFromIt() = runTest {
@@ -96,9 +98,9 @@ class RouletteViewModelTest {
     }
 
     @Test fun infamousJackpot() = runTest {
-        catalogFlow.value = CatalogRepository.State.Loaded(RouletteFixtures.withInfamous())
         val jackpot = RareOutcomePolicy(forcedRespinChance = 0.0, infamousJackpotChance = 1.0)
-        val vm = vm(rare = jackpot)
+        // iOS 1.0.1: no flags; the lowest-rated movie (d-2, 0.5 stars) is by far the likeliest.
+        val vm = vm(rare = jackpot, jackpotAverages = RouletteFixtures.jackpotAverages)
         vm.spin()
         vm.spinAnimationEnded(vm.state.value.spin!!.token)
         val reveal = vm.state.value.reveal!!

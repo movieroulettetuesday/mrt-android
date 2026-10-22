@@ -8,6 +8,7 @@ import com.movieroulettetuesday.app.catalog.HexColor
 import com.movieroulettetuesday.app.catalog.MovieCatalog
 import com.movieroulettetuesday.app.roulette.MovieSelector
 import java.security.MessageDigest
+import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.fail
@@ -53,7 +54,7 @@ class CatalogVectorsTest {
                 assertEquals(tag, m["episodeIds"]!!.strings(), movie.episodeIds)
                 assertEquals(tag, m.dbl("hostRating"), movie.hostRating)
                 assertEquals(tag, m.int("tmdbId"), movie.tmdbId)
-                assertEquals(tag, m.bool("isInfamous"), movie.isInfamous)
+                assertEquals(tag, null, m["isInfamous"]) // iOS 1.0.1: not a Movie property any more
                 assertEquals(tag, m.str("subtitle"), cat.subtitle(movie))
                 assertEquals(tag, m["streaming"] is kotlinx.serialization.json.JsonNull, movie.streaming == null)
             }
@@ -100,7 +101,9 @@ class CatalogVectorsTest {
         assertEquals(b.int("movieCount"), cat.movies.size)
         assertEquals(b["categoryIds"]!!.strings(), cat.categories.map { it.id })
         assertEquals(b["hosts"]!!.strings(), cat.showInfo.hosts)
-        assertEquals(b.int("infamousCount"), cat.movies.count { it.isInfamous })
+        // Legacy key only: counted in the raw JSON, never decoded (iOS 1.0.1, 5d459a0).
+        val raw = kotlinx.serialization.json.Json.parseToJsonElement(bytes.decodeToString()).jsonObject.arr("movies").objs()
+        assertEquals(b.int("legacyIsInfamousTrueCount"), raw.count { it.bool("isInfamous") == true })
         val sel = MovieSelector()
         for ((id, n) in b.obj("candidateCounts")) assertEquals(id, num(n)!!.toInt(), sel.candidates(cat.category(id)!!, cat).size)
     }

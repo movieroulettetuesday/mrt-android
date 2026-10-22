@@ -1,8 +1,10 @@
 {
   "_generated" : {
+    "bundledCatalogCommit" : "b673df1",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "b673df1",
-    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
+    "iosCommit" : "a0dffcc",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
+    "rules" : "iOS 1.0.1 (branch fix/notification-tap-main-thread @ a0dffcc: 5d459a0, f39fbb9, 867e024, a0dffcc)"
   },
   "appSpinSequence" : {
     "cases" : [
@@ -405,9 +407,9 @@
             "wasForcedRespin" : false
           },
           {
-            "categoryId" : "b",
+            "categoryId" : "d",
             "landed" : "a",
-            "movieId" : "b-1",
+            "movieId" : "d-2",
             "outcome" : "infamousJackpot",
             "rotation" : 30154.002294623428,
             "wasForcedRespin" : false
@@ -604,7 +606,7 @@
           {
             "categoryId" : "b",
             "landed" : "b",
-            "movieId" : "b-1",
+            "movieId" : "b-2",
             "outcome" : "normal",
             "rotation" : 95968.5190756657,
             "wasForcedRespin" : false
@@ -748,7 +750,7 @@
           {
             "categoryId" : "b",
             "landed" : "b",
-            "movieId" : "b-1",
+            "movieId" : "b-2",
             "outcome" : "normal",
             "rotation" : 138497.07304287894,
             "wasForcedRespin" : false
@@ -901,7 +903,6 @@
           "episodeTitle" : "Ep a",
           "genre" : "Drama",
           "id" : "a-1",
-          "isInfamous" : false,
           "title" : "Movie a 1",
           "year" : 2001
         },
@@ -915,7 +916,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "a-2",
-          "isInfamous" : false,
           "title" : "Movie a 2",
           "year" : 2002
         },
@@ -929,7 +929,6 @@
           "episodeTitle" : "Ep b",
           "genre" : "Drama",
           "id" : "b-1",
-          "isInfamous" : false,
           "title" : "Movie b 1",
           "year" : 2001
         },
@@ -943,7 +942,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "b-2",
-          "isInfamous" : false,
           "title" : "Movie b 2",
           "year" : 2002
         },
@@ -957,7 +955,6 @@
           "episodeTitle" : "Ep c",
           "genre" : "Drama",
           "id" : "c-1",
-          "isInfamous" : false,
           "title" : "Movie c 1",
           "year" : 2001
         },
@@ -971,7 +968,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "c-2",
-          "isInfamous" : false,
           "title" : "Movie c 2",
           "year" : 2002
         },
@@ -985,7 +981,6 @@
           "episodeTitle" : "Ep d",
           "genre" : "Drama",
           "id" : "d-1",
-          "isInfamous" : false,
           "title" : "Movie d 1",
           "year" : 2001
         },
@@ -999,7 +994,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "d-2",
-          "isInfamous" : false,
           "title" : "Movie d 2",
           "year" : 2002
         }
@@ -1064,7 +1058,6 @@
           "episodeTitle" : "Ep a",
           "genre" : "Drama",
           "id" : "a-1",
-          "isInfamous" : false,
           "title" : "Movie a 1",
           "year" : 2001
         },
@@ -1078,7 +1071,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "a-2",
-          "isInfamous" : false,
           "title" : "Movie a 2",
           "year" : 2002
         },
@@ -1106,7 +1098,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "b-2",
-          "isInfamous" : false,
           "title" : "Movie b 2",
           "year" : 2002
         },
@@ -1120,7 +1111,6 @@
           "episodeTitle" : "Ep c",
           "genre" : "Drama",
           "id" : "c-1",
-          "isInfamous" : false,
           "title" : "Movie c 1",
           "year" : 2001
         },
@@ -1134,7 +1124,6 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "c-2",
-          "isInfamous" : false,
           "title" : "Movie c 2",
           "year" : 2002
         },
@@ -1148,7 +1137,6 @@
           "episodeTitle" : "Ep d",
           "genre" : "Drama",
           "id" : "d-1",
-          "isInfamous" : false,
           "title" : "Movie d 1",
           "year" : 2001
         },
@@ -1169,6 +1157,367 @@
       ],
       "schemaVersion" : 2
     }
+  },
+  "infamousSelection" : {
+    "cases" : [
+      {
+        "averageStars" : [
+          1,
+          5
+        ],
+        "name" : "V1",
+        "probabilities" : [
+          0.9,
+          0.1
+        ],
+        "seed42Counts100k" : [
+          89969,
+          10031
+        ],
+        "seed42First10" : [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "unitToIndex" : [
+          {
+            "index" : 0,
+            "unit" : 0
+          },
+          {
+            "index" : 0,
+            "unit" : 0.25
+          },
+          {
+            "index" : 0,
+            "unit" : 0.5
+          },
+          {
+            "index" : 0,
+            "unit" : 0.75
+          },
+          {
+            "index" : 1,
+            "unit" : 0.999
+          }
+        ],
+        "weights" : [
+          4.5,
+          0.5
+        ]
+      },
+      {
+        "averageStars" : [
+          1,
+          3,
+          5,
+          null
+        ],
+        "name" : "V2",
+        "probabilities" : [
+          0.45,
+          0.25,
+          0.05,
+          0.25
+        ],
+        "seed42Counts100k" : [
+          44723,
+          25147,
+          5102,
+          25028
+        ],
+        "seed42First10" : [
+          2,
+          1,
+          1,
+          3,
+          3,
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        "unitToIndex" : [
+          {
+            "index" : 0,
+            "unit" : 0
+          },
+          {
+            "index" : 0,
+            "unit" : 0.25
+          },
+          {
+            "index" : 1,
+            "unit" : 0.5
+          },
+          {
+            "index" : 3,
+            "unit" : 0.75
+          },
+          {
+            "index" : 3,
+            "unit" : 0.999
+          }
+        ],
+        "weights" : [
+          4.5,
+          2.5,
+          0.5,
+          2.5
+        ]
+      },
+      {
+        "averageStars" : [
+          null,
+          null,
+          null,
+          null
+        ],
+        "name" : "V3",
+        "probabilities" : [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "seed42Counts100k" : [
+          24728,
+          25004,
+          25240,
+          25028
+        ],
+        "seed42First10" : [
+          2,
+          1,
+          2,
+          3,
+          3,
+          0,
+          1,
+          2,
+          0,
+          2
+        ],
+        "unitToIndex" : [
+          {
+            "index" : 0,
+            "unit" : 0
+          },
+          {
+            "index" : 1,
+            "unit" : 0.25
+          },
+          {
+            "index" : 2,
+            "unit" : 0.5
+          },
+          {
+            "index" : 3,
+            "unit" : 0.75
+          },
+          {
+            "index" : 3,
+            "unit" : 0.999
+          }
+        ],
+        "weights" : [
+          2.5,
+          2.5,
+          2.5,
+          2.5
+        ]
+      },
+      {
+        "averageStars" : [
+          0.5,
+          2.5,
+          4.5
+        ],
+        "name" : "V4",
+        "probabilities" : [
+          0.5555555555555556,
+          0.3333333333333333,
+          0.1111111111111111
+        ],
+        "seed42Counts100k" : [
+          55284,
+          33586,
+          11130
+        ],
+        "seed42First10" : [
+          1,
+          0,
+          1,
+          2,
+          1,
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        "unitToIndex" : [
+          {
+            "index" : 0,
+            "unit" : 0
+          },
+          {
+            "index" : 0,
+            "unit" : 0.25
+          },
+          {
+            "index" : 0,
+            "unit" : 0.5
+          },
+          {
+            "index" : 1,
+            "unit" : 0.75
+          },
+          {
+            "index" : 2,
+            "unit" : 0.999
+          }
+        ],
+        "weights" : [
+          5,
+          3,
+          1
+        ]
+      },
+      {
+        "averageStars" : [
+          5,
+          2,
+          null
+        ],
+        "name" : "V5",
+        "probabilities" : [
+          0.07692307692307693,
+          0.5384615384615384,
+          0.38461538461538464
+        ],
+        "seed42Counts100k" : [
+          7644,
+          53594,
+          38762
+        ],
+        "seed42First10" : [
+          2,
+          1,
+          1,
+          2,
+          2,
+          1,
+          1,
+          2,
+          1,
+          2
+        ],
+        "unitToIndex" : [
+          {
+            "index" : 0,
+            "unit" : 0
+          },
+          {
+            "index" : 1,
+            "unit" : 0.25
+          },
+          {
+            "index" : 1,
+            "unit" : 0.5
+          },
+          {
+            "index" : 2,
+            "unit" : 0.75
+          },
+          {
+            "index" : 2,
+            "unit" : 0.999
+          }
+        ],
+        "weights" : [
+          0.5,
+          3.5,
+          2.5
+        ]
+      },
+      {
+        "averageStars" : [
+          0,
+          7,
+          "NaN",
+          "Infinity",
+          -3
+        ],
+        "name" : "clamp-and-nonfinite",
+        "probabilities" : [
+          0.3225806451612903,
+          0.03225806451612903,
+          0.16129032258064516,
+          0.16129032258064516,
+          0.3225806451612903
+        ],
+        "seed42Counts100k" : [
+          32054,
+          3202,
+          16067,
+          16291,
+          32386
+        ],
+        "seed42First10" : [
+          4,
+          2,
+          3,
+          4,
+          4,
+          0,
+          0,
+          4,
+          0,
+          3
+        ],
+        "unitToIndex" : [
+          {
+            "index" : 0,
+            "unit" : 0
+          },
+          {
+            "index" : 0,
+            "unit" : 0.25
+          },
+          {
+            "index" : 2,
+            "unit" : 0.5
+          },
+          {
+            "index" : 4,
+            "unit" : 0.75
+          },
+          {
+            "index" : 4,
+            "unit" : 0.999
+          }
+        ],
+        "weights" : [
+          5,
+          0.5,
+          2.5,
+          2.5,
+          5
+        ]
+      }
+    ],
+    "description" : "iOS 1.0.1 InfamousSelection (RareOutcomes.swift, 5d459a0). seed42 = SeededRandomNumberGenerator(42) with one Double.random(in: 0..<1) per pick.",
+    "maxWeight" : 5,
+    "unratedWeight" : 2.5
   },
   "pickIndex" : [
     {
@@ -1455,10 +1804,10 @@
       },
       {
         "catalog" : "fixtureInfamous",
-        "categoryId" : "d",
+        "categoryId" : "b",
         "isJackpot" : true,
         "landed" : "d",
-        "movieId" : "d-2",
+        "movieId" : "b-1",
         "seed" : 121,
         "wasForcedRespin" : false
       },
@@ -1583,40 +1932,151 @@
     "jackpotPick" : [
       {
         "catalog" : "fixtureInfamous",
-        "categoryId" : "d",
+        "categoryId" : "b",
         "landed" : "a",
-        "movieId" : "d-2",
+        "listenerAverages" : {
+
+        },
+        "movieId" : "b-1",
+        "rngDraws" : 1,
         "seed" : 1
       },
       {
         "catalog" : "fixtureInfamous",
         "categoryId" : "d",
         "landed" : "a",
-        "movieId" : "d-2",
+        "listenerAverages" : {
+
+        },
+        "movieId" : "d-1",
+        "rngDraws" : 1,
         "seed" : 2
       },
       {
         "catalog" : "fixtureInfamous",
         "categoryId" : "b",
         "landed" : "d",
+        "listenerAverages" : {
+
+        },
         "movieId" : "b-1",
+        "rngDraws" : 1,
         "seed" : 3
       },
       {
         "catalog" : "fixtureInfamous",
-        "categoryId" : "b",
+        "categoryId" : "c",
         "landed" : "b",
-        "movieId" : "b-1",
+        "listenerAverages" : {
+
+        },
+        "movieId" : "c-1",
+        "rngDraws" : 1,
         "seed" : 4
       },
       {
         "catalog" : "fixtureInfamous",
-        "categoryId" : "b",
+        "categoryId" : "a",
         "landed" : "c",
-        "movieId" : "b-1",
+        "listenerAverages" : {
+
+        },
+        "movieId" : "a-1",
+        "rngDraws" : 1,
         "seed" : 5
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "landed" : "a",
+        "listenerAverages" : {
+          "a-1" : 5,
+          "a-2" : 1,
+          "b-1" : 4.5,
+          "c-2" : 2,
+          "d-1" : 0.5
+        },
+        "movieId" : "b-2",
+        "rngDraws" : 1,
+        "seed" : 1
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "d",
+        "landed" : "a",
+        "listenerAverages" : {
+          "a-1" : 5,
+          "a-2" : 1,
+          "b-1" : 4.5,
+          "c-2" : 2,
+          "d-1" : 0.5
+        },
+        "movieId" : "d-1",
+        "rngDraws" : 1,
+        "seed" : 2
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "b",
+        "landed" : "a",
+        "listenerAverages" : {
+          "a-1" : 5,
+          "a-2" : 1,
+          "b-1" : 4.5,
+          "c-2" : 2,
+          "d-1" : 0.5
+        },
+        "movieId" : "b-2",
+        "rngDraws" : 1,
+        "seed" : 3
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "c",
+        "landed" : "a",
+        "listenerAverages" : {
+          "a-1" : 5,
+          "a-2" : 1,
+          "b-1" : 4.5,
+          "c-2" : 2,
+          "d-1" : 0.5
+        },
+        "movieId" : "c-2",
+        "rngDraws" : 1,
+        "seed" : 4
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "a",
+        "landed" : "a",
+        "listenerAverages" : {
+          "a-1" : 5,
+          "a-2" : 1,
+          "b-1" : 4.5,
+          "c-2" : 2,
+          "d-1" : 0.5
+        },
+        "movieId" : "a-2",
+        "rngDraws" : 1,
+        "seed" : 5
+      },
+      {
+        "catalog" : "fixtureInfamous",
+        "categoryId" : "a",
+        "landed" : "a",
+        "listenerAverages" : {
+          "a-1" : 5,
+          "a-2" : 1,
+          "b-1" : 4.5,
+          "c-2" : 2,
+          "d-1" : 0.5
+        },
+        "movieId" : "a-2",
+        "rngDraws" : 1,
+        "seed" : 6
       }
     ],
+    "jackpotRule" : "1.0.1: jackpot candidates = every catalog movie (available whenever the catalog has a movie); InfamousSelection draws exactly one unit double; weight 5.5 - clamp(avg, 0.5, 5), unrated/non-finite 2.5; legacy isInfamous ignored; no x1.25 boost in normal spins.",
     "policy" : {
       "forcedRespinChance" : 0.01,
       "infamousJackpotChance" : 0.01
@@ -2029,12 +2489,12 @@
       "category_b" : [
         {
           "movieId" : "b-1",
-          "probability" : 0.5555555555555556,
-          "weight" : 1.25
+          "probability" : 0.5,
+          "weight" : 1
         },
         {
           "movieId" : "b-2",
-          "probability" : 0.4444444444444444,
+          "probability" : 0.5,
           "weight" : 1
         }
       ],
@@ -2091,12 +2551,12 @@
       "category_b" : [
         {
           "movieId" : "b-1",
-          "probability" : 0.5555555555555556,
-          "weight" : 1.25
+          "probability" : 0.5,
+          "weight" : 1
         },
         {
           "movieId" : "b-2",
-          "probability" : 0.4444444444444444,
+          "probability" : 0.5,
           "weight" : 1
         }
       ],
@@ -2154,12 +2614,12 @@
       "category_b" : [
         {
           "movieId" : "b-1",
-          "probability" : 0.1111111111111111,
-          "weight" : 0.125
+          "probability" : 0.09090909090909091,
+          "weight" : 0.1
         },
         {
           "movieId" : "b-2",
-          "probability" : 0.8888888888888888,
+          "probability" : 0.9090909090909091,
           "weight" : 1
         }
       ],
@@ -2221,12 +2681,12 @@
       "category_b" : [
         {
           "movieId" : "b-1",
-          "probability" : 0.5555555555555556,
-          "weight" : 1.25
+          "probability" : 0.5,
+          "weight" : 1
         },
         {
           "movieId" : "b-2",
-          "probability" : 0.4444444444444444,
+          "probability" : 0.5,
           "weight" : 1
         }
       ],
@@ -2292,12 +2752,12 @@
       "category_b" : [
         {
           "movieId" : "b-1",
-          "probability" : 0.5555555555555556,
-          "weight" : 1.25
+          "probability" : 0.5,
+          "weight" : 1
         },
         {
           "movieId" : "b-2",
-          "probability" : 0.4444444444444444,
+          "probability" : 0.5,
           "weight" : 1
         }
       ],
@@ -2360,12 +2820,12 @@
       "category_b" : [
         {
           "movieId" : "b-1",
-          "probability" : 0.5555555555555556,
-          "weight" : 1.25
+          "probability" : 0.5,
+          "weight" : 1
         },
         {
           "movieId" : "b-2",
-          "probability" : 0.4444444444444444,
+          "probability" : 0.5,
           "weight" : 1
         }
       ],
@@ -2426,12 +2886,12 @@
       "category_b" : [
         {
           "movieId" : "b-1",
-          "probability" : 0.5555555555555556,
-          "weight" : 1.25
+          "probability" : 0.5,
+          "weight" : 1
         },
         {
           "movieId" : "b-2",
-          "probability" : 0.4444444444444444,
+          "probability" : 0.5,
           "weight" : 1
         }
       ],

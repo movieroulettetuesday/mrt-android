@@ -2,7 +2,7 @@ package com.movieroulettetuesday.app.shared
 
 import com.movieroulettetuesday.app.catalog.CatalogRepository
 import com.movieroulettetuesday.app.catalog.MovieCatalog
-import com.movieroulettetuesday.app.roulette.FlaggedInfamousSelector
+import com.movieroulettetuesday.app.roulette.InfamousSelection
 import com.movieroulettetuesday.app.roulette.MovieSelector
 import com.movieroulettetuesday.app.roulette.RareOutcome
 import com.movieroulettetuesday.app.roulette.RareOutcomePolicy
@@ -128,9 +128,13 @@ class SelectionVectorsTest {
         for (c in ro.arr("jackpotPick").objs()) {
             val catalog = SharedVectors.catalog(c["catalog"]!!)
             val landed = catalog.categories.first { it.id == c.str("landed") }
-            val (movie, credited) = FlaggedInfamousSelector.pick(catalog, landed, SwiftCompatRandom(c.seed()))!!
-            assertEquals("seed ${c.seed()}", c.str("movieId"), movie.id)
-            assertEquals("seed ${c.seed()}", c.str("categoryId"), credited.id)
+            val averages = c.obj("listenerAverages").mapValues { num(it.value)!! }
+            val r = CountingSwiftRandom(c.seed())
+            val (movie, credited) = RareOutcomeRoller.jackpotPick(catalog, landed, averages, r)!!
+            val tag = "seed ${c.seed()} averages $averages"
+            assertEquals(tag, c.str("movieId"), movie.id)
+            assertEquals(tag, c.str("categoryId"), credited.id)
+            assertEquals(tag, c.int("rngDraws"), r.draws)
         }
     }
 
@@ -140,15 +144,16 @@ class SelectionVectorsTest {
         for (c in v.obj("quickSpin").arr("cases").objs()) {
             val catalog = SharedVectors.catalog(c["catalog"]!!)
             val geometry = WheelGeometry.forCatalog(catalog)
+            val jackpot = RatingWeightedSelector() // Siri/widget spins have no averages in the vectors
             val r = SwiftCompatRandom(c.seed())
             var allowRespin = true
             var wasForced = false
             while (true) {
                 val target = geometry.randomTargetRotation(0.0, r, fullTurns = 1..1)
                 val landed = catalog.categories[geometry.segmentIndex(target)]
-                val outcome = RareOutcomeRoller.roll(RareOutcomePolicy(), FlaggedInfamousSelector.isAvailable(catalog), allowRespin, r)
+                val outcome = RareOutcomeRoller.roll(RareOutcomePolicy(), jackpot.isAvailable(catalog), allowRespin, r)
                 if (outcome == RareOutcome.ForcedRespin) { allowRespin = false; wasForced = true; continue }
-                val jackpot = if (outcome == RareOutcome.InfamousJackpot) FlaggedInfamousSelector.pick(catalog, landed, r) else null
+                val jackpot = if (outcome == RareOutcome.InfamousJackpot) jackpot.pick(catalog, landed, r) else null
                 val movie = jackpot?.first ?: selector.selectMovie(landed, catalog, emptyList(), r)!!
                 val tag = "seed ${c.seed()}"
                 assertEquals(tag, c.str("landed"), landed.id)
@@ -201,46 +206,54 @@ class SelectionVectorsTest {
     private fun mod360(x: Double) = ((x % 360) + 360) % 360
     private fun kotlinx.serialization.json.JsonElement.jsonArray() = this as kotlinx.serialization.json.JsonArray
 
+    /** selection.json#infamousSelection (iOS 1.0.1 InfamousSelection): V1-V5 + clamp/non-finite. */
     @Test
-    fun ratingWeightedJackpotVectors() {
-        fun w(avgs: List<Double?>) = avgs.map { RatingWeightedSelector.weight(it) }
-        val units = listOf(0.0, 0.25, 0.5, 0.75, 0.999)
-        val cases = listOf(
-            Triple(w(listOf(1.0, 5.0)), listOf(4.5, 0.5), listOf(0, 0, 0, 0, 1)),
-            Triple(w(listOf(1.0, 3.0, 5.0, null)), listOf(4.5, 2.5, 0.5, 2.5), listOf(0, 0, 1, 3, 3)),
-            Triple(w(List(4) { null }), List(4) { 2.5 }, listOf(0, 1, 2, 3, 3)),
-            Triple(w(listOf(0.5, 2.5, 4.5)), listOf(5.0, 3.0, 1.0), listOf(0, 0, 0, 1, 2)),
-            Triple(w(listOf(5.0, 2.0, null)), listOf(0.5, 3.5, 2.5), listOf(0, 1, 1, 2, 2)), // V5 after 5d459a0 (no flag)
-        )
-        cases.forEachIndexed { i, (got, weights, idx) ->
-            assertEquals("V${i + 1} weights", weights, got)
-            assertEquals("V${i + 1} picks", idx, units.map { RatingWeightedSelector.pickIndex(got, it) })
+    fun infamousSelectionVectors() {
+        val iv = v.obj("infamousSelection")
+        assertEquals(iv.dbl("unratedWeight")!!, InfamousSelection.UNRATED_WEIGHT, 0.0)
+        assertEquals(iv.dbl("maxWeight")!!, InfamousSelection.weight(InfamousSelection.MIN_STARS), 0.0)
+        val cases = iv.arr("cases").objs()
+        assertEquals(listOf("V1", "V2", "V3", "V4", "V5", "clamp-and-nonfinite"), cases.map { it.str("name") })
+        for (c in cases) {
+            val tag = c.str("name")!!
+            val stars = c["averageStars"]!!.jsonArray().map { num(it) }
+            val movies = stars.indices.map { com.movieroulettetuesday.app.catalog.Movie(id = "m$it", title = "M$it", year = 2000, genre = "Drama") }
+            val averages = movies.zip(stars).mapNotNull { (m, a) -> a?.let { m.id to it } }.toMap()
+            val weights = InfamousSelection.weights(movies, averages)
+            assertEquals(tag, c["weights"]!!.doubles(), weights)
+            c["probabilities"]!!.doubles().zip(InfamousSelection.probabilities(movies, averages)).forEach { (e, g) -> assertClose("$tag p", e, g) }
+            for (u in c.arr("unitToIndex").objs()) {
+                assertEquals("$tag @ ${u.dbl("unit")}", u.int("index"), InfamousSelection.pickIndex(weights, u.dbl("unit")!!))
+            }
+            val r = SwiftCompatRandom(42)
+            val picks = List(100_000) { movies.indexOf(InfamousSelection.pick(movies, averages, r)!!) }
+            assertEquals("$tag first 10", c["seed42First10"]!!.doubles().map { it.toInt() }, picks.take(10))
+            val counts = IntArray(movies.size).also { a -> picks.forEach { a[it]++ } }.toList()
+            assertEquals("$tag counts", c["seed42Counts100k"]!!.doubles().map { it.toInt() }, counts)
         }
-        assertEquals(2.5, RatingWeightedSelector.weight(Double.NaN), 0.0)
-        assertEquals(0.5, RatingWeightedSelector.weight(9.0), 0.0)
-        assertEquals(5.0, RatingWeightedSelector.weight(0.0), 0.0)
-
-        val v1 = cases[0].first
-        val v2 = cases[1].first
-        fun picks(ws: List<Double>, n: Int) = SwiftCompatRandom(42).let { r -> List(n) { RatingWeightedSelector.pickIndex(ws, r.nextDouble())!! } }
-        assertEquals(listOf(0, 0, 0, 1, 0, 0, 0, 0, 0, 0), picks(v1, 10))
-        assertEquals(listOf(2, 1, 1, 3, 3, 0, 0, 1, 0, 1), picks(v2, 10))
-        assertEquals(listOf(89969, 10031), picks(v1, 100_000).groupingBy { it }.eachCount().toSortedMap().values.toList())
-        assertEquals(listOf(44723, 25147, 5102, 25028), picks(v2, 100_000).groupingBy { it }.eachCount().toSortedMap().values.toList())
-        fun counts(ws: List<Double>) = picks(ws, 100_000).groupingBy { it }.eachCount().toSortedMap().values.toList()
-        assertEquals(listOf(24728, 25004, 25240, 25028), counts(cases[2].first))
-        assertEquals(listOf(55284, 33586, 11130), counts(cases[3].first))
-        assertEquals(listOf(7644, 53594, 38762), counts(cases[4].first))
+        assertEquals(null, InfamousSelection.pick(emptyList(), emptyMap(), SwiftCompatRandom(1)))
     }
 
-    /** A legacy `"isInfamous": true` entry weighs exactly what it would without the key (V5 note). */
+    /**
+     * iOS 1.0.1: a legacy `"isInfamous": true` key is ignored. The fixtureInfamous catalog (legacy keys on
+     * d-2 and b-1) decodes to exactly the plain fixture and weighs the same in normal and jackpot spins.
+     */
     @Test
     fun legacyInfamousKeyHasNoWeight() {
-        val catalog = com.movieroulettetuesday.app.catalog.CatalogJson.decode(com.movieroulettetuesday.app.catalog.CatalogFixtures.bundledBytes)
-        val movies = catalog.movies.take(3)
-        val flagged = listOf(movies[0].copy(isInfamous = true)) + movies.drop(1)
-        val avgs = mapOf(movies[0].id to 5.0, movies[1].id to 2.0)
-        assertEquals(listOf(0.5, 3.5, 2.5), RatingWeightedSelector.weights(flagged, avgs))
-        assertEquals(RatingWeightedSelector.weights(movies, avgs), RatingWeightedSelector.weights(flagged, avgs))
+        val plain = SharedVectors.catalog(kotlinx.serialization.json.JsonPrimitive("fixture"))
+        val legacy = SharedVectors.catalog(kotlinx.serialization.json.JsonPrimitive("fixtureInfamous"))
+        assertTrue(v.obj("fixtures").obj("fixtureInfamous").toString().contains("\"isInfamous\":true"))
+        assertEquals(plain, legacy)
+        val hist = history(listOf("a-1"))
+        assertEquals(plain.movies.map { selector.weight(it, hist) }, legacy.movies.map { selector.weight(it, hist) })
+        assertTrue(plain.movies.all { selector.weight(it, emptyList()) == 1.0 }) // no x1.25 boost
+        val avgs = mapOf("d-2" to 5.0, "b-1" to 2.0)
+        assertEquals(InfamousSelection.weights(plain.movies, avgs), InfamousSelection.weights(legacy.movies, avgs))
+    }
+
+    /** Counts unit doubles drawn (one Swift `next()` each), for `rngDraws`. */
+    private class CountingSwiftRandom(seed: Long) : SwiftCompatRandom(seed) {
+        var draws = 0
+        override fun nextDouble(): Double { draws++; return super.nextDouble() }
     }
 }

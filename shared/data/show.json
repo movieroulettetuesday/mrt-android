@@ -1,7 +1,8 @@
 {
   "_generated" : {
-    "from" : "iOS RouletteCore at b673df1 via tools/vector-gen",
-    "note" : "Single source for both ports. Do not edit by hand; change iOS first, then regenerate."
+    "from" : "iOS RouletteCore at a0dffcc via tools/vector-gen",
+    "note" : "Single source for both ports. Do not edit by hand; change iOS first, then regenerate.",
+    "rules" : "iOS 1.0.1 (branch fix/notification-tap-main-thread @ a0dffcc: 5d459a0, f39fbb9, 867e024, a0dffcc)"
   },
   "appGroup" : "group.com.movieroulettetuesday.app",
   "appleLookupURL" : "https://itunes.apple.com/lookup?id=1666123849&entity=podcastEpisode&limit=200",

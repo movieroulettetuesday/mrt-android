@@ -34,8 +34,8 @@ class RouletteViewModel(
     private val soundEnabled: () -> Boolean = { false },
     /** Monotonic seconds, for tap-to-stop timing. */
     private val now: () -> Double = { System.nanoTime() / 1e9 },
-    /** Which movie an Infamous Jackpot picks (iOS main: uniform over isInfamous). */
-    private val jackpot: JackpotSelector = FlaggedInfamousSelector,
+    /** Which movie an Infamous Jackpot picks (iOS 1.0.1: every movie, weighted by listener average). */
+    private val jackpot: JackpotSelector = RatingWeightedSelector(),
     /** Each recorded spin (movie, credited category, epoch ms): the home-screen widget's "last spin". */
     private val onSpinRecorded: (Movie, RouletteCategory, Long) -> Unit = { _, _, _ -> },
 ) : ViewModel(scope) {
