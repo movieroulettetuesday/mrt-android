@@ -6,13 +6,15 @@ _Box: Debian 13 (trixie) x86_64, 8 vCPU, 16 GB RAM. All Android tooling, builds,
 | What | Where |
 |---|---|
 | Workspace | `/workspace/mrt-android/` (PARITY.md, backend-options.md, NOTES.md, the canonical copies) |
-| iOS reference (read-only clone, `main` @ `b673df1`; `origin/fix/notification-tap-main-thread` @ `a0dffcc` = iOS 1.0.1, fetched only) | `/workspace/mrt-android/ios-ref`. Never commit to it, never push from it; only `git fetch`. |
+| iOS reference (read-only clone, `main` @ `b673df1`; `origin/fix/notification-tap-main-thread` @ `78d72a7` = iOS 1.0.1, fetched only) | `/workspace/mrt-android/ios-ref`. Never commit to it, never push from it; only `git fetch`. |
 | Android repo (local clone) | `/workspace/mrt-android/repo` → https://github.com/movieroulettetuesday/mrt-android (**public**) |
-| JDK 17 (Temurin 17.0.20.1) | `/opt/jdk17` (`JAVA_HOME`) |
+| JDK 17 (Temurin 17.0.21+9 since the Oct 23 reinstall) | `/opt/jdk17` (`JAVA_HOME`) |
 | JDK 21 for Robolectric tests | Gradle toolchain, auto-provisioned (foojay) into `~/.gradle/jdks` (Temurin 21.0.12.1) |
 | Android SDK | `ANDROID_HOME=/opt/android-sdk` (owned by box) |
 | Gradle (used only to create the wrapper) | `/opt/gradle-9.8.2`. Builds use `./gradlew` (wrapper 9.8.2). |
 | AVDs | `~/.android/avd/mrt-api36`, `mrt-api37` (unusable, see KVM) |
+
+**After a box restore** (it can wipe `/opt`): run `/workspace/mrt-android/scripts/install-toolchain.sh` (box-only, outside the repo, idempotent). It installs the latest Temurin 17 (checksum-verified) at `/opt/jdk17` and the cmdline-tools + the SDK packages below at `/opt/android-sdk`, and accepts licenses. Emulator and system images are skipped unless `--with-emulator` (KVM is broken here); `/opt/gradle-9.8.2` only with `--with-gradle` (the wrapper is enough for builds). The Gradle JDK 21 for Robolectric lives in `~/.gradle/jdks` and survives restores. `scripts/test-counts.sh` sums the JUnit XML (passed/failed/skipped). Last run Oct 23, 2026: Temurin 17.0.21+9, cmdline-tools 23.0.0, platform-tools 37.0.1, platforms 36 + 37.0, build-tools 36.0.0/36.1.0/37.0.0; emulator, system images, AVDs and `/opt/gradle-9.8.2` not restored.
 
 SDK packages: cmdline-tools 23.0.0 (latest), platform-tools 37.0.1, platforms android-36 (compile/target) and android-37.0, build-tools 36.0.0 / 36.1.0 / 37.0.0, emulator 37.2.12, system images android-36 and android-37.0 google_apis x86_64.
 

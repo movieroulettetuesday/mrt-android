@@ -1,13 +1,13 @@
 # MRT Android ↔ iOS parity checklist (living)
 
 Canonical copy: `/workspace/mrt-android/PARITY.md` (box). Mirrored into the repo root by `scripts/sync-docs.sh`.
-iOS source of truth: `movieroulettetuesday/movie-roulette-tuesday@main` (read-only clone at `/workspace/mrt-android/ios-ref`, reviewed at `b673df1`, 2026-10-20). **Behavior target: iOS 1.0.1** (`fix/notification-tap-main-thread` @ `a0dffcc`, fetched read-only; main untouched), per mrt-shared `test-vectors/`.
+iOS source of truth: `movieroulettetuesday/movie-roulette-tuesday@main` (read-only clone at `/workspace/mrt-android/ios-ref`, reviewed at `b673df1`, 2026-10-20). **Behavior target: iOS 1.0.1** (`fix/notification-tap-main-thread` @ `78d72a7`, fetched read-only; main untouched; shared vectors still pinned at `a0dffcc`, since 99accd7/6b88813/78d72a7 change only the reveal sheet UI), per mrt-shared `test-vectors/`.
 Android repo: https://github.com/movieroulettetuesday/mrt-android (public).
 
 Status: ✅ done · 🟡 partial · ⬜ not started · ⏸ blocked on a decision.
 Effort (Android work, rough): **S** ≤ ½ day · **M** 1–2 days · **L** 3–5 days · **XL** > 1 week.
 
-_Last updated 2026-10-21 (ET) after `feature/ios-1.0.1-rules` (iOS 1.0.1 rules: no infamous flags / boost / badge, rating-weighted jackpot by default, 1.0.1 vectors)._
+_Last updated 2026-10-23 (ET) after `feature/ios-1.0.1-reveal-banner` (iOS 1.0.1 99accd7 / 6b88813 / 78d72a7: jackpot banner is the reveal title, brand gold in light and dark, long titles keep the actions on screen)._
 
 ## 0. App shell
 | iOS (SwiftUI) | Android (Compose) | Effort | Status |
@@ -36,7 +36,10 @@ _Last updated 2026-10-21 (ET) after `feature/ios-1.0.1-rules` (iOS 1.0.1 rules: 
 | Spin sound `wheel-spin.m4a` once per spin; haptic per slice crossing (`SpinFeedback.swift`, `SpinTicks.swift`) | `roulette/SpinFeedback.kt` `SpinSoundPlayer` (MediaPlayer, fade-out on stop) + CLOCK_TICK haptics at the planned crossings (thinned to ≥45 ms). Sound file committed in assets (approved Oct 21), byte-identical to iOS, sha256-verified by `verifySpinSound` on every build; Settings “Spin sound” (`settings.tickSound`) | M | ✅ |
 | Hub ■ stops a spin early (`SpinStopPlan`) | `SpinStopPlan` (0.8 s ease-out, ≥120° travel, same-RNG target); only the hub (“STOP”) stops; the wheel face spins only when idle (iOS, answers-from-ios.md E12) | M | ✅ shared stopPlan vector |
 | Reduce Motion: same timeline, 1–2 turns | Remove-animations setting → 1–2 turns (`RouletteRoute.kt`) | S | ✅ |
-| `RevealSheet.swift` (category, then movie, year, "Discussed on…", spin count, Spin Again, jackpot styling) | `RevealSheet` in `RouletteScreen.kt` (ModalBottomSheet) | S | ✅ (jackpot styling basic) |
+| `RevealSheet.swift` (category, then movie, year, "Discussed on…", spin count, Spin Again, jackpot styling) | `RevealSheet` / `RevealContent` in `RouletteScreen.kt` (ModalBottomSheet; inline card when side by side) | S | ✅ `RevealSheetTest` (7) |
+| iOS 1.0.1 `99accd7`: the Infamous Jackpot banner is the reveal's nav bar title (`ToolbarItem(.principal)`), not part of the content; non-jackpot title "Tonight’s Movie" | `RevealTitleBar` at the top of the sheet (below the drag handle) and of the inline card: jackpot → gold capsule "Infamous Jackpot" (ink text, heading, TalkBack "Infamous jackpot"); otherwise the "Tonight’s Movie" heading. Replaces the old "💀 INFAMOUS JACKPOT 💀" / "TONIGHT'S SPIN" label | S | ✅ tests: banner is the title, above category and movie title; regular title |
+| iOS 1.0.1 `6b88813`: the banner stays brand gold `#F2C14E` in iPhone light mode (`drawingGroup()` keeps it out of the bar's vibrancy filter) | `BrandColors.JackpotGold` (#F2C14E) on `BrandColors.Ink`, fixed colors not taken from the M3 scheme, so light and dark render the same gold (no tinting/elevation overlay on Android) | S | ✅ pixel tests (native graphics) in light and dark: >50 % of the capsule is exactly brand gold |
+| iOS 1.0.1 `78d72a7`: long reveal titles keep Share / Movie page on screen at the iPhone 0.65 detent (`lineLimit` 2 on iPhone, 3 on iPad, `minimumScaleFactor` 0.5). iOS caveat: the longest title clears the buttons by only 1.2 pt; a scroll fallback awaits Matthew | Title `maxLines` 2 compact / 3 regular width (`revealTitleMaxLines`), M3 `TextAutoSize.StepBased` down to 50 % of `headlineMedium`, then ellipsis. **More robust than iOS:** in the sheet the details (category, title, year, Discussed on, spin count) scroll in the space left and the actions row (Share, Spin Again, Movie page, Done) is pinned below them, so no title length or font scale can push the buttons off-screen | S | ✅ tests: the catalog's 3 longest titles (regular + jackpot) at 360×640 dp keep Share, Spin Again and Movie page fully on screen in ≤2 lines; 2× font scale still on screen; tablet 800×1280 dp ≤3 lines. Verified the phone tests fail without the fix |
 | `ShareCard.swift` (1080×1350 branded image) + `ShareLink` text "Tonight’s Movie Roulette Tuesday spin: Title (Year)" | `roulette/Share.kt`: `ACTION_SEND` text/plain chooser, same text and subject | S / M | ✅ text · ⬜ image card (render composable → PNG → FileProvider) |
 | `ConfettiView.swift` | Compose particle effect | S | ⬜ |
 | `RouletteTaglines.swift`, header "Dinner, discussion, and the wheel" | Header in `RouletteScreen.kt` | S | 🟡 tagline only |
