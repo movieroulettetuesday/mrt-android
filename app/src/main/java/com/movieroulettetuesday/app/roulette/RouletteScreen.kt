@@ -40,6 +40,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movieroulettetuesday.app.catalog.CatalogRepository
 import com.movieroulettetuesday.app.catalog.HexColor
@@ -205,11 +213,56 @@ fun RevealSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, modifier = Modifier.testTag("reveal-sheet")) {
-        RevealContent(reveal, episodesByGUID, onDismiss, onSpinAgain, onShare, onOpenMovie)
+        RevealContent(reveal, episodesByGUID, onDismiss, onSpinAgain, onShare, onOpenMovie, pinActions = true)
     }
 }
 
-/** The reveal itself: in the bottom sheet (stacked) or next to the wheel (side by side). */
+/**
+ * The sheet's top title (iOS 1.0.1 99accd7: the reveal's navigation bar title). A jackpot shows the
+ * gold "Infamous Jackpot" capsule as the title itself; otherwise the plain "Tonight’s Movie" title.
+ * The capsule is drawn in fixed brand colors (gold on ink) in light and dark themes (iOS 6b88813).
+ */
+@Composable
+fun RevealTitleBar(isJackpot: Boolean, modifier: Modifier = Modifier) {
+    Box(
+        modifier.fillMaxWidth().heightIn(min = 48.dp).padding(horizontal = 24.dp).testTag("reveal-title-bar"),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (isJackpot) {
+            Text(
+                "Infamous Jackpot",
+                Modifier
+                    .background(BrandColors.JackpotGold, CircleShape)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .semantics { heading(); contentDescription = "Infamous jackpot" }
+                    .testTag("reveal-jackpot-banner"),
+                color = BrandColors.Ink,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Black,
+                letterSpacing = 0.5.sp,
+                maxLines = 1,
+            )
+        } else {
+            Text(
+                "Tonight’s Movie",
+                Modifier.semantics { heading() }.testTag("reveal-sheet-title"),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+/** Movie title lines (iOS 78d72a7): two on a compact phone, three on regular width (tablet). */
+internal fun revealTitleMaxLines(isRegularWidth: Boolean): Int = if (isRegularWidth) 3 else 2
+
+/**
+ * The reveal itself: in the bottom sheet (stacked) or next to the wheel (side by side).
+ * [pinActions] (the sheet): the details scroll in the space left over, so Share, Spin Again and
+ * Movie page always stay on screen however long the title or large the font scale (iOS 78d72a7 only
+ * shrinks the title; Android also lets the details scroll as a fallback).
+ */
 @Composable
 fun RevealContent(
     reveal: RouletteViewModel.Reveal,
@@ -218,18 +271,21 @@ fun RevealContent(
     onSpinAgain: () -> Unit,
     onShare: () -> Unit,
     onOpenMovie: (() -> Unit)?,
+    pinActions: Boolean = false,
 ) {
-    run {
+    val isRegularWidth = LocalWindowLayout.current.isRegularWidth
+    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        RevealTitleBar(reveal.isJackpot)
         Column(
-            Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
+            Modifier
+                .fillMaxWidth()
+                // Only the sheet scrolls here; side by side, the whole column already scrolls.
+                .then(if (pinActions) Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()) else Modifier)
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .testTag("reveal-details"),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Text(
-                if (reveal.isJackpot) "💀 INFAMOUS JACKPOT 💀" else "TONIGHT'S SPIN",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
             val catColor = reveal.category.displayColor
             Text(
                 reveal.category.displayName,
@@ -240,12 +296,17 @@ fun RevealContent(
                 color = if (catColor.prefersDarkText) BrandColors.Ink else Color.White,
                 fontWeight = FontWeight.SemiBold,
             )
+            val titleStyle = MaterialTheme.typography.headlineMedium
             Text(
                 reveal.movie.title,
-                Modifier.testTag("reveal-title"),
-                style = MaterialTheme.typography.headlineMedium,
+                Modifier.fillMaxWidth().testTag("reveal-title"),
+                style = titleStyle,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
+                maxLines = revealTitleMaxLines(isRegularWidth),
+                overflow = TextOverflow.Ellipsis,
+                // iOS minimumScaleFactor 0.5: shrink to fit the line limit before ellipsizing.
+                autoSize = TextAutoSize.StepBased(minFontSize = titleStyle.fontSize * 0.5f, maxFontSize = titleStyle.fontSize, stepSize = 1.sp),
             )
             Text("${reveal.movie.year}", style = MaterialTheme.typography.titleMedium)
             Text(EpisodeLabel.discussedText(reveal.movie, episodesByGUID), textAlign = TextAlign.Center)
@@ -254,6 +315,12 @@ fun RevealContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+        Column(
+            Modifier.padding(horizontal = 24.dp).testTag("reveal-actions"),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(onClick = onShare, modifier = Modifier.testTag("reveal-share")) { Text("Share") }
                 Button(onClick = onSpinAgain, modifier = Modifier.testTag("reveal-spin-again")) { Text("Spin Again") }
@@ -262,7 +329,7 @@ fun RevealContent(
                 OutlinedButton(onClick = onOpenMovie, modifier = Modifier.testTag("reveal-movie-page")) { Text("Movie page") }
             }
             TextButton(onClick = onDismiss, modifier = Modifier.testTag("reveal-done")) { Text("Done") }
-            Spacer(Modifier.height(12.dp))
         }
+        Spacer(Modifier.height(12.dp))
     }
 }

@@ -58,7 +58,7 @@ class RouletteScreenTest {
         val reveal = vm.state.value.reveal!!
         compose.onNodeWithTag("reveal-category").assertTextEquals(reveal.category.displayName)
         compose.onNodeWithTag("reveal-title").assertTextEquals(reveal.movie.title)
-        compose.onNodeWithText("TONIGHT'S SPIN").assertIsDisplayed()
+        compose.onNodeWithTag("reveal-sheet-title").assertTextEquals("Tonight’s Movie")
         assertTrue(reveal.movie.id in reveal.category.movieIds)
         assertEquals(1, history.totalSpins)
     }
