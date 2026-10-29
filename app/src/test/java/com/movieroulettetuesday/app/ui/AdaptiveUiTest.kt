@@ -1,7 +1,10 @@
 package com.movieroulettetuesday.app.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -25,7 +28,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-/** MrtApp at compact / medium / expanded widths (bottom bar vs rail, stacked vs two-pane, side-by-side roulette). */
+/** MrtApp at compact / medium / expanded widths (bottom bar vs iPad-style top tabs, stacked vs two-pane, side-by-side roulette). */
 @RunWith(AndroidJUnit4::class)
 class AdaptiveUiTest {
     @get:Rule val compose = createComposeRule()
@@ -44,7 +47,7 @@ class AdaptiveUiTest {
     fun compactUsesBottomBarAndPushedPages() {
         start()
         compose.onNodeWithTag("nav-bar").assertIsDisplayed()
-        gone("nav-rail")
+        gone("nav-top-tabs")
         compose.onNodeWithTag("roulette-stacked").assertIsDisplayed()
         compose.onNodeWithTag("tab-movies").performClick()
         compose.waitUntil(5_000) { compose.onAllNodesWithTag("movies-search").fetchSemanticsNodes().isNotEmpty() }
@@ -57,9 +60,9 @@ class AdaptiveUiTest {
     }
 
     @Test @Config(qualifiers = "w600dp-h960dp")
-    fun mediumUsesRailAndTwoPaneEpisodes() {
+    fun mediumUsesTopTabsAndTwoPaneEpisodes() {
         start(seedEpisodes = true)
-        compose.onNodeWithTag("nav-rail").assertIsDisplayed()
+        compose.onNodeWithTag("nav-top-tabs").assertIsDisplayed()
         gone("nav-bar")
         // 600 dp portrait: regular width but not landscape, so the wheel stays stacked (iOS 1024x1366).
         compose.onNodeWithTag("roulette-stacked").assertIsDisplayed()
@@ -78,9 +81,35 @@ class AdaptiveUiTest {
     }
 
     @Test @Config(qualifiers = "w1280dp-h800dp")
+    fun regularTopTabsSitAboveContentWithEpisodesBadge() {
+        seedFeed(app, lastViewedAt = 1L) // everything in the sample feed is newer than this -> badge
+        start()
+        gone("nav-bar")
+        val bar = compose.onNodeWithTag("nav-top-tabs").assertIsDisplayed().getBoundsInRoot()
+        val screen = compose.onNodeWithTag("screen-roulette").getBoundsInRoot()
+        assertTrue("tabs above the content", bar.bottom <= screen.top)
+        assertTrue("tabs at the top of the window", bar.top < 100.dp)
+        // Same four destinations as the phone bar, in iOS order, one selected.
+        val tabs = TopLevelDestination.entries.map { compose.onNodeWithTag("tab-${it.route}").assertIsDisplayed().getBoundsInRoot() }
+        assertEquals(tabs.sortedBy { it.left }, tabs)
+        tabs.forEach { assertTrue(it.bottom <= screen.top) }
+        compose.onNodeWithTag("tab-roulette").assertIsSelected()
+        compose.onNodeWithTag("episodes-badge", useUnmergedTree = true).assertIsDisplayed()
+        // Opening Episodes marks them viewed: the badge clears (same as the phone bar).
+        compose.onNodeWithTag("tab-episodes").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("tab-episodes").assertIsSelected()
+        compose.onNodeWithTag("tab-roulette").assertIsNotSelected()
+        compose.waitUntil(5_000) { compose.onAllNodesWithTag("episodes-badge", useUnmergedTree = true).fetchSemanticsNodes().isEmpty() }
+        compose.onNodeWithTag("tab-stats").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("screen-stats").assertIsDisplayed()
+    }
+
+    @Test @Config(qualifiers = "w1280dp-h800dp")
     fun expandedRouletteRevealSitsBesideTheWheel() {
         start()
-        compose.onNodeWithTag("nav-rail").assertIsDisplayed()
+        compose.onNodeWithTag("nav-top-tabs").assertIsDisplayed()
         compose.onNodeWithTag("roulette-side-by-side").assertIsDisplayed()
         compose.mainClock.autoAdvance = false
         compose.onNodeWithTag("spin-hub").performClick()
@@ -127,7 +156,7 @@ class AdaptiveUiTest {
         start()
         compose.onNodeWithTag("tab-stats").performClick()
         compose.waitForIdle()
-        // 1280 dp minus the 80 dp rail and 40 dp padding = 1160 ≥ 1100 -> 3 columns (iOS StatsGridLayout).
+        // 1280 dp minus 40 dp padding = 1240 (the tabs sit on top, no rail) ≥ 1100 -> 3 columns (iOS StatsGridLayout).
         compose.onNodeWithTag("stats-grid-3").assertIsDisplayed()
     }
 
@@ -137,7 +166,7 @@ class AdaptiveUiTest {
         start()
         compose.onNodeWithTag("tab-stats").performClick()
         compose.waitForIdle()
-        // 600 - 80 rail - 40 padding = 480 dp < 640 -> one column, like iPad Slide Over.
+        // 600 - 40 padding = 560 dp < 640 -> one column, like iPad Slide Over.
         compose.onNodeWithTag("stats-grid-1").assertIsDisplayed()
     }
 
@@ -146,9 +175,10 @@ class AdaptiveUiTest {
 
     companion object {
         /** Replaces the app's offline (empty) feed with the sample feed. */
-        fun seedFeed(app: MrtApplication) {
+        fun seedFeed(app: MrtApplication, lastViewedAt: Long? = null) {
             val bytes = EpisodeFixtures.resource("feed-sample.rss")
-            val repo = EpisodeRepository(null, InMemoryKeyValueStore(), { bytes }).also { runBlocking { it.load() } }
+            val settings = InMemoryKeyValueStore().apply { lastViewedAt?.let { putLong(EpisodeRepository.LAST_VIEWED_KEY, it) } }
+            val repo = EpisodeRepository(null, settings, { bytes }).also { runBlocking { it.load() } }
             MrtApplication::class.java.getDeclaredField("episodeRepository\$delegate").apply { isAccessible = true }.set(app, lazyOf(repo))
         }
 

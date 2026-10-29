@@ -10,9 +10,6 @@ import com.movieroulettetuesday.app.notifications.NewEpisodeSchedule
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -227,23 +224,16 @@ private fun MrtAppContent(layout: WindowLayout) {
         }
     }
     if (regular) {
-        // Medium / expanded: navigation rail (Android's counterpart of the iPad tab bar).
-        Row(Modifier.fillMaxSize()) {
-            NavigationRail(Modifier.testTag("nav-rail")) {
-                Spacer(Modifier.weight(1f))
-                TopLevelDestination.entries.forEach { dest ->
-                    NavigationRailItem(
-                        selected = current?.hierarchy?.any { it.route == dest.route } == true,
-                        onClick = { openTab(dest) },
-                        icon = { TabIcon(dest, badge) },
-                        label = { Text(stringResource(dest.label)) },
-                        modifier = Modifier.testTag("tab-${dest.route}"),
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-            }
-            Scaffold(Modifier.weight(1f)) { padding -> host(Modifier.padding(padding)) }
-        }
+        // Medium / expanded: iPad-style top tab bar (iPadOS 18 `TabView` at regular width).
+        Scaffold(
+            topBar = {
+                TopTabBar(
+                    isSelected = { dest -> current?.hierarchy?.any { it.route == dest.route } == true },
+                    onSelect = ::openTab,
+                    newEpisodes = badge,
+                )
+            },
+        ) { padding -> host(Modifier.padding(padding)) }
     } else {
         Scaffold(
             bottomBar = {
