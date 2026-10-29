@@ -1,6 +1,8 @@
 package com.movieroulettetuesday.app.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -21,7 +23,13 @@ object BrandColors {
     val Ink = Color(0xFF1D2B2E) // iOS Brand.ink (mrt-shared ASSETS.md)
     /** iOS Brand.jackpotGold (mrt-shared ASSETS.md). Fixed: never theme-tinted, light or dark. */
     val JackpotGold = Color(0xFFF2C14E)
+    /** iOS `CleanProColors.pointerLight` / `pointerDark` (shared/data/palette.json). */
+    val PointerLight = Color(0xFF2E8691)
+    val PointerDark = Color(0xFF5BB8C2)
 }
+
+/** Whether [MrtTheme] is rendering dark (follows the in-app appearance override, not just the system). */
+val LocalDarkTheme = staticCompositionLocalOf { false }
 
 private val LightColors = lightColorScheme(
     primary = BrandColors.TealLight,
@@ -39,5 +47,7 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun MrtTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = if (darkTheme) DarkColors else LightColors, content = content)
+    CompositionLocalProvider(LocalDarkTheme provides darkTheme) {
+        MaterialTheme(colorScheme = if (darkTheme) DarkColors else LightColors, content = content)
+    }
 }

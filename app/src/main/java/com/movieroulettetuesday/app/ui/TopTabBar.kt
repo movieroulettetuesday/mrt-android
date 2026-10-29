@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,8 +29,8 @@ import androidx.compose.ui.unit.dp
 
 /**
  * iPadOS 18 top tab bar (iOS `TabView` at regular width): a floating capsule centred at the top
- * with the four tabs as text pills; the selected tab is filled. Compact width keeps the bottom
- * `NavigationBar`, like the iPhone tab bar.
+ * with the four tabs as text pills; the selected tab is a solid primary pill, the others quiet
+ * (onSurfaceVariant). Compact width keeps the bottom `NavigationBar`, like the iPhone tab bar.
  */
 @Composable
 fun TopTabBar(
@@ -39,20 +40,32 @@ fun TopTabBar(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier.fillMaxWidth().statusBarsPadding().padding(top = 8.dp, bottom = 6.dp).testTag("nav-top-tabs"),
+        modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 6.dp)
+            .testTag("nav-top-tabs"),
         contentAlignment = Alignment.TopCenter,
     ) {
-        Surface(shape = CircleShape, tonalElevation = 3.dp, shadowElevation = 3.dp, color = MaterialTheme.colorScheme.surfaceContainer) {
-            Row(Modifier.padding(4.dp).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        // Floating "chrome" capsule: the highest container tone, a lifted shadow and a hairline
+        // edge, like the iPadOS 18 tab bar's material over content.
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            tonalElevation = 6.dp,
+            shadowElevation = 8.dp,
+            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+        ) {
+            Row(Modifier.padding(3.dp).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 TopLevelDestination.entries.forEach { dest ->
                     val selected = isSelected(dest)
                     Row(
                         Modifier
                             .clip(CircleShape)
-                            .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
+                            .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
                             .selectable(selected, role = Role.Tab, onClick = { onSelect(dest) })
-                            .heightIn(min = 40.dp)
-                            .padding(horizontal = 18.dp, vertical = 8.dp)
+                            .heightIn(min = 36.dp)
+                            .padding(horizontal = 18.dp, vertical = 6.dp)
                             .testTag("tab-${dest.route}"),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -61,7 +74,7 @@ fun TopTabBar(
                             stringResource(dest.label),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
-                            color = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface,
+                            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         if (dest == TopLevelDestination.Episodes && newEpisodes > 0) {
                             Badge(Modifier.testTag("episodes-badge")) { Text("$newEpisodes") }

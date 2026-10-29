@@ -56,6 +56,7 @@ import com.movieroulettetuesday.app.catalog.HexColor
 import com.movieroulettetuesday.app.catalog.RouletteCategory
 import com.movieroulettetuesday.app.ui.RouletteLayout
 import com.movieroulettetuesday.app.ui.theme.BrandColors
+import com.movieroulettetuesday.app.ui.theme.LocalDarkTheme
 
 /**
  * The category wheel (Roulette/WheelView.swift): slices drawn from the same [WheelGeometry] the
@@ -186,6 +187,7 @@ fun RouletteWheel(
         // Fixed pointer at 12 o'clock, sized by iOS `RouletteLayout.pointerSize` for this wheel's
         // diameter (dp) and straddling the rim by half its height, like iOS's `.padding(.top, h / 2)`.
         val (pointerW, pointerH) = WheelPointer.size(minOf(maxWidth, maxHeight).value)
+        val pointerColor = WheelPointer.color(LocalDarkTheme.current)
         Canvas(
             Modifier
                 .align(Alignment.TopCenter)
@@ -199,7 +201,7 @@ fun RouletteWheel(
                 lineTo(size.width / 2, size.height)
                 close()
             }
-            drawPath(p, BrandColors.Ink)
+            drawPath(p, pointerColor)
         }
         // Hub button.
         Box(
@@ -229,4 +231,7 @@ fun RouletteWheel(
 object WheelPointer {
     fun size(diameterDp: Float): Pair<Float, Float> =
         RouletteLayout.pointerSize(diameterDp.toDouble()).let { (w, h) -> w.toFloat() to h.toFloat() }
+
+    /** iOS `RouletteView` pointer fill: `colorScheme == .dark ? pointerDark : pointerLight`. */
+    fun color(dark: Boolean): Color = if (dark) BrandColors.PointerDark else BrandColors.PointerLight
 }
