@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.movieroulettetuesday.app.catalog.HexColor
 import com.movieroulettetuesday.app.catalog.RouletteCategory
+import com.movieroulettetuesday.app.ui.RouletteLayout
 import com.movieroulettetuesday.app.ui.theme.BrandColors
 
 /**
@@ -119,7 +122,7 @@ fun RouletteWheel(
             SpinControls.Action.Nothing -> Unit
         }
     }
-    Box(
+    BoxWithConstraints(
         modifier
             .fillMaxWidth()
             .aspectRatio(1f)
@@ -180,15 +183,20 @@ fun RouletteWheel(
             }
             drawCircle(rim, r, c, style = Stroke(r * 0.04f))
         }
-        // Fixed pointer at 12 o'clock.
-        Canvas(Modifier.fillMaxSize()) {
-            val r = size.minDimension / 2
-            val w = r * 0.09f
-            val top = size.height / 2 - r - w * 0.2f
+        // Fixed pointer at 12 o'clock, sized by iOS `RouletteLayout.pointerSize` for this wheel's
+        // diameter (dp) and straddling the rim by half its height, like iOS's `.padding(.top, h / 2)`.
+        val (pointerW, pointerH) = WheelPointer.size(minOf(maxWidth, maxHeight).value)
+        Canvas(
+            Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = -(pointerH / 2).dp)
+                .size(pointerW.dp, pointerH.dp)
+                .testTag("wheel-pointer"),
+        ) {
             val p = Path().apply {
-                moveTo(size.width / 2 - w, top)
-                lineTo(size.width / 2 + w, top)
-                lineTo(size.width / 2, top + w * 1.9f)
+                moveTo(0f, 0f)
+                lineTo(size.width, 0f)
+                lineTo(size.width / 2, size.height)
                 close()
             }
             drawPath(p, BrandColors.Ink)
@@ -215,4 +223,10 @@ fun RouletteWheel(
             )
         }
     }
+}
+
+/** Pointer size in dp for a wheel of [diameterDp] (iOS `RouletteLayout.pointerSize(forDiameter:)`). */
+object WheelPointer {
+    fun size(diameterDp: Float): Pair<Float, Float> =
+        RouletteLayout.pointerSize(diameterDp.toDouble()).let { (w, h) -> w.toFloat() to h.toFloat() }
 }

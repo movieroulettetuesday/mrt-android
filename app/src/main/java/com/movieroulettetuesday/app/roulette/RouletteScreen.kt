@@ -153,7 +153,8 @@ private fun WheelSlot(
             maxWidth.value.toDouble(), maxHeight.value.toDouble(), arrangement, isRegularWidth, RouletteLayout.HINT_HEIGHT,
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.height(RouletteLayout.TOP_GAP.dp))
+            // Room for the half of the pointer that sits above the rim (budgeted in wheelDiameter).
+            Spacer(Modifier.height((RouletteLayout.TOP_GAP + RouletteLayout.pointerSize(d).second / 2).dp))
             val catalog = state.catalog
             Box(Modifier.size(d.dp).testTag("wheel-slot"), contentAlignment = Alignment.Center) {
                 when {
