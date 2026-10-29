@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -112,15 +113,79 @@ fun rememberMoviesInputs(app: MrtApplication): MoviesInputs {
     )
 }
 
-/** Selection shown in the detail pane of the two-pane Episodes / Movies layouts (regular width). */
-class PaneSelection(episode: String? = null, movie: String? = null) {
-    var episode by mutableStateOf(episode)
-    var movie by mutableStateOf(movie)
+/** A page pushed inside a detail pane (iOS: the `NavigationStack` in the split view's detail column). */
+sealed interface PanePage {
+    data class Movie(val id: String) : PanePage
+    data class Episode(val guid: String) : PanePage
+
+    /** The pushed route for this page on compact width, under the tab's [prefix]. */
+    fun route(prefix: String): String = when (this) {
+        is Movie -> Routes.movie(prefix, id)
+        is Episode -> Routes.episode(prefix, guid)
+    }
 
     companion object {
-        val Saver = androidx.compose.runtime.saveable.listSaver<PaneSelection, String?>(
-            save = { listOf(it.episode, it.movie) },
-            restore = { PaneSelection(it[0], it[1]) },
+        fun encode(p: PanePage): String = when (p) {
+            is Movie -> "movie:${p.id}"
+            is Episode -> "episode:${p.guid}"
+        }
+
+        fun decode(s: String): PanePage? = when {
+            s.startsWith("movie:") -> Movie(s.removePrefix("movie:"))
+            s.startsWith("episode:") -> Episode(s.removePrefix("episode:"))
+            else -> null
+        }
+    }
+}
+
+/**
+ * Selection shown in the detail pane of the two-pane Episodes / Movies layouts (regular width),
+ * plus the pages pushed on top of it inside that pane. Like iOS's `.id(selection)` on the detail
+ * `NavigationStack`, picking a different row starts a fresh stack.
+ */
+class PaneSelection(
+    episode: String? = null,
+    movie: String? = null,
+    episodeStack: List<PanePage> = emptyList(),
+    movieStack: List<PanePage> = emptyList(),
+) {
+    private var episodeSel by mutableStateOf(episode)
+    private var movieSel by mutableStateOf(movie)
+    /** Pages pushed over the selected episode / movie, bottom first. */
+    val episodeStack = mutableStateListOf<PanePage>().apply { addAll(episodeStack) }
+    val movieStack = mutableStateListOf<PanePage>().apply { addAll(movieStack) }
+
+    var episode: String?
+        get() = episodeSel
+        set(value) {
+            if (value != episodeSel) episodeStack.clear()
+            episodeSel = value
+        }
+    var movie: String?
+        get() = movieSel
+        set(value) {
+            if (value != movieSel) movieStack.clear()
+            movieSel = value
+        }
+
+    /** Deep link: show exactly this episode, popping anything pushed over it. */
+    fun showEpisode(guid: String) { episode = guid; episodeStack.clear() }
+
+    /** Deep link: show exactly this movie, popping anything pushed over it. */
+    fun showMovie(id: String) { movie = id; movieStack.clear() }
+
+    fun clear() { episode = null; movie = null }
+
+    companion object {
+        val Saver = androidx.compose.runtime.saveable.listSaver<PaneSelection, Any?>(
+            save = {
+                listOf(it.episode, it.movie, ArrayList(it.episodeStack.map(PanePage::encode)), ArrayList(it.movieStack.map(PanePage::encode)))
+            },
+            restore = {
+                @Suppress("UNCHECKED_CAST")
+                fun pages(v: Any?) = (v as? List<String>).orEmpty().mapNotNull(PanePage::decode)
+                PaneSelection(it[0] as String?, it[1] as String?, pages(it[2]), pages(it[3]))
+            },
         )
     }
 }
@@ -163,7 +228,7 @@ private fun MrtAppContent(layout: WindowLayout) {
         openTab(TopLevelDestination.Movies)
         if (regular) {
             navController.popBackStack("movies/list", inclusive = false)
-            panes.movie = id
+            panes.showMovie(id)
         } else {
             navController.navigate(Routes.movie("movies", id))
         }
@@ -175,19 +240,25 @@ private fun MrtAppContent(layout: WindowLayout) {
         openTab(TopLevelDestination.Episodes)
         if (regular) {
             navController.popBackStack("episodes/list", inclusive = false)
-            panes.episode = guid
+            panes.showEpisode(guid)
         } else {
             navController.navigate(Routes.episode("episodes", guid))
         }
     }
-    // iOS keeps the selection when the size class changes: a split-view pick becomes a pushed page.
+    // iOS keeps the selection when the size class changes: a split-view pick (and anything pushed
+    // inside its pane) becomes pushed pages, in the same order.
     LaunchedEffect(regular) {
         if (regular) return@LaunchedEffect
         val route = navController.currentDestination?.route
-        if (route == "movies/list") panes.movie?.let { navController.navigate(Routes.movie("movies", it)) }
-        if (route == "episodes/list") panes.episode?.let { navController.navigate(Routes.episode("episodes", it)) }
-        panes.movie = null
-        panes.episode = null
+        if (route == "movies/list") panes.movie?.let { m ->
+            navController.navigate(Routes.movie("movies", m))
+            panes.movieStack.forEach { navController.navigate(it.route("movies")) }
+        }
+        if (route == "episodes/list") panes.episode?.let { g ->
+            navController.navigate(Routes.episode("episodes", g))
+            panes.episodeStack.forEach { navController.navigate(it.route("episodes")) }
+        }
+        panes.clear()
     }
     val badge = episodesState.newEpisodeCount
     val host: @Composable (Modifier) -> Unit = { mod ->
@@ -392,6 +463,24 @@ private fun EpisodeDetailContent(app: MrtApplication, guid: String, onBack: (() 
     )
 }
 
+/** A page pushed inside a detail pane, with the same links its pushed route has on phones. */
+@Composable
+private fun PanePageContent(
+    app: MrtApplication,
+    page: PanePage,
+    onBack: () -> Unit,
+    stack: MutableList<PanePage>,
+    linkMovie: Boolean,
+    linkEpisodes: Boolean,
+) {
+    when (page) {
+        is PanePage.Movie -> MovieDetailContent(app, page.id, onBack,
+            onOpenEpisode = if (linkEpisodes) ({ stack.add(PanePage.Episode(it)) }) else null)
+        is PanePage.Episode -> EpisodeDetailContent(app, page.guid, onBack,
+            onOpenMovie = if (linkMovie) ({ stack.add(PanePage.Movie(it)) }) else null)
+    }
+}
+
 private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplication, panes: PaneSelection, regular: Boolean) {
     navigation(startDestination = "episodes/list", route = TopLevelDestination.Episodes.route) {
         composable("episodes/list") {
@@ -412,7 +501,12 @@ private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplic
                     detail = guid?.let { g ->
                         {
                             key(g) {
-                                EpisodeDetailContent(app, g, onBack = null, onOpenMovie = { nav.navigate(Routes.movie("episodes", it)) })
+                                PaneStack(panes.episodeStack, root = {
+                                    EpisodeDetailContent(app, g, onBack = null, onOpenMovie = { panes.episodeStack.add(PanePage.Movie(it)) })
+                                }) { page, pop ->
+                                    // Same links as the phone stack: Episode -> its movie, which doesn't link back.
+                                    PanePageContent(app, page, pop, panes.episodeStack, linkMovie = true, linkEpisodes = false)
+                                }
                             }
                         }
                     },
@@ -454,7 +548,12 @@ private fun NavGraphBuilder.moviesGraph(
                     detail = id?.let { m ->
                         {
                             key(m) {
-                                MovieDetailContent(app, m, onBack = null, onOpenEpisode = { nav.navigate(Routes.episode("movies", it)) })
+                                PaneStack(panes.movieStack, root = {
+                                    MovieDetailContent(app, m, onBack = null, onOpenEpisode = { panes.movieStack.add(PanePage.Episode(it)) })
+                                }) { page, pop ->
+                                    // Same links as the phone stack: Movie -> an episode, which doesn't link back.
+                                    PanePageContent(app, page, pop, panes.movieStack, linkMovie = false, linkEpisodes = true)
+                                }
                             }
                         }
                     },

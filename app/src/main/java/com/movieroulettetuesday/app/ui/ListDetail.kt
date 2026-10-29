@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +48,32 @@ fun ListDetailPane(
             Box(Modifier.width(listWidth).fillMaxHeight().testTag("list-pane")) { list() }
             VerticalDivider()
             Box(Modifier.weight(1f).fillMaxHeight().testTag("detail-pane")) { (detail ?: empty)() }
+        }
+    }
+}
+
+/**
+ * The detail pane's own stack (iOS: a `NavigationStack` in the split view's detail column). Links
+ * from the detail push a page that fills the pane while the list stays beside it; the page's Back
+ * button or the system back gesture pops one page. Each level keeps its saveable state (scroll
+ * position) while covered.
+ */
+@Composable
+fun <T : Any> PaneStack(
+    stack: SnapshotStateList<T>,
+    root: @Composable () -> Unit,
+    page: @Composable (page: T, pop: () -> Unit) -> Unit,
+) {
+    val holder = rememberSaveableStateHolder()
+    val pop: () -> Unit = { if (stack.isNotEmpty()) stack.removeAt(stack.lastIndex) }
+    BackHandler(enabled = stack.isNotEmpty(), onBack = pop)
+    val depth = stack.size
+    Box(Modifier.fillMaxSize().testTag("pane-page-$depth")) {
+        if (depth == 0) {
+            holder.SaveableStateProvider("root") { root() }
+        } else {
+            val top = stack[depth - 1]
+            holder.SaveableStateProvider("page-$depth-$top") { page(top, pop) }
         }
     }
 }
