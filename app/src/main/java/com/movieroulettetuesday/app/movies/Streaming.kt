@@ -92,6 +92,21 @@ object StreamingCatalog {
         return (info.rent + info.buy).filter { seen.add(it.id) }
     }
 
+    /**
+     * One Paramount+ entry (iOS StreamingCatalog.collapsingParamountPlusDuplicates, PR #8).
+     * TMDB lists Premium, Essential and store channels as separate provider ids; keep the
+     * best-priority one (lowest priority, then earliest). Every other provider stays in order.
+     */
+    fun collapsingParamountPlusDuplicates(providers: List<StreamingInfo.Provider>): List<StreamingInfo.Provider> {
+        val best = providers.indices.filter { isParamountPlusService(providers[it]) }
+            .minWithOrNull(compareBy({ providers[it].priority ?: Int.MAX_VALUE }, { it })) ?: return providers
+        return providers.filterIndexed { i, p -> !isParamountPlusService(p) || i == best }
+    }
+
+    /** Legacy id 531, or any name containing "paramount" (case-insensitive). */
+    private fun isParamountPlusService(p: StreamingInfo.Provider): Boolean =
+        p.id == 531 || p.name.lowercase(Locale.ROOT).contains("paramount")
+
     private val outFmt = DateTimeFormatter.ofPattern("MMM d", Locale.US)
 
     /** "Oct 13" from "2026-10-13"; null when unparseable. */

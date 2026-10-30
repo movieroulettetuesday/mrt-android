@@ -219,17 +219,19 @@ fun WhereToWatchSection(movie: Movie, services: MyServices, onOpen: (String) -> 
 
 @Composable
 private fun ProviderRow(title: String, providers: List<StreamingInfo.Provider>, services: MyServices, id: String) {
-    if (providers.isEmpty()) return
+    val shown = StreamingCatalog.collapsingParamountPlusDuplicates(providers)
+    if (shown.isEmpty()) return
     Column(Modifier.testTag("streaming-$id"), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(title, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+            // Any saved Paramount+ tier still marks the row, though only one logo shows.
             if (providers.any { services.contains(it.id) }) {
                 Text("Your service", color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.background(BrandColors.TealDark, RoundedCornerShape(50)).padding(10.dp, 4.dp))
             }
         }
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            providers.forEach { p ->
+            shown.forEach { p ->
                 Column(Modifier.width(64.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     ProviderLogo(p, 44.dp)
                     Text(p.name, style = MaterialTheme.typography.labelSmall, maxLines = 2, textAlign = TextAlign.Center,
