@@ -58,10 +58,14 @@ data class CachedEpisodeFeed(
 )
 
 object ShowNotes {
-    // UNICODE_CHARACTER_CLASS: `\s` covers U+00A0 etc., like NSRegularExpression on iOS.
-    private val fanMailPrefix = java.util.regex.Pattern.compile(
-        """^send us fan ?mail[\s.:!\-–—|]*""",
-        java.util.regex.Pattern.CASE_INSENSITIVE or java.util.regex.Pattern.UNICODE_CASE or java.util.regex.Pattern.UNICODE_CHARACTER_CLASS,
+    // Android's java.util.regex rejects UNICODE_CHARACTER_CLASS, and without that flag `\s` is
+    // ASCII-only. This is UTS #18 White_Space: Java's unicode `\s` (iOS NSRegularExpression `\s`,
+    // plus VT, which ASCII `\s` already covers, and NEL U+0085).
+    private const val WS = """\s\u0085\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000"""
+
+    internal val fanMailPrefix = java.util.regex.Pattern.compile(
+        """^send us fan ?mail[${WS}.:!\-–—|]*""",
+        java.util.regex.Pattern.CASE_INSENSITIVE or java.util.regex.Pattern.UNICODE_CASE,
     ).toRegex()
     private val anchor = Regex("""<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>\s*([^<]*)</a>""", RegexOption.IGNORE_CASE)
     private val fanMailLabel = Regex("""fan ?mail""", RegexOption.IGNORE_CASE)
@@ -85,7 +89,7 @@ object ShowNotes {
     }
 
     private val tag = Regex("<[^>]+>")
-    private val spaces = java.util.regex.Pattern.compile("""\s+""", java.util.regex.Pattern.UNICODE_CHARACTER_CLASS).toRegex()
+    internal val spaces = java.util.regex.Pattern.compile("""[${WS}]+""").toRegex()
     private val entities = listOf(
         "&amp;" to "&", "&lt;" to "<", "&gt;" to ">", "&quot;" to "\"",
         "&#39;" to "'", "&apos;" to "'", "&nbsp;" to " ",
