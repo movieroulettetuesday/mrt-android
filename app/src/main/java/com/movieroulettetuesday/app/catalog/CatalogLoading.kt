@@ -1,9 +1,8 @@
 package com.movieroulettetuesday.app.catalog
 
+import com.movieroulettetuesday.app.net.Http
 import java.io.File
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -55,23 +54,8 @@ class RemoteCatalogSource(
     fun fetchData(): ByteArray = fetch(url)
 
     companion object {
-        fun httpGet(url: String): ByteArray {
-            require(url.startsWith("https://")) { "HTTPS only" }
-            val conn = URL(url).openConnection() as HttpURLConnection
-            try {
-                conn.requestMethod = "GET"
-                conn.connectTimeout = RemoteCatalog.TIMEOUT_MS
-                conn.readTimeout = RemoteCatalog.TIMEOUT_MS
-                conn.useCaches = false
-                conn.instanceFollowRedirects = true
-                conn.setRequestProperty("Accept", "application/json")
-                val code = conn.responseCode
-                if (code !in 200..299) throw HttpStatusException(code)
-                return conn.inputStream.use { it.readBytes() }
-            } finally {
-                conn.disconnect()
-            }
-        }
+        fun httpGet(url: String): ByteArray =
+            Http.get(url, RemoteCatalog.TIMEOUT_MS, accept = "application/json")
     }
 }
 
