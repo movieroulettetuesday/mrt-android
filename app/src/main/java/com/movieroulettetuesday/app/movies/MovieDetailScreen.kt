@@ -47,6 +47,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -194,14 +196,18 @@ private fun EpisodeLinkRow(guid: String, movie: Movie, inputs: MoviesInputs, onO
 fun WhereToWatchSection(movie: Movie, services: MyServices, onOpen: (String) -> Unit) {
     val display = WhereToWatchDisplay.of(movie)
     val s = movie.streaming ?: StreamingInfo()
+    val context = LocalContext.current
     Column(Modifier.testTag("where-to-watch")) {
         MrtSection("Where to Watch · ${display.region}") {
             if (display.showsEmptyMessage) {
                 Text(WhereToWatchDisplay.EMPTY_MESSAGE, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.testTag("streaming-empty"))
             } else {
-                ProviderRow("Stream", s.stream, services, "stream")
-                ProviderRow("Free", s.free, services, "free")
-                ProviderRow("Rent or buy", StreamingCatalog.rentOrBuy(s), services, "rent-buy")
+                val openProvider: (StreamingInfo.Provider) -> Unit = { p ->
+                    ProviderLaunch.open(context, ProviderLaunch.plan(p, movie))
+                }
+                ProviderRow("Stream", s.stream, services, "stream", openProvider)
+                ProviderRow("Free", s.free, services, "free", openProvider)
+                ProviderRow("Rent or buy", StreamingCatalog.rentOrBuy(s), services, "rent-buy", openProvider)
             }
             display.link?.let { link ->
                 TextButton(onClick = { onOpen(link) }, modifier = Modifier.testTag("streaming-tmdb-link")) {
@@ -218,19 +224,34 @@ fun WhereToWatchSection(movie: Movie, services: MyServices, onOpen: (String) -> 
 }
 
 @Composable
-private fun ProviderRow(title: String, providers: List<StreamingInfo.Provider>, services: MyServices, id: String) {
-    if (providers.isEmpty()) return
+private fun ProviderRow(
+    title: String,
+    providers: List<StreamingInfo.Provider>,
+    services: MyServices,
+    id: String,
+    onProvider: (StreamingInfo.Provider) -> Unit,
+) {
+    val shown = StreamingCatalog.collapsingParamountPlusDuplicates(providers)
+    if (shown.isEmpty()) return
     Column(Modifier.testTag("streaming-$id"), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(title, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+            // Any saved Paramount+ tier still marks the row, though only one logo shows.
             if (providers.any { services.contains(it.id) }) {
                 Text("Your service", color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.background(BrandColors.TealDark, RoundedCornerShape(50)).padding(10.dp, 4.dp))
             }
         }
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            providers.forEach { p ->
-                Column(Modifier.width(64.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            shown.forEach { p ->
+                Column(
+                    Modifier
+                        .width(64.dp)
+                        .clickable(onClickLabel = "Open ${p.name}") { onProvider(p) }
+                        .semantics(mergeDescendants = true) { contentDescription = "${p.name}. Opens outside the app" }
+                        .testTag("provider-$id-${p.id}"),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     ProviderLogo(p, 44.dp)
                     Text(p.name, style = MaterialTheme.typography.labelSmall, maxLines = 2, textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
