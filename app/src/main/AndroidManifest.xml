@@ -10,6 +10,30 @@
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
 
+    <!-- Where-to-watch chips ask if these apps are installed (ProviderLaunch). API 30+ hides packages that are not listed here. -->
+    <queries>
+        <package android:name="com.netflix.mediaclient" />
+        <package android:name="com.netflix.ninja" />
+        <package android:name="com.amazon.avod.thirdpartyclient" />
+        <package android:name="com.amazon.amazonvideo.livingroom" />
+        <package android:name="com.wbd.stream" />
+        <package android:name="com.apple.atve.androidtv.appletv" />
+        <package android:name="com.disney.disneyplus" />
+        <package android:name="com.hulu.plus" />
+        <package android:name="com.cbs.ott" />
+        <package android:name="com.peacocktv.peacockandroid" />
+        <package android:name="com.tubitv" />
+        <package android:name="com.google.android.youtube" />
+        <package android:name="com.google.android.youtube.tv" />
+        <package android:name="com.google.android.apps.youtube.unplugged" />
+        <package android:name="com.mubi" />
+        <package android:name="tv.pluto.android" />
+        <package android:name="com.dramafever.shudder" />
+        <package android:name="com.google.android.videos" />
+        <package android:name="air.com.vudu.air.DownloaderTablet" />
+        <package android:name="com.plexapp.android" />
+    </queries>
+
     <application
         android:name=".MrtApplication"
         android:allowBackup="false"
