@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +36,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -140,6 +142,17 @@ fun MovieDetailScreen(
                     if (half != null) {
                         Text("${HalfStars.label(half)} of 5", style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.testTag("my-rating-label"))
+                        OutlinedButton(
+                            onClick = {
+                                ratingsStore.setHalfStars(null, movie.id)
+                                onRated(null)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 48.dp)
+                                .testTag("clear-rating")
+                                .semantics { contentDescription = "Clear rating" },
+                        ) { Text("Clear rating") }
                     }
                     val status = inputs.ratings.status(movie.id)
                     val options = listOf<Pair<WatchStatus?, String>>(null to "None", WatchStatus.WantToWatch to "Want to watch", WatchStatus.Watched to "Watched")

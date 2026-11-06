@@ -2,6 +2,7 @@ package com.movieroulettetuesday.app.stats
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -45,5 +46,22 @@ class StatsScreenTest {
         compose.onNodeWithText("3.5 ★").assertExists()
         compose.onNodeWithText("Piranha II: The Spawning").assertExists()
         compose.onNodeWithTag("stats-recent").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("stats-rating-distribution").performScrollTo().assertTextEquals("3.5★ × 1")
+    }
+
+    @Test
+    fun clearedRatingIsExcludedFromAverageAndDistribution() {
+        val ratings = PersonalRatings()
+            .withHalfStars(10, "laura-1944", 1)
+            .withHalfStars(2, "piranha-ii-the-spawning-1982", 1)
+            .withHalfStars(null, "piranha-ii-the-spawning-1982", 2)
+        compose.setContent { MrtTheme { StatsScreen(SpinHistoryStore.Log(), ratings, catalog) } }
+        compose.onNodeWithTag("stats-ratings").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("5 ★").assertExists()
+        compose.onNodeWithText("Laura").assertExists()
+        compose.onNodeWithText("Piranha II: The Spawning").assertDoesNotExist()
+        compose.onNodeWithTag("stats-rating-distribution").assertTextEquals("5★ × 1")
+        compose.onNodeWithText("Watched").assertExists()
+        compose.onNodeWithText("2").assertExists()
     }
 }
