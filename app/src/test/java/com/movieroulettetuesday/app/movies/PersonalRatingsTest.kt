@@ -2,12 +2,17 @@ package com.movieroulettetuesday.app.movies
 
 import com.movieroulettetuesday.app.catalog.Movie
 import com.movieroulettetuesday.app.catalog.MovieCatalog
+import com.movieroulettetuesday.app.community.RatingAggregate
 import com.movieroulettetuesday.app.roulette.SpinHistoryStore
 import com.movieroulettetuesday.app.roulette.SpinResult
 import com.movieroulettetuesday.app.roulette.SpinStats
 import java.io.File
 import java.nio.file.Files
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -114,5 +119,94 @@ class PersonalRatingsTest {
         assertEquals(listOf("b"), MovieListFilter.Watched.apply(m, r2, stats).map { it.id })
         assertEquals(listOf("b"), MovieListFilter.Rated.apply(m, r2, stats).map { it.id })
         assertEquals(listOf("a"), MovieListFilter.NotSpunYet.apply(m, r2, stats).map { it.id })
+    }
+
+    @Test
+    fun clearPersistsTrueUnratedAndKeepsOtherMetadata() {
+        val dir = Files.createTempDirectory("pr-clear").toFile()
+        val ratingsFile = File(dir, PersonalRatingsStore.FILE_NAME)
+        val spinsFile = File(dir, SpinHistoryStore.FILE_NAME)
+        val spins = SpinHistoryStore(spinsFile)
+        spins.record(SpinResult(id = "s1", movieId = "a", categoryId = "cat", timestampEpochMs = 50))
+        val spinBytes = spinsFile.readBytes()
+
+        val store = PersonalRatingsStore(ratingsFile) { 10 }
+        store.setStatus(WatchStatus.WantToWatch, "b")
+        store.setHalfStars(7, "a")
+        store.setStatus(WatchStatus.Watched, "c")
+        assertEquals(WatchStatus.Watched, store.ratings.value.status("a"))
+        store.setHalfStars(null, "a")
+
+        assertNull(store.ratings.value.halfStars("a"))
+        assertEquals("watched kept after clear", WatchStatus.Watched, store.ratings.value.status("a"))
+        assertEquals(WatchStatus.WantToWatch, store.ratings.value.status("b"))
+        assertNull(store.ratings.value.halfStars("b"))
+        assertEquals(WatchStatus.Watched, store.ratings.value.status("c"))
+        assertEquals(1, spins.spinCount("a"))
+        assertEquals("spin history file untouched", spinBytes.toList(), spinsFile.readBytes().toList())
+
+        val text = ratingsFile.readText()
+        val entries = Json.parseToJsonElement(text).jsonObject.getValue("entries").jsonObject
+        val cleared = entries.getValue("a").jsonObject
+        assertFalse(cleared.containsKey("halfStars"))
+        assertFalse(cleared.containsKey("rating"))
+        assertEquals("watched", cleared.getValue("status").jsonPrimitive.content)
+        assertEquals(10L, cleared.getValue("updatedAt").jsonPrimitive.content.toLong())
+        assertTrue(entries.getValue("b").jsonObject.containsKey("status"))
+        assertFalse(text.contains("\"halfStars\":0"))
+        assertEquals(store.ratings.value, PersonalRatings.decode(text))
+
+        val reloaded = PersonalRatingsStore(ratingsFile)
+        assertNull(reloaded.ratings.value.halfStars("a"))
+        assertEquals(WatchStatus.Watched, reloaded.ratings.value.status("a"))
+        assertEquals(WatchStatus.WantToWatch, reloaded.ratings.value.status("b"))
+        assertEquals(store.ratings.value, reloaded.ratings.value)
+
+        reloaded.setHalfStars(9, "a")
+        val again = PersonalRatingsStore(ratingsFile).ratings.value
+        assertEquals(9, again.halfStars("a"))
+        assertEquals(5, again.rating("a"))
+        assertEquals(WatchStatus.Watched, again.status("a"))
+        assertEquals(WatchStatus.WantToWatch, again.status("b"))
+        assertTrue(ratingsFile.readText().contains("\"a\":{\"halfStars\":9,\"rating\":5,\"status\":\"watched\""))
+        assertEquals("re-rate does not rewrite spin history", spinBytes.toList(), spinsFile.readBytes().toList())
+    }
+
+    @Test
+    fun zeroHalfStarsDecodeAsUnratedAndStayOutOfStats() {
+        val zeroOnly = PersonalRatings.decode("""{"entries":{"a":{"halfStars":0,"status":"watched","updatedAt":3}}}""")
+        assertNull(zeroOnly.halfStars("a"))
+        assertEquals(WatchStatus.Watched, zeroOnly.status("a"))
+        val encoded = PersonalRatings.encode(zeroOnly)
+        assertFalse(encoded.contains("halfStars"))
+        assertFalse(encoded.contains("rating"))
+        assertEquals(zeroOnly, PersonalRatings.decode(encoded))
+
+        val mixed = PersonalRatings(
+            PersonalRatings().withHalfStars(10, "a", 1).withHalfStars(4, "b", 1).withHalfStars(null, "b", 2)
+                .withStatus(WatchStatus.Watched, "c", 1).withStatus(WatchStatus.WantToWatch, "d", 1).entries +
+                ("z" to PersonalMovieEntry(halfStars = 0, status = WatchStatus.Watched, updatedAt = 1)),
+        )
+        val summary = PersonalRatingsSummary.of(mixed, catalog)
+        assertEquals(1, summary.ratedCount)
+        assertEquals(5.0, summary.averageStars!!, 0.0)
+        assertEquals(listOf("Alpha"), summary.topRated.map { it.title })
+        assertEquals(List(10) { if (it == 9) 1 else 0 }, summary.distribution)
+        assertEquals(1, summary.watchlistCount)
+        assertEquals(4, summary.watchedCount)
+        val stats = SpinStats(SpinHistoryStore.Log())
+        val movies = catalog.movies + Movie("d", "Delta", 2003, "G")
+        assertEquals(listOf("a"), MovieListFilter.Rated.apply(movies, mixed, stats).map { it.id })
+        assertEquals(listOf("a", "b", "c"), MovieListFilter.Watched.apply(movies, mixed, stats).map { it.id })
+        assertEquals(listOf("d"), MovieListFilter.Watchlist.apply(movies, mixed, stats).map { it.id })
+
+        val aggregate = RatingAggregate.fromHalfStars(listOf(10, 0, -3, 11, 4))
+        assertEquals(2, aggregate.count)
+        assertEquals(3.5, aggregate.average!!, 1e-12)
+        assertEquals(listOf(0, 1, 0, 0, 1), aggregate.histogram)
+        val none = RatingAggregate.fromHalfStars(listOf(0, -1, 11))
+        assertEquals(0, none.count)
+        assertNull(none.average)
+        assertEquals(listOf(0, 0, 0, 0, 0), none.histogram)
     }
 }

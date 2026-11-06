@@ -34,7 +34,8 @@ import com.movieroulettetuesday.app.movies.HalfStars
 /**
  * 0.5–5 stars in half steps (values are half-stars 1..10), iOS StarRatingView: tap a star's left
  * half for ½, right half for the whole star, or drag; tapping the current value clears it.
- * TalkBack: adjustable (setProgress) plus increase/decrease actions. Read-only when [onChange] is null.
+ * TalkBack: adjustable (setProgress), increase/decrease, and — once a rating is set — an explicit
+ * "Clear rating" action. Read-only when [onChange] is null.
  */
 @Composable
 fun StarRating(
@@ -66,10 +67,13 @@ fun StarRating(
             if (onChange != null) {
                 progressBarRangeInfo = ProgressBarRangeInfo((shown ?: 0).toFloat(), 0f..10f, steps = 9)
                 setProgress { v -> onChange(HalfStars.clamped(Math.round(v))); true }
-                customActions = listOf(
-                    CustomAccessibilityAction("Increase rating") { onChange(HalfStars.adjusted(halfStars, true)); true },
-                    CustomAccessibilityAction("Decrease rating") { onChange(HalfStars.adjusted(halfStars, false)); true },
-                )
+                customActions = buildList {
+                    if (halfStars != null) {
+                        add(CustomAccessibilityAction("Clear rating") { onChange(null); true })
+                    }
+                    add(CustomAccessibilityAction("Increase rating") { onChange(HalfStars.adjusted(halfStars, true)); true })
+                    add(CustomAccessibilityAction("Decrease rating") { onChange(HalfStars.adjusted(halfStars, false)); true })
+                }
             }
         },
         horizontalArrangement = Arrangement.spacedBy(4.dp),

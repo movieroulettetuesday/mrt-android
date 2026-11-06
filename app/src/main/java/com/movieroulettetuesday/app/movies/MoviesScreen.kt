@@ -224,7 +224,7 @@ private fun MovieRow(movie: Movie, catalog: MovieCatalog, inputs: MoviesInputs, 
             }
         }
         if (service != null) ProviderLogo(service, 30.dp, Modifier.padding(start = 6.dp))
-        entry?.halfStars?.let { h ->
+        entry?.ratedHalfStars?.let { h ->
             Row(Modifier.padding(start = 6.dp).semantics(mergeDescendants = true) { contentDescription = "Your rating ${HalfStars.label(h)} of 5" },
                 verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Filled.Star, null, Modifier.size(14.dp), tint = Color(0xFFF39C12))

@@ -79,20 +79,28 @@ object HalfStars {
 }
 
 data class PersonalMovieEntry(val halfStars: Int? = null, val status: WatchStatus? = null, val updatedAt: Long = 0) {
-    val isEmpty: Boolean get() = halfStars == null && status == null
-    val rating: Int? get() = halfStars?.let(HalfStars::roundedStars)
+    /** 1..10, or null when missing, 0, or otherwise not a real rating. */
+    val ratedHalfStars: Int? get() = HalfStars.clamped(halfStars)
+    val isEmpty: Boolean get() = ratedHalfStars == null && status == null
+    val rating: Int? get() = ratedHalfStars?.let(HalfStars::roundedStars)
 }
 
 /** Immutable set of personal entries keyed by movie id. Port of `PersonalRatings`. */
 data class PersonalRatings(val entries: Map<String, PersonalMovieEntry> = emptyMap()) {
     fun entry(movieId: String) = entries[movieId]
-    fun halfStars(movieId: String) = entries[movieId]?.halfStars
+    /** Half-stars 1..10, or null when the movie is unrated (missing, cleared, or not a real rating). */
+    fun halfStars(movieId: String) = entries[movieId]?.ratedHalfStars
     fun rating(movieId: String) = entries[movieId]?.rating
     fun status(movieId: String) = entries[movieId]?.status
 
+    /**
+     * Sets the rating. Null, 0, and anything outside 1..10 clear it.
+     * Clearing does not change watch status, and does not remove the entry while a status remains.
+     * A real rating still implies Watched when status was unset or Want to watch.
+     */
     fun withHalfStars(halfStars: Int?, movieId: String, now: Long): PersonalRatings {
         var e = (entries[movieId] ?: PersonalMovieEntry(updatedAt = now)).copy(halfStars = HalfStars.clamped(halfStars))
-        // Rating a movie implies you've seen it.
+        // Rating a movie implies you've seen it. Clearing does not undo Watched or the watchlist.
         if (e.halfStars != null && (e.status == null || e.status == WatchStatus.WantToWatch)) e = e.copy(status = WatchStatus.Watched)
         return store(e.copy(updatedAt = now), movieId)
     }
@@ -133,8 +141,10 @@ data class PersonalRatings(val entries: Map<String, PersonalMovieEntry> = emptyM
                 for (id in r.entries.keys.sorted()) {
                     val e = r.entries.getValue(id)
                     put(id, buildJsonObject {
-                        e.halfStars?.let { put("halfStars", it) }
-                        e.rating?.let { put("rating", it) }
+                        // True unrated omits both keys. Writing 0 would fall through to legacy `rating` on read.
+                        val half = e.ratedHalfStars
+                        half?.let { put("halfStars", it) }
+                        half?.let { put("rating", HalfStars.roundedStars(it)) }
                         e.status?.let { put("status", it.raw) }
                         put("updatedAt", e.updatedAt)
                     })
@@ -151,14 +161,18 @@ data class PersonalRatingsSummary(
     val topRated: List<Rated>,
     val watchlistCount: Int,
     val watchedCount: Int,
+    /** Counts for half-stars 1..10 (index 0 = ½★). Unrated movies are not a bucket. */
+    val distribution: List<Int> = List(10) { 0 },
 ) {
     data class Rated(val movieId: String, val title: String, val halfStars: Int)
 
     companion object {
         fun of(ratings: PersonalRatings, catalog: MovieCatalog?, topLimit: Int = 5): PersonalRatingsSummary {
             val rated = ratings.entries.mapNotNull { (id, e) ->
-                e.halfStars?.let { Rated(id, catalog?.movie(id)?.title ?: id, it) }
+                e.ratedHalfStars?.let { Rated(id, catalog?.movie(id)?.title ?: id, it) }
             }
+            val distribution = MutableList(10) { 0 }
+            rated.forEach { distribution[it.halfStars - 1]++ }
             return PersonalRatingsSummary(
                 ratedCount = rated.size,
                 averageStars = if (rated.isEmpty()) null else rated.sumOf { it.halfStars } / 2.0 / rated.size,
@@ -166,6 +180,7 @@ data class PersonalRatingsSummary(
                     .take(maxOf(0, topLimit)),
                 watchlistCount = ratings.watchlist.size,
                 watchedCount = ratings.watched.size,
+                distribution = distribution,
             )
         }
     }

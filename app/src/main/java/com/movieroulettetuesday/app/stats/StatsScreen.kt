@@ -100,6 +100,17 @@ fun StatsScreen(
                     MrtSection("Your Ratings", Modifier.testTag("stats-ratings")) {
                         Labeled("Movies rated", "${mine.ratedCount}")
                         mine.averageStars?.let { Labeled("Your average", "${HalfStars.label(it)} ★") }
+                        val buckets = mine.distribution.mapIndexedNotNull { index, count ->
+                            if (count == 0) null else "${HalfStars.label(index + 1)}★ × $count"
+                        }
+                        if (buckets.isNotEmpty()) {
+                            Text(
+                                buckets.joinToString("  "),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.testTag("stats-rating-distribution"),
+                            )
+                        }
                         Labeled("Watched", "${mine.watchedCount}")
                         Labeled("On your watchlist", "${mine.watchlistCount}")
                         mine.topRated.forEach { r ->

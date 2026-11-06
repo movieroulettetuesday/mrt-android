@@ -95,9 +95,13 @@ class ScreenshotTour {
         compose.onNodeWithTag("tab-movies").performClick(); compose.waitForIdle()
         shot("04-movies-list")
 
+        app.personalRatings.setHalfStars(7, DETAIL_MOVIE)
         app.pendingMovie.value = DETAIL_MOVIE
         compose.waitForIdle()
         shot("05-movie-detail")
+        compose.onNodeWithTag("clear-rating").performScrollTo()
+        compose.waitForIdle()
+        shot("05b-clear-rating")
 
         compose.onNodeWithTag("tab-stats").performClick(); compose.waitForIdle()
         shot("06-stats")

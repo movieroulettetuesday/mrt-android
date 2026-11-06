@@ -59,6 +59,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import com.movieroulettetuesday.app.BuildConfig
 import com.movieroulettetuesday.app.R
+import com.movieroulettetuesday.app.movies.HalfStars
 import com.movieroulettetuesday.app.movies.StreamingCatalog
 import com.movieroulettetuesday.app.settings.CreditsScreen
 import com.movieroulettetuesday.app.settings.MyServicesScreen
@@ -430,7 +431,10 @@ private fun MovieDetailContent(app: MrtApplication, movieId: String, onBack: (()
         onBack = onBack,
         onOpenEpisode = onOpenEpisode,
         ratingFooter = if (sharing) CommunityCopy.AUTO_SHARE_FOOTER else "Saved on this device.",
-        onRated = { half -> if (sharing && half != null) scope.launch { community?.submitListenerRating(movieId, half) } },
+        // Clearing passes null. The relay accepts only half-stars 1..10 and has no delete, so unrated is not posted.
+        onRated = { half ->
+            if (sharing && half != null && half in HalfStars.range) scope.launch { community?.submitListenerRating(movieId, half) }
+        },
         extra = { movie -> community?.let { ListenerRatingSection(movie.id, inputs.ratings.halfStars(movie.id), it) } },
     )
 }
