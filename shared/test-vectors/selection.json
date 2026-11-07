@@ -1,6 +1,8 @@
 {
   "_generated" : {
-    "bundledCatalogCommit" : "b673df1",
+    "bundledCatalogCommit" : "22b8176",
+    "bundledCatalogPrevious" : "b673df1",
+    "bundledRefresh" : "Bundled-catalog expectations for movies.json sha256 144ecac34efd80f8b0069156cbaceb21b7047ca1a70ed38cb70dc59b3956d447 (182 movies, iOS main 22b8176) were recomputed after every bundled expectation at b673df1 (sha256 4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630, 180 movies) reproduced exactly. tools/vector-gen was not rerun. Fixture cases are unchanged.",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
     "iosCommit" : "a0dffcc",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
@@ -25,7 +27,7 @@
           {
             "categoryId" : "cat-scifi",
             "landed" : "cat-scifi",
-            "movieId" : "mirrormask-2005",
+            "movieId" : "memento-2000",
             "outcome" : "normal",
             "rotation" : 6324.300727123617,
             "wasForcedRespin" : false
@@ -41,7 +43,7 @@
           {
             "categoryId" : "cat-scifi",
             "landed" : "cat-scifi",
-            "movieId" : "the-fall-2008",
+            "movieId" : "mirrormask-2005",
             "outcome" : "normal",
             "rotation" : 11013,
             "wasForcedRespin" : false
@@ -73,7 +75,7 @@
           {
             "categoryId" : "cat-horror",
             "landed" : "cat-horror",
-            "movieId" : "fright-night-1985",
+            "movieId" : "weapons-2025",
             "outcome" : "normal",
             "rotation" : 21224.503931765503,
             "wasForcedRespin" : false
@@ -81,7 +83,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "the-ugly-stepsister-2025",
+            "movieId" : "passengers-2016",
             "outcome" : "normal",
             "rotation" : 23475.04901638203,
             "wasForcedRespin" : false
@@ -89,7 +91,7 @@
           {
             "categoryId" : "cat-scifi",
             "landed" : "cat-scifi",
-            "movieId" : "snowpiercer-2013",
+            "movieId" : "godzilla-minus-one-2023",
             "outcome" : "normal",
             "rotation" : 26475.201873648002,
             "wasForcedRespin" : false
@@ -97,7 +99,7 @@
           {
             "categoryId" : "cat-love",
             "landed" : "cat-love",
-            "movieId" : "romeo-plus-juliet-1996",
+            "movieId" : "what-dreams-may-come-1998",
             "outcome" : "normal",
             "rotation" : 28680.38087172524,
             "wasForcedRespin" : false
@@ -105,7 +107,7 @@
           {
             "categoryId" : "cat-cult",
             "landed" : "cat-cult",
-            "movieId" : "enter-the-void-2009",
+            "movieId" : "alice-1988",
             "outcome" : "normal",
             "rotation" : 30892.291577054493,
             "wasForcedRespin" : false
@@ -113,7 +115,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "the-pirates-of-penzance-1983",
+            "movieId" : "the-ugly-stepsister-2025",
             "outcome" : "normal",
             "rotation" : 33920.11731725013,
             "wasForcedRespin" : false
@@ -129,7 +131,7 @@
           {
             "categoryId" : "cat-scifi",
             "landed" : "cat-scifi",
-            "movieId" : "project-hail-mary-2026",
+            "movieId" : "strawberry-mansion-2021",
             "outcome" : "normal",
             "rotation" : 38703,
             "wasForcedRespin" : false
@@ -137,7 +139,7 @@
           {
             "categoryId" : "cat-scifi",
             "landed" : "cat-scifi",
-            "movieId" : "the-thing-1982",
+            "movieId" : "lord-of-illusions-1995",
             "outcome" : "normal",
             "rotation" : 41241.72258249854,
             "wasForcedRespin" : false
@@ -193,7 +195,7 @@
           {
             "categoryId" : "cat-love",
             "landed" : "cat-love",
-            "movieId" : "high-fidelity-2000",
+            "movieId" : "crash-1996",
             "outcome" : "normal",
             "rotation" : 59649,
             "wasForcedRespin" : false
@@ -233,7 +235,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "the-ugly-stepsister-2025",
+            "movieId" : "passengers-2016",
             "outcome" : "normal",
             "rotation" : 1158.546538340035,
             "wasForcedRespin" : false
@@ -249,7 +251,7 @@
           {
             "categoryId" : "cat-cult",
             "landed" : "cat-cult",
-            "movieId" : "harlequin-1980",
+            "movieId" : "the-alamo-2004",
             "outcome" : "normal",
             "rotation" : 2454.915948446148,
             "wasForcedRespin" : false
@@ -257,7 +259,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "the-ugly-stepsister-2025",
+            "movieId" : "passengers-2016",
             "outcome" : "normal",
             "rotation" : 3315,
             "wasForcedRespin" : false
@@ -793,7 +795,7 @@
     "description" : "RouletteViewModel order per spin: randomTargetRotation(from: current rotation, 5...8 or 1...2 with reduce motion) -> landed = segmentIndex -> roll(allowRespin: !lastWasForced) -> forced: next step is the automatic re-spin; jackpot: jackpotPick; else selectMovie(history so far). History accumulates."
   },
   "bundledHorrorWeights" : {
-    "candidateCount" : 38,
+    "candidateCount" : 39,
     "catalog" : "bundled",
     "categoryId" : "cat-horror",
     "historyMovieIds" : [
@@ -803,22 +805,22 @@
       "x",
       "x"
     ],
-    "otherProbability" : 0.027085590465872156,
+    "otherProbability" : 0.026371308016877634,
     "otherWeight" : 1,
     "weights" : [
       {
         "movieId" : "deadly-games-1989",
-        "probability" : 0.012459371614301194,
+        "probability" : 0.012130801687763714,
         "weight" : 0.4600000000000001
       },
       {
         "movieId" : "the-vanishing-1988",
-        "probability" : 0.01733477789815818,
+        "probability" : 0.016877637130801686,
         "weight" : 0.64
       },
       {
         "movieId" : "what-ever-happened-to-baby-jane-1962",
-        "probability" : 0.022210184182015168,
+        "probability" : 0.021624472573839662,
         "weight" : 0.8200000000000001
       }
     ]
@@ -1672,7 +1674,7 @@
         "categoryId" : "cat-listener",
         "isJackpot" : false,
         "landed" : "cat-listener",
-        "movieId" : "runaway-train-1985",
+        "movieId" : "the-pirates-of-penzance-1983",
         "seed" : 2,
         "wasForcedRespin" : false
       },
@@ -1726,7 +1728,7 @@
         "categoryId" : "cat-listener",
         "isJackpot" : false,
         "landed" : "cat-listener",
-        "movieId" : "the-ugly-stepsister-2025",
+        "movieId" : "passengers-2016",
         "seed" : 8,
         "wasForcedRespin" : false
       },
@@ -2401,15 +2403,15 @@
       ],
       "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
       "picks" : [
-        "race-with-the-devil-1975",
         "return-of-the-living-dead-3-1993",
+        "palmer-rockeys-scarlet-warning-666-1982",
         "night-of-the-living-dead-1990",
         "the-vanishing-1988",
         "talk-to-me-2022",
-        "fright-night-1985",
-        "leviathan-1989",
         "weapons-2025",
-        "leviathan-1989",
+        "the-thing-1982",
+        "night-of-the-living-dead-1990",
+        "the-thing-1982",
         "martin-1977",
         "diabolique-1955",
         "the-grave-1996"
@@ -2426,16 +2428,16 @@
       "picks" : [
         "the-thing-1982",
         "the-thing-1982",
+        "the-ugly-stepsister-2025",
+        "the-ugly-stepsister-2025",
         "the-pirates-of-penzance-1983",
         "the-ugly-stepsister-2025",
-        "runaway-train-1985",
-        "the-ugly-stepsister-2025",
         "the-thing-1982",
-        "the-ugly-stepsister-2025",
-        "the-ugly-stepsister-2025",
+        "passengers-2016",
+        "passengers-2016",
         "strawberry-mansion-2021",
         "strawberry-mansion-2021",
-        "the-pirates-of-penzance-1983"
+        "the-ugly-stepsister-2025"
       ],
       "seed" : 7
     }

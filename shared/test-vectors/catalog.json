@@ -1,6 +1,8 @@
 {
   "_generated" : {
-    "bundledCatalogCommit" : "b673df1",
+    "bundledCatalogCommit" : "22b8176",
+    "bundledCatalogPrevious" : "b673df1",
+    "bundledRefresh" : "Bundled-catalog expectations for movies.json sha256 144ecac34efd80f8b0069156cbaceb21b7047ca1a70ed38cb70dc59b3956d447 (182 movies, iOS main 22b8176) were recomputed after every bundled expectation at b673df1 (sha256 4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630, 180 movies) reproduced exactly. tools/vector-gen was not rerun. Fixture cases are unchanged.",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
     "iosCommit" : "a0dffcc",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
@@ -10,14 +12,14 @@
     "candidateCounts" : {
       "cat-action" : 28,
       "cat-criterion" : 21,
-      "cat-cult" : 34,
+      "cat-cult" : 35,
       "cat-dark-comedy" : 21,
       "cat-escape" : 21,
-      "cat-horror" : 38,
-      "cat-listener" : 6,
-      "cat-love" : 12,
+      "cat-horror" : 39,
+      "cat-listener" : 7,
+      "cat-love" : 13,
       "cat-prestige" : 30,
-      "cat-scifi" : 30
+      "cat-scifi" : 31
     },
     "categoryIds" : [
       "cat-horror",
@@ -37,12 +39,29 @@
       "Matt"
     ],
     "legacyIsInfamousTrueCount" : 0,
-    "movieCount" : 180,
+    "movieCount" : 182,
     "path" : "MovieRouletteTuesday/Resources/movies.json",
-    "sha256" : "4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630",
+    "sha256" : "144ecac34efd80f8b0069156cbaceb21b7047ca1a70ed38cb70dc59b3956d447",
     "validationIssues" : [
 
     ]
+  },
+  "bundledSnapshot180" : {
+    "bundledCatalogCommit" : "b673df1",
+    "candidateCounts" : {
+      "cat-action" : 28,
+      "cat-criterion" : 21,
+      "cat-cult" : 34,
+      "cat-dark-comedy" : 21,
+      "cat-escape" : 21,
+      "cat-horror" : 38,
+      "cat-listener" : 6,
+      "cat-love" : 12,
+      "cat-prestige" : 30,
+      "cat-scifi" : 30
+    },
+    "movieCount" : 180,
+    "sha256" : "4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630"
   },
   "cases" : [
     {

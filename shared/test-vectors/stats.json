@@ -1,6 +1,8 @@
 {
   "_generated" : {
-    "bundledCatalogCommit" : "b673df1",
+    "bundledCatalogCommit" : "22b8176",
+    "bundledCatalogPrevious" : "b673df1",
+    "bundledRefresh" : "Bundled-catalog expectations for movies.json sha256 144ecac34efd80f8b0069156cbaceb21b7047ca1a70ed38cb70dc59b3956d447 (182 movies, iOS main 22b8176) were recomputed after every bundled expectation at b673df1 (sha256 4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630, 180 movies) reproduced exactly. tools/vector-gen was not rerun. Fixture cases are unchanged.",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
     "iosCommit" : "a0dffcc",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
@@ -1591,13 +1593,13 @@
         "catalog" : "bundled",
         "categoryId" : "cat-horror",
         "dayKey" : "2026-10-20",
-        "movieId" : "leviathan-1989"
+        "movieId" : "fright-night-1985"
       },
       {
         "catalog" : "bundled",
         "categoryId" : "cat-cult",
         "dayKey" : "2026-10-21",
-        "movieId" : "the-split-1968"
+        "movieId" : "tiptoes-2003"
       },
       {
         "catalog" : "bundled",
