@@ -26,9 +26,10 @@ android {
         minSdk = 26
         targetSdk = 36
         // versionCode: monotonically increasing integer, +1 for every build uploaded to Play (never reused).
+        // 1 is the held 1.0.0 AAB (7d85952). No higher code is reserved in this repo.
         // versionName: semantic version shown to users (MAJOR.MINOR.PATCH). See docs/NOTES.md.
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Community (polls + listener ratings), off unless both are provided at build time:
