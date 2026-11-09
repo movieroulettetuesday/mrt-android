@@ -1,12 +1,8 @@
 {
   "_generated" : {
-    "bundledCatalogCommit" : "22b8176",
-    "bundledCatalogPrevious" : "b673df1",
-    "bundledRefresh" : "Bundled-catalog expectations for movies.json sha256 144ecac34efd80f8b0069156cbaceb21b7047ca1a70ed38cb70dc59b3956d447 (182 movies, iOS main 22b8176) were recomputed after every bundled expectation at b673df1 (sha256 4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630, 180 movies) reproduced exactly. tools/vector-gen was not rerun. Fixture cases are unchanged.",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "a0dffcc",
-    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
-    "rules" : "iOS 1.0.1 (branch fix/notification-tap-main-thread @ a0dffcc: 5d459a0, f39fbb9, 867e024, a0dffcc)"
+    "iosCommit" : "7322559",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
   },
   "bundled" : {
     "candidateCounts" : {
@@ -38,30 +34,13 @@
       "Karl",
       "Matt"
     ],
-    "legacyIsInfamousTrueCount" : 0,
+    "infamousCount" : 0,
     "movieCount" : 182,
     "path" : "MovieRouletteTuesday/Resources/movies.json",
     "sha256" : "144ecac34efd80f8b0069156cbaceb21b7047ca1a70ed38cb70dc59b3956d447",
     "validationIssues" : [
 
     ]
-  },
-  "bundledSnapshot180" : {
-    "bundledCatalogCommit" : "b673df1",
-    "candidateCounts" : {
-      "cat-action" : 28,
-      "cat-criterion" : 21,
-      "cat-cult" : 34,
-      "cat-dark-comedy" : 21,
-      "cat-escape" : 21,
-      "cat-horror" : 38,
-      "cat-listener" : 6,
-      "cat-love" : 12,
-      "cat-prestige" : 30,
-      "cat-scifi" : 30
-    },
-    "movieCount" : 180,
-    "sha256" : "4babf73930fdd02b1adf2cc672f5ead819401c8faff5c5b9afde30e592c19630"
   },
   "cases" : [
     {
@@ -95,6 +74,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -146,6 +126,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -197,6 +178,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -248,6 +230,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -299,6 +282,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -392,6 +376,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -443,6 +428,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -494,6 +480,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -545,6 +532,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -605,6 +593,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2000 · a",
             "tmdbId" : null
@@ -615,6 +604,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2000 · a",
             "tmdbId" : null
@@ -625,6 +615,7 @@
             ],
             "hostRating" : null,
             "id" : "m2",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2000 · b",
             "tmdbId" : null
@@ -684,6 +675,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2000 · A",
             "tmdbId" : null
@@ -694,6 +686,7 @@
             ],
             "hostRating" : null,
             "id" : "m2",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2000 · Drama",
             "tmdbId" : null
@@ -745,6 +738,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : {
               "buy" : [
 
@@ -835,6 +829,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -902,6 +897,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -953,6 +949,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -1012,6 +1009,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -1081,6 +1079,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2000 · a",
             "tmdbId" : null
@@ -1091,6 +1090,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2000 · Drama",
             "tmdbId" : null
@@ -1147,6 +1147,7 @@
             ],
             "hostRating" : null,
             "id" : "m1",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "1999 · One",
             "tmdbId" : null
@@ -1157,6 +1158,7 @@
             ],
             "hostRating" : null,
             "id" : "m2",
+            "isInfamous" : false,
             "streaming" : null,
             "subtitle" : "2001 · Comedy",
             "tmdbId" : null
@@ -1285,7 +1287,7 @@
         "hexString" : "#E9C46A",
         "input" : "#E9C46A",
         "prefersDarkText" : true,
-        "relativeLuminance" : 0.5784410112104773,
+        "relativeLuminance" : 0.57844101121047731,
         "rgba255" : [
           233,
           196,
@@ -1298,7 +1300,7 @@
         "hexString" : "#7B2CBF",
         "input" : "#7B2CBF",
         "prefersDarkText" : false,
-        "relativeLuminance" : 0.09773905972928854,
+        "relativeLuminance" : 0.097739059729288535,
         "rgba255" : [
           123,
           44,

@@ -35,9 +35,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 /**
- * Sections added in SPEC revision 2 (flows.json, rss/catalog/stats additions). Since the iOS 1.0.1
- * regeneration (a0dffcc) `expected…` is always the iOS output; discussedFormats also carries the
- * unadopted Q9 collapse as `q9CollapseProposal`, which Android does not implement.
+ * Sections added in SPEC revision 2. `discussedFormats.expected` is the shared rule: identical
+ * labels collapse and the 1 / 2 / 3+ format uses the distinct label count (Q9).
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -55,10 +54,10 @@ class SpecRev2VectorsTest {
         for (c in cases) {
             val movie = Movie(id = "m", title = "T", year = 2000, genre = "g", episodeIds = c["episodeIds"]!!.strings(), episodeTitle = c.str("episodeTitle"))
             val got = EpisodeLabel.discussedText(movie, if (c.bool("feedLoaded") == true) byGuid else emptyMap())
-            // Q9 collapse is not in iOS 1.0.1 (MRT App, Oct 21): `expected` keeps identical labels.
             assertEquals(c.str("name"), c.str("expected"), got)
         }
-        assertEquals(listOf(8, 9, 10), cases.indices.filter { cases[it].str("q9CollapseProposal") != cases[it].str("expected") })
+        val identical = cases.filter { it.str("name")!!.contains("identical labels") }
+        assertEquals(listOf("Discussed on Ep Title", "Discussed on Ep Title"), identical.map { it.str("expected") })
     }
 
     @Test
@@ -78,16 +77,25 @@ class SpecRev2VectorsTest {
         val io = UnconfinedTestDispatcher(testScheduler)
         val dir: File = Files.createTempDirectory("rev2").toFile()
         val cases = rss.obj("refreshRule").arr("cases").objs()
-        // iOS 1.0.1 (f39fbb9): 0 episodes (empty channel, or a well-formed non-RSS 200 like a captive
-        // portal) throws noEpisodes before the cache write; a parse error fails the same way.
-        assertEquals(listOf("empty-channel", "html captive portal", "not-xml", "buzzsprout-fixture"), cases.map { it.str("feed")!!.substringBefore(" (") })
+        // 7322559 oracle: empty channel, the not-xml feed (body is `<html><body>oops`, a captive-portal
+        // style non-RSS document) plus truncated rss, then the real fixture. HTML and a 0-episode
+        // channel both fail before the cache write.
+        assertEquals(
+            listOf("empty-channel", "not-xml / truncated rss", "buzzsprout-fixture"),
+            cases.map { it.str("feed")!!.substringBefore(" (") },
+        )
         cases.forEachIndexed { i, c ->
             val e = c.obj("expected")
             val feed = c.str("feed")!!
             val bodies = when {
                 feed.startsWith("buzzsprout-fixture") -> listOf(feedBody("buzzsprout-fixture"))
-                feed.startsWith("not-xml") -> listOf(c.str("input")!!, feedBody("truncated rss"))
-                else -> listOf(c.str("input")!!)
+                feed.startsWith("not-xml") -> listOf(feedBody("not-xml"), feedBody("truncated rss"))
+                feed.startsWith("html") -> listOf(c.str("input")!!)
+                c.str("input") != null -> listOf(c.str("input")!!)
+                else -> listOf(feedBody(feed.substringBefore(" (")))
+            }
+            if (feed.startsWith("not-xml") || feed.startsWith("html") || feed.startsWith("empty-channel")) {
+                assertEquals(feed, "failed", e.str("refresh"))
             }
             for ((j, body) in bodies.withIndex()) {
                 val name = "$feed #$j"

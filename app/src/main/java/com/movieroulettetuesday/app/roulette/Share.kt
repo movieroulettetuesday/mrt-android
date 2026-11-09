@@ -54,8 +54,9 @@ object EpisodeLabel {
             val t = title(id, movie, episodesByGUID)
             return episodesByGUID[id]?.seasonEpisodeLabel?.let { "$t ($it)" } ?: t
         }
-        // iOS main: one label per id, no collapse ("X & X" stays). The Q9 collapse is not in iOS 1.0.1.
-        val labels = ids.map(::label)
+        // Shared rule (discussedFormats.expected, Q9): identical labels collapse, and the
+        // 1 / 2 / 3+ format uses the distinct count in first-seen order.
+        val labels = ids.map(::label).distinct()
         return when (labels.size) {
             1 -> "Discussed on ${labels[0]}"
             2 -> "Discussed on ${labels[0]} & ${labels[1]}"

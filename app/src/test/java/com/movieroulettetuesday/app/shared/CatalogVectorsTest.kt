@@ -54,7 +54,8 @@ class CatalogVectorsTest {
                 assertEquals(tag, m["episodeIds"]!!.strings(), movie.episodeIds)
                 assertEquals(tag, m.dbl("hostRating"), movie.hostRating)
                 assertEquals(tag, m.int("tmdbId"), movie.tmdbId)
-                assertEquals(tag, null, m["isInfamous"]) // iOS 1.0.1: not a Movie property any more
+                // Snapshot keeps the legacy key, always false. Movie does not decode it.
+                assertEquals(tag, false, m.bool("isInfamous"))
                 assertEquals(tag, m.str("subtitle"), cat.subtitle(movie))
                 assertEquals(tag, m["streaming"] is kotlinx.serialization.json.JsonNull, movie.streaming == null)
             }
@@ -101,9 +102,9 @@ class CatalogVectorsTest {
         assertEquals(b.int("movieCount"), cat.movies.size)
         assertEquals(b["categoryIds"]!!.strings(), cat.categories.map { it.id })
         assertEquals(b["hosts"]!!.strings(), cat.showInfo.hosts)
-        // Legacy key only: counted in the raw JSON, never decoded (iOS 1.0.1, 5d459a0).
+        // Oracle field is infamousCount (0). The raw legacy key is never true.
         val raw = kotlinx.serialization.json.Json.parseToJsonElement(bytes.decodeToString()).jsonObject.arr("movies").objs()
-        assertEquals(b.int("legacyIsInfamousTrueCount"), raw.count { it.bool("isInfamous") == true })
+        assertEquals(b.int("infamousCount"), raw.count { it.bool("isInfamous") == true })
         val sel = MovieSelector()
         for ((id, n) in b.obj("candidateCounts")) assertEquals(id, num(n)!!.toInt(), sel.candidates(cat.category(id)!!, cat).size)
     }

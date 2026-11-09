@@ -1,10 +1,8 @@
 {
   "_generated" : {
-    "bundledCatalogCommit" : "b673df1",
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "a0dffcc",
-    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC.",
-    "rules" : "iOS 1.0.1 (branch fix/notification-tap-main-thread @ a0dffcc: 5d459a0, f39fbb9, 867e024, a0dffcc)"
+    "iosCommit" : "7322559",
+    "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
   },
   "androidCrossCheck" : {
     "artworkUsableURL" : [
@@ -383,8 +381,9 @@
         "episodeTitle" : null,
         "expected" : "Not discussed on the show yet",
         "feedLoaded" : true,
-        "name" : "no ids",
-        "q9CollapseProposal" : "Not discussed on the show yet"
+        "iosB673df1" : "Not discussed on the show yet",
+        "iosMatchesSharedRule" : true,
+        "name" : "no ids"
       },
       {
         "episodeIds" : [
@@ -393,8 +392,9 @@
         "episodeTitle" : null,
         "expected" : "Discussed on The Outsiders (S4E34)",
         "feedLoaded" : true,
-        "name" : "1 id in feed with S/E",
-        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34)"
+        "iosB673df1" : "Discussed on The Outsiders (S4E34)",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id in feed with S/E"
       },
       {
         "episodeIds" : [
@@ -403,8 +403,9 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Bonus Chat",
         "feedLoaded" : true,
-        "name" : "1 id in feed without S/E",
-        "q9CollapseProposal" : "Discussed on Bonus Chat"
+        "iosB673df1" : "Discussed on Bonus Chat",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id in feed without S/E"
       },
       {
         "episodeIds" : [
@@ -413,8 +414,9 @@
         "episodeTitle" : "Ep Title",
         "expected" : "Discussed on Ep Title",
         "feedLoaded" : false,
-        "name" : "1 id, no feed, episodeTitle",
-        "q9CollapseProposal" : "Discussed on Ep Title"
+        "iosB673df1" : "Discussed on Ep Title",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id, no feed, episodeTitle"
       },
       {
         "episodeIds" : [
@@ -423,8 +425,9 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Buzzsprout-123",
         "feedLoaded" : true,
-        "name" : "1 id not in feed, no episodeTitle -> raw guid",
-        "q9CollapseProposal" : "Discussed on Buzzsprout-123"
+        "iosB673df1" : "Discussed on Buzzsprout-123",
+        "iosMatchesSharedRule" : true,
+        "name" : "1 id not in feed, no episodeTitle -> raw guid"
       },
       {
         "episodeIds" : [
@@ -434,8 +437,9 @@
         "episodeTitle" : null,
         "expected" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)",
         "feedLoaded" : true,
-        "name" : "2 ids in feed",
-        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)"
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) & Laura (S4E35)",
+        "iosMatchesSharedRule" : true,
+        "name" : "2 ids in feed"
       },
       {
         "episodeIds" : [
@@ -446,8 +450,9 @@
         "episodeTitle" : null,
         "expected" : "Discussed on The Outsiders (S4E34) + 2 more",
         "feedLoaded" : true,
-        "name" : "3 ids in feed",
-        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) + 2 more"
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 2 more",
+        "iosMatchesSharedRule" : true,
+        "name" : "3 ids in feed"
       },
       {
         "episodeIds" : [
@@ -459,8 +464,9 @@
         "episodeTitle" : "Ep Title",
         "expected" : "Discussed on The Outsiders (S4E34) + 3 more",
         "feedLoaded" : true,
-        "name" : "4 ids, one missing (episodeTitle used)",
-        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) + 3 more"
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 3 more",
+        "iosMatchesSharedRule" : true,
+        "name" : "4 ids, one missing (episodeTitle used)"
       },
       {
         "episodeIds" : [
@@ -468,10 +474,11 @@
           "g2"
         ],
         "episodeTitle" : "Ep Title",
-        "expected" : "Discussed on Ep Title & Ep Title",
+        "expected" : "Discussed on Ep Title",
         "feedLoaded" : false,
-        "name" : "2 ids, no feed -> identical labels (Q9)",
-        "q9CollapseProposal" : "Discussed on Ep Title"
+        "iosB673df1" : "Discussed on Ep Title & Ep Title",
+        "iosMatchesSharedRule" : false,
+        "name" : "2 ids, no feed -> identical labels (Q9)"
       },
       {
         "episodeIds" : [
@@ -480,10 +487,11 @@
           "g4"
         ],
         "episodeTitle" : "Ep Title",
-        "expected" : "Discussed on Ep Title + 2 more",
+        "expected" : "Discussed on Ep Title",
         "feedLoaded" : false,
-        "name" : "3 ids, no feed -> identical labels (Q9)",
-        "q9CollapseProposal" : "Discussed on Ep Title"
+        "iosB673df1" : "Discussed on Ep Title + 2 more",
+        "iosMatchesSharedRule" : false,
+        "name" : "3 ids, no feed -> identical labels (Q9)"
       },
       {
         "episodeIds" : [
@@ -492,10 +500,11 @@
           "yy"
         ],
         "episodeTitle" : "Ep Title",
-        "expected" : "Discussed on The Outsiders (S4E34) + 2 more",
+        "expected" : "Discussed on The Outsiders (S4E34) & Ep Title",
         "feedLoaded" : true,
-        "name" : "3 ids, 2 distinct labels",
-        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) & Ep Title"
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) + 2 more",
+        "iosMatchesSharedRule" : false,
+        "name" : "3 ids, 2 distinct labels"
       },
       {
         "episodeIds" : [
@@ -505,8 +514,9 @@
         "episodeTitle" : "Ep Title",
         "expected" : "Discussed on The Outsiders (S4E34) & Ep Title",
         "feedLoaded" : true,
-        "name" : "2 ids, one in feed one via episodeTitle",
-        "q9CollapseProposal" : "Discussed on The Outsiders (S4E34) & Ep Title"
+        "iosB673df1" : "Discussed on The Outsiders (S4E34) & Ep Title",
+        "iosMatchesSharedRule" : true,
+        "name" : "2 ids, one in feed one via episodeTitle"
       },
       {
         "episodeIds" : [
@@ -515,8 +525,9 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Episode 6 (sample)",
         "feedLoaded" : true,
-        "name" : "samples 1",
-        "q9CollapseProposal" : "Discussed on Episode 6 (sample)"
+        "iosB673df1" : "Discussed on Episode 6 (sample)",
+        "iosMatchesSharedRule" : true,
+        "name" : "samples 1"
       },
       {
         "episodeIds" : [
@@ -526,8 +537,9 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Episodes 6 & 7 (sample)",
         "feedLoaded" : true,
-        "name" : "samples 2",
-        "q9CollapseProposal" : "Discussed on Episodes 6 & 7 (sample)"
+        "iosB673df1" : "Discussed on Episodes 6 & 7 (sample)",
+        "iosMatchesSharedRule" : true,
+        "name" : "samples 2"
       },
       {
         "episodeIds" : [
@@ -538,11 +550,12 @@
         "episodeTitle" : null,
         "expected" : "Discussed on Episode 6 + 2 more (sample)",
         "feedLoaded" : true,
-        "name" : "samples 3",
-        "q9CollapseProposal" : "Discussed on Episode 6 + 2 more (sample)"
+        "iosB673df1" : "Discussed on Episode 6 + 2 more (sample)",
+        "iosMatchesSharedRule" : true,
+        "name" : "samples 3"
       }
     ],
-    "description" : "EpisodeLabel.discussedText (SPEC §2.3). Formats: 0 ids -> 'Not discussed on the show yet'; label = title + ' (S4E34)' when the feed has S/E; 1 -> 'Discussed on A'; 2 -> 'Discussed on A & B'; 3+ -> 'Discussed on A + N more'. Title source: feed title, else movie.episodeTitle, else 'Episode n' for sample ids, else the raw guid. `expected` = what iOS 1.0.1 renders (identical labels are NOT collapsed: \"A & A\" stays). `q9CollapseProposal` = MRT App's Q9 collapse rule, which is NOT in iOS 1.0.1; do not implement it. Siri always renders with no feed.",
+    "description" : "EpisodeLabel.discussedText (SPEC §2.3). Formats: 0 ids -> 'Not discussed on the show yet'; label = title + ' (S4E34)' when the feed has S/E; 1 -> 'Discussed on A'; 2 -> 'Discussed on A & B'; 3+ -> 'Discussed on A + N more'. Title source: feed title, else movie.episodeTitle, else 'Episode n' for sample ids, else the raw guid. `iosB673df1` = what iOS main renders today; `expected` = shared rule decided by MRT App: identical labels collapse and the 1/2/3+ format uses the DISTINCT label count (Q9; iOS fix is a 1.0.1 candidate). Siri always renders with no feed.",
     "feed" : [
       {
         "episode" : 34,
@@ -652,12 +665,8 @@
         }
       ],
       "expected" : {
-        "artworkURL" : null,
-        "episodes" : [
-
-        ],
-        "ok" : true,
-        "title" : ""
+        "error" : "malformed",
+        "ok" : false
       },
       "input" : "<html><body>oops",
       "name" : "not-xml",
@@ -894,12 +903,8 @@
         }
       ],
       "expected" : {
-        "artworkURL" : null,
-        "episodes" : [
-
-        ],
-        "ok" : true,
-        "title" : ""
+        "error" : "malformed",
+        "ok" : false
       },
       "input" : "<rss><channel><item>",
       "name" : "truncated rss (android-main RssFeedParserTest.emptyAndBrokenInput)",
@@ -981,83 +986,6 @@
       },
       "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title><item><title>1</title><guid>d1</guid><pubDate>Tue, 06 Oct 2026 00:00:00 -0400</pubDate></item><item><title>2</title><guid>d2</guid><pubDate>06 Oct 2026 04:00:00 GMT</pubDate></item><item><title>3</title><guid>d3</guid><pubDate>Tue, 06 Oct 2026 04:00 +0000</pubDate></item><item><title>4</title><guid>d4</guid><pubDate>2026-10-06</pubDate></item><item><title>5</title><guid>d5</guid><pubDate>Tue, 06 Oct 2026 00:00:00 EST</pubDate></item></channel></rss>",
       "name" : "date variants"
-    },
-    {
-      "expected" : {
-        "artworkURL" : "https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg",
-        "episodes" : [
-          {
-            "episode" : 36,
-            "episodeType" : "full",
-            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
-            "guid" : "Buzzsprout-19980357",
-            "imageURL" : "https://storage.buzzsprout.com/ts10xban322i29sx0oznh8gwl95h?.jpg",
-            "link" : null,
-            "pubDate" : "2026-10-20T04:00:00Z",
-            "season" : 4,
-            "seasonEpisodeLabel" : "S4E36",
-            "summary" : "Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why? Tune in to find out! We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt), as well as make a very exciting announcement about something Matt is cooking up related to the podcast. So please join us as we watch a movie about killer piranhas that fly.",
-            "title" : "Piranha II:  The Spawning"
-          },
-          {
-            "episode" : 35,
-            "episodeType" : "full",
-            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
-            "guid" : "Buzzsprout-19950553",
-            "imageURL" : "https://storage.buzzsprout.com/7bxady8lbcznxdtl5hfhyvze1ykc?.jpg",
-            "link" : null,
-            "pubDate" : "2026-10-13T04:00:00Z",
-            "season" : 4,
-            "seasonEpisodeLabel" : "S4E35",
-            "summary" : "We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles. In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery. We also learn how this film became an inspiration for David Lynch and Mark Frost’s Twin Peaks, and get a mini-biography of Vincent Price. So line up your suspects, grab your favorite dame, take a belt or two of bourbon, and help us solve the mystery!",
-            "title" : "Laura"
-          },
-          {
-            "episode" : 34,
-            "episodeType" : "full",
-            "fanMailURL" : "https://www.buzzsprout.com/2117292/fan_mail/new",
-            "guid" : "Buzzsprout-19913482",
-            "imageURL" : "https://storage.buzzsprout.com/owoiwvlyear05oze07ippg1m06yb?.jpg",
-            "link" : null,
-            "pubDate" : "2026-10-06T04:00:00Z",
-            "season" : 4,
-            "seasonEpisodeLabel" : "S4E34",
-            "summary" : "Hi everyone, we have a new theme this week and that theme is: “before they were famous”. It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand. We are kicking things off with The Outsiders. This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.",
-            "title" : "The Outsiders"
-          },
-          {
-            "episode" : null,
-            "episodeType" : "bonus",
-            "fanMailURL" : null,
-            "guid" : "Buzzsprout-11111111",
-            "imageURL" : "http://storage.buzzsprout.com/bonus.jpg",
-            "link" : null,
-            "pubDate" : "2023-02-03T08:00:00Z",
-            "season" : null,
-            "seasonEpisodeLabel" : null,
-            "summary" : "A much longer summary that is still shorter? No, this summary is clearly longer than the description text above it.",
-            "title" : "Bonus: Listener Mailbag & Q&A"
-          },
-          {
-            "episode" : null,
-            "episodeType" : null,
-            "fanMailURL" : null,
-            "guid" : "https://www.buzzsprout.com/2117292/episodes/22222222",
-            "imageURL" : null,
-            "link" : "https://www.buzzsprout.com/2117292/episodes/22222222",
-            "pubDate" : null,
-            "season" : null,
-            "seasonEpisodeLabel" : null,
-            "summary" : "",
-            "title" : "No guid uses link"
-          }
-        ],
-        "ok" : true,
-        "title" : "Movie Roulette Tuesday: The Podcast"
-      },
-      "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<?xml-stylesheet href=\"https://rss.buzzsprout.com/styles.xsl\" type=\"text/xsl\"?>\n<rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:podcast=\"https://podcastindex.org/namespace/1.0\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:psc=\"http://podlove.org/simple-chapters\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n<channel>\n  <atom:link href=\"https://rss.buzzsprout.com/2117292.rss\" rel=\"self\" type=\"application/rss+xml\" />\n  <atom:link href=\"https://pubsubhubbub.appspot.com/\" rel=\"hub\" xmlns=\"http://www.w3.org/2005/Atom\" />\n  <title>Movie Roulette Tuesday: The Podcast</title>\n\n  <lastBuildDate>Tue, 20 Oct 2026 00:00:04 -0400</lastBuildDate>\n  <link>https://www.buzzsprout.com/2117292</link>\n  <language>en-us</language>\n  <copyright>© 2026 Movie Roulette Tuesday: The Podcast</copyright>\n  <podcast:locked>yes</podcast:locked>\n    <podcast:guid>793c389d-f31e-5f2f-a95c-8d7e46d695eb</podcast:guid>\n  <itunes:author>The MRT Crew</itunes:author>\n  <itunes:type>episodic</itunes:type>\n  <itunes:explicit>true</itunes:explicit>\n  <description><![CDATA[Three lifelong friends with a passion for cinema invite you to their weekly movie night where they get together for dinner, discussion and laughs.  Written, directed and hosted by Rachael, Karl and Matt.]]></description>\n  <generator>Buzzsprout (https://www.buzzsprout.com)</generator>\n  <itunes:keywords>movie, roulette, tuesday, film, friends, cinema, reviews, discussion, cinephile, </itunes:keywords>\n  <itunes:owner>\n    <itunes:name>The MRT Crew</itunes:name>\n    <itunes:email>owner@example.com</itunes:email>\n  </itunes:owner>\n  <image>\n     <url>https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg</url>\n     <title>Movie Roulette Tuesday: The Podcast</title>\n     <link>https://www.buzzsprout.com/2117292</link>\n  </image>\n  <itunes:image href=\"https://storage.buzzsprout.com/0ivqancdb8l9ww2mlieeag1x8bdr?.jpg\" />\n  <itunes:category text=\"TV &amp; Film\">\n    <itunes:category text=\"Film Reviews\" />\n  </itunes:category>\n  <itunes:category text=\"TV &amp; Film\" />\n  <itunes:category text=\"Comedy\" />\n  <item>\n    <itunes:title>Piranha II:  The Spawning</itunes:title>\n    <title>Piranha II:  The Spawning</title>\n    <itunes:summary><![CDATA[Send us Fan Mail Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why?  Tune in to find out! We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt),...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why?  Tune in to find out!</p><p>We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt), as well as make a very exciting announcement about something Matt is cooking up related to the podcast. So please join us as we watch a movie about killer piranhas that fly. </p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Before there was Avatar, Avatar 2, Avatar 3, Avatar 4….is there a 4? Who even knows anymore? But before all of that, James Cameron directed a little film in 1982 called Piranha 2: The Spawning. And while he may have been fired after two and a half weeks of filming, his name remained on the movie as the director. Why?  Tune in to find out!</p><p>We also discover some facts about piranhas (including how much of their reputation was shaped by former President Theodore Roosevelt), as well as make a very exciting announcement about something Matt is cooking up related to the podcast. So please join us as we watch a movie about killer piranhas that fly. </p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19980357-piranha-ii-the-spawning.mp3\" length=\"55528397\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/ts10xban322i29sx0oznh8gwl95h?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19980357</guid>\n    <pubDate>Tue, 20 Oct 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>4621</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>36</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n<item>\n    <itunes:title>Laura</itunes:title>\n    <title>Laura</title>\n    <itunes:summary><![CDATA[Send us Fan Mail We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles.   In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery.  We also learn how this film became an inspiration for David Lynch ...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles.   In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery. <br/>We also learn how this film became an inspiration for David Lynch and Mark Frost’s Twin Peaks, and get a mini-biography of Vincent Price. <br/>So line up your suspects, grab your favorite dame, take a belt or two of bourbon, and help us solve the mystery!</p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>We continue our “before they were famous” theme with a little whodunnit film noire gem from 1944; “Laura,” directed by Otto Preminger and starring Gene Tierney, Dana Andrews, Clifton Webb, and Vincent Price. Yes, before he was synonymous with gothic horror, Vincent Price had more mundane roles.   In this film, he plays a cowardly playboy love interest, one of several suspects in this murder mystery. <br/>We also learn how this film became an inspiration for David Lynch and Mark Frost’s Twin Peaks, and get a mini-biography of Vincent Price. <br/>So line up your suspects, grab your favorite dame, take a belt or two of bourbon, and help us solve the mystery!</p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19950553-laura.mp3\" length=\"52427206\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/7bxady8lbcznxdtl5hfhyvze1ykc?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19950553</guid>\n    <pubDate>Tue, 13 Oct 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>4361</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>35</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n<item>\n    <itunes:title>The Outsiders</itunes:title>\n    <title>The Outsiders</title>\n    <itunes:summary><![CDATA[Send us Fan Mail Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand. We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry b...]]></itunes:summary>\n    <description><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand.</p><p>We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.  </p><p><br/></p>]]></description>\n    <content:encoded><![CDATA[<p><a target=\"_blank\" href=\"https://www.buzzsprout.com/2117292/fan_mail/new\">Send us Fan Mail</a></p><p>Hi everyone, we have a new theme this week and that theme is: “before they were famous”.  It’s pretty self explanatory but just to be clear, that means we will be reviewing films where the stars/directors/etc are not necessarily making their debut but significant contributions to the film industry before they became their own brand.</p><p>We are kicking things off with The Outsiders.  This is a 1983 Francis Ford Coppola film where In Tulsa, Oklahoma in 1964, the rivalry between two gangs, the poor Greasers and the rich Socs, heats up when one gang member accidentally kills a member of the other.  </p><p><br/></p>]]></content:encoded>\n    <enclosure url=\"https://www.buzzsprout.com/2117292/episodes/19913482-the-outsiders.mp3\" length=\"67349282\" type=\"audio/mpeg\" />\n    <itunes:image href=\"https://storage.buzzsprout.com/owoiwvlyear05oze07ippg1m06yb?.jpg\" />\n    <itunes:author>The MRT Crew</itunes:author>\n    <guid isPermaLink=\"false\">Buzzsprout-19913482</guid>\n    <pubDate>Tue, 06 Oct 2026 00:00:00 -0400</pubDate>\n    <itunes:duration>5609</itunes:duration>\n    <itunes:keywords></itunes:keywords>\n    <itunes:season>4</itunes:season>\n    <itunes:episode>34</itunes:episode>\n    <itunes:episodeType>full</itunes:episodeType>\n    <itunes:explicit>true</itunes:explicit>\n  </item>\n  <item>\n    <title>Bonus: Listener Mailbag &amp; Q&amp;A</title>\n    <guid isPermaLink=\"false\">Buzzsprout-11111111</guid>\n    <pubDate>Fri, 03 Feb 2023 08:00:00 GMT</pubDate>\n    <description><![CDATA[<p>Short <b>notes</b> &amp; more.</p>]]></description>\n    <itunes:summary>A much longer summary that is still shorter? No, this summary is clearly longer than the description text above it.</itunes:summary>\n    <itunes:image href=\"http://storage.buzzsprout.com/bonus.jpg\" />\n    <itunes:episodeType>bonus</itunes:episodeType>\n  </item>\n  <item>\n    <title>Duplicate guid should be dropped</title>\n    <guid isPermaLink=\"false\">Buzzsprout-11111111</guid>\n  </item>\n  <item>\n    <title>No guid uses link</title>\n    <link>https://www.buzzsprout.com/2117292/episodes/22222222</link>\n    <pubDate>not a date</pubDate>\n    <itunes:episode>x</itunes:episode>\n  </item>\n  <item>\n    <guid>Buzzsprout-33333333</guid>\n  </item>\n\n</channel>\n</rss>\n",
-      "name" : "android feed-sample.rss (Android main app/src/test/resources/episodes/feed-sample.rss)",
-      "source" : "android-main:RssFeedParserTest.parsesLiveFeedSampleWithEdgeCases"
     }
   ],
   "feedURL" : "https://rss.buzzsprout.com/2117292.rss",
@@ -1195,6 +1123,7 @@
           "episodeTitle" : "The Outsiders",
           "genre" : "Drama",
           "id" : "m1",
+          "isInfamous" : false,
           "title" : "One",
           "year" : 1983
         },
@@ -1209,6 +1138,7 @@
           "episodeTitle" : "Double Feature",
           "genre" : "Drama",
           "id" : "m2",
+          "isInfamous" : false,
           "title" : "Two",
           "year" : 1990
         },
@@ -1224,6 +1154,7 @@
           "episodeTitle" : "Triple",
           "genre" : "Drama",
           "id" : "m3",
+          "isInfamous" : false,
           "title" : "Three",
           "year" : 1991
         },
@@ -1238,6 +1169,7 @@
           "episodeTitle" : null,
           "genre" : "Drama",
           "id" : "m4",
+          "isInfamous" : false,
           "title" : "Four",
           "year" : 1992
         }
@@ -1351,57 +1283,48 @@
         "expected" : {
           "cacheOverwritten" : false,
           "episodesListChanged" : false,
-          "error" : "noEpisodes",
-          "parse" : {
-            "episodes" : 0,
-            "ok" : true
-          },
           "refresh" : "failed"
         },
         "feed" : "empty-channel (see feeds[])",
-        "input" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><title>T</title></channel></rss>"
+        "iosB673df1" : {
+          "cacheOverwritten" : true,
+          "episodesListChanged" : true,
+          "refresh" : "succeeded"
+        },
+        "parse" : {
+          "episodes" : 0,
+          "ok" : true
+        }
       },
       {
         "expected" : {
           "cacheOverwritten" : false,
           "episodesListChanged" : false,
-          "error" : "noEpisodes",
-          "parse" : {
-            "episodes" : 0,
-            "ok" : true
-          },
           "refresh" : "failed"
         },
-        "feed" : "html captive portal (200, not RSS)",
-        "input" : "<html><head><title>Login</title></head><body>Wi-Fi</body></html>"
-      },
-      {
-        "expected" : {
-          "cacheOverwritten" : false,
-          "episodesListChanged" : false,
-          "error" : "parse",
-          "parse" : "throws",
-          "refresh" : "failed"
-        },
-        "feed" : "not-xml",
-        "input" : "not xml at all"
+        "feed" : "not-xml / truncated rss (see feeds[])",
+        "iosB673df1" : "Linux probe: succeeded with 0 episodes, cache overwritten; Darwin unverified",
+        "parse" : "ok with 0 episodes, or malformed (platform-dependent)"
       },
       {
         "expected" : {
           "cacheOverwritten" : true,
           "episodesListChanged" : true,
-          "parse" : {
-            "episodes" : 2,
-            "ok" : true
-          },
           "refresh" : "succeeded"
         },
         "feed" : "buzzsprout-fixture",
-        "input" : "MovieRouletteTuesdayTests/Fixtures/feed-snippet.xml"
+        "iosB673df1" : {
+          "cacheOverwritten" : true,
+          "episodesListChanged" : true,
+          "refresh" : "succeeded"
+        },
+        "parse" : {
+          "episodes" : 2,
+          "ok" : true
+        }
       }
     ],
-    "description" : "iOS 1.0.1 (f39fbb9, EpisodeFeedIO.validated): a refresh whose parse yields 0 episodes (empty channel, or any well-formed non-RSS HTTP 200 such as a captive portal) throws RSSFeedError.noEpisodes BEFORE the cache write: cache file untouched, current list kept, soft error shown. A parse error fails the same way.",
-    "source" : "RouletteCore/EpisodeStoreCore.swift EpisodeFeedIO.validated / refresh"
+    "description" : "Shared rule (MRT App, Q2): the PARSER may return 0 episodes; the REFRESH treats 0 episodes (or a parse error) as a failure: cache file untouched, current list kept, soft error shown. iOS b673df1 instead saves and applies the empty feed (bug, 1.0.1 candidate); Android follows the shared rule."
   },
   "stripFanMail" : [
     {

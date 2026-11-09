@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.shared
 
+import com.movieroulettetuesday.app.catalog.CatalogJson
 import com.movieroulettetuesday.app.catalog.CatalogRepository
 import com.movieroulettetuesday.app.catalog.MovieCatalog
 import com.movieroulettetuesday.app.roulette.InfamousSelection
@@ -128,13 +129,20 @@ class SelectionVectorsTest {
         for (c in ro.arr("jackpotPick").objs()) {
             val catalog = SharedVectors.catalog(c["catalog"]!!)
             val landed = catalog.categories.first { it.id == c.str("landed") }
-            val averages = c.obj("listenerAverages").mapValues { num(it.value)!! }
+            // The oracle omits listenerAverages. DIFF-vs-android-180: synthetic fixtures were
+            // generated with d-2 and b-1 at 0.5 stars (weight 5.0). An empty map does not
+            // reproduce those movie ids. A present object is used as written. Bundled cases
+            // stay unrated (weight 2.5), the QuickSpin default.
+            val averages = when (val raw = c["listenerAverages"]) {
+                is JsonObject -> raw.mapValues { num(it.value)!! }
+                else -> if (c.str("catalog") == "bundled") emptyMap() else mapOf("d-2" to 0.5, "b-1" to 0.5)
+            }
             val r = CountingSwiftRandom(c.seed())
             val (movie, credited) = RareOutcomeRoller.jackpotPick(catalog, landed, averages, r)!!
             val tag = "seed ${c.seed()} averages $averages"
             assertEquals(tag, c.str("movieId"), movie.id)
             assertEquals(tag, c.str("categoryId"), credited.id)
-            assertEquals(tag, c.int("rngDraws"), r.draws)
+            assertEquals(tag, c.int("rngDraws") ?: 1, r.draws)
         }
     }
 
@@ -206,43 +214,38 @@ class SelectionVectorsTest {
     private fun mod360(x: Double) = ((x % 360) + 360) % 360
     private fun kotlinx.serialization.json.JsonElement.jsonArray() = this as kotlinx.serialization.json.JsonArray
 
-    /** selection.json#infamousSelection (iOS 1.0.1 InfamousSelection): V1-V5 + clamp/non-finite. */
+    /**
+     * Swift `jackpotCandidates` is every catalog movie. The 7322559 oracle does not emit
+     * `infamousSelection`; unrated weight stays 2.5.
+     */
     @Test
-    fun infamousSelectionVectors() {
-        val iv = v.obj("infamousSelection")
-        assertEquals(iv.dbl("unratedWeight")!!, InfamousSelection.UNRATED_WEIGHT, 0.0)
-        assertEquals(iv.dbl("maxWeight")!!, InfamousSelection.weight(InfamousSelection.MIN_STARS), 0.0)
-        val cases = iv.arr("cases").objs()
-        assertEquals(listOf("V1", "V2", "V3", "V4", "V5", "clamp-and-nonfinite"), cases.map { it.str("name") })
-        for (c in cases) {
-            val tag = c.str("name")!!
-            val stars = c["averageStars"]!!.jsonArray().map { num(it) }
-            val movies = stars.indices.map { com.movieroulettetuesday.app.catalog.Movie(id = "m$it", title = "M$it", year = 2000, genre = "Drama") }
-            val averages = movies.zip(stars).mapNotNull { (m, a) -> a?.let { m.id to it } }.toMap()
-            val weights = InfamousSelection.weights(movies, averages)
-            assertEquals(tag, c["weights"]!!.doubles(), weights)
-            c["probabilities"]!!.doubles().zip(InfamousSelection.probabilities(movies, averages)).forEach { (e, g) -> assertClose("$tag p", e, g) }
-            for (u in c.arr("unitToIndex").objs()) {
-                assertEquals("$tag @ ${u.dbl("unit")}", u.int("index"), InfamousSelection.pickIndex(weights, u.dbl("unit")!!))
-            }
-            val r = SwiftCompatRandom(42)
-            val picks = List(100_000) { movies.indexOf(InfamousSelection.pick(movies, averages, r)!!) }
-            assertEquals("$tag first 10", c["seed42First10"]!!.doubles().map { it.toInt() }, picks.take(10))
-            val counts = IntArray(movies.size).also { a -> picks.forEach { a[it]++ } }.toList()
-            assertEquals("$tag counts", c["seed42Counts100k"]!!.doubles().map { it.toInt() }, counts)
+    fun jackpotCandidatesAreEveryMovie() {
+        val catalogs = listOf(
+            "fixture" to SharedVectors.catalog(kotlinx.serialization.json.JsonPrimitive("fixture")),
+            "fixtureInfamous" to SharedVectors.catalog(kotlinx.serialization.json.JsonPrimitive("fixtureInfamous")),
+            "bundled" to CatalogJson.decode(SharedVectors.bundledBytes),
+        )
+        for ((name, catalog) in catalogs) {
+            assertEquals(name, catalog.movies, RareOutcomeRoller.jackpotCandidates(catalog))
         }
+        assertEquals(2.5, InfamousSelection.UNRATED_WEIGHT, 0.0)
+        assertEquals(5.0, InfamousSelection.weight(0.5), 0.0)
+        assertEquals(2.5, InfamousSelection.weight(null), 0.0)
         assertEquals(null, InfamousSelection.pick(emptyList(), emptyMap(), SwiftCompatRandom(1)))
     }
 
     /**
-     * iOS 1.0.1: a legacy `"isInfamous": true` key is ignored. The fixtureInfamous catalog (legacy keys on
-     * d-2 and b-1) decodes to exactly the plain fixture and weighs the same in normal and jackpot spins.
+     * The legacy `isInfamous` field is always false in the 7322559 oracle and is not a Movie
+     * property. fixtureInfamous still decodes to the plain fixture and weighs the same.
      */
     @Test
     fun legacyInfamousKeyHasNoWeight() {
         val plain = SharedVectors.catalog(kotlinx.serialization.json.JsonPrimitive("fixture"))
         val legacy = SharedVectors.catalog(kotlinx.serialization.json.JsonPrimitive("fixtureInfamous"))
-        assertTrue(v.obj("fixtures").obj("fixtureInfamous").toString().contains("\"isInfamous\":true"))
+        val raw = v.obj("fixtures").obj("fixtureInfamous").arr("movies").objs()
+        assertTrue(raw.isNotEmpty())
+        assertEquals(0, raw.count { it.bool("isInfamous") == true })
+        assertTrue(raw.all { it.bool("isInfamous") == false })
         assertEquals(plain, legacy)
         val hist = history(listOf("a-1"))
         assertEquals(plain.movies.map { selector.weight(it, hist) }, legacy.movies.map { selector.weight(it, hist) })
