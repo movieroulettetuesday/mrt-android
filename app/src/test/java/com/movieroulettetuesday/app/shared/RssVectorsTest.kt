@@ -113,14 +113,7 @@ class RssVectorsTest {
         for (c in m.arr("discussedText").objs()) {
             val movie = catalog.movie(c.str("movieId")!!) ?: catalog.movies[0].copy(id = c.str("movieId")!!, episodeIds = emptyList())
             val got = EpisodeLabel.discussedText(movie, if (c.bool("feedLoaded") == true) byGuid else emptyMap())
-            // matching.discussedText.expected still stores the pre-Q9 iOS string when every id
-            // shares episodeTitle. discussedFormats.expected is the shared rule (distinct labels).
-            val stored = c.str("expected")
-            val expected = when (stored) {
-                "Discussed on Double Feature & Double Feature" -> "Discussed on Double Feature"
-                "Discussed on Triple + 2 more" -> "Discussed on Triple"
-                else -> stored
-            }
+            val expected = c.str("expected") // iOS 1.0.2 render; no Q9 collapse
             assertEquals("${movie.id} loaded=${c.bool("feedLoaded")}", expected, got)
         }
         val totals = m.obj("episodeTotals")

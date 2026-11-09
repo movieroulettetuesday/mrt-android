@@ -35,8 +35,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 /**
- * Sections added in SPEC revision 2. `discussedFormats.expected` is the shared rule: identical
- * labels collapse and the 1 / 2 / 3+ format uses the distinct label count (Q9).
+ * Sections added in SPEC revision 2. In discussedFormats, `iosB673df1` is what iOS renders (still
+ * true at iOS 1.0.2 / 7322559) and `expected` is the unshipped Q9 collapse; Android matches iOS.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -54,10 +54,10 @@ class SpecRev2VectorsTest {
         for (c in cases) {
             val movie = Movie(id = "m", title = "T", year = 2000, genre = "g", episodeIds = c["episodeIds"]!!.strings(), episodeTitle = c.str("episodeTitle"))
             val got = EpisodeLabel.discussedText(movie, if (c.bool("feedLoaded") == true) byGuid else emptyMap())
-            assertEquals(c.str("name"), c.str("expected"), got)
+            assertEquals(c.str("name"), c.str("iosB673df1") ?: c.str("expected"), got)
         }
-        val identical = cases.filter { it.str("name")!!.contains("identical labels") }
-        assertEquals(listOf("Discussed on Ep Title", "Discussed on Ep Title"), identical.map { it.str("expected") })
+        // Exactly the three Q9 cases differ between iOS and the proposed shared rule.
+        assertEquals(listOf(8, 9, 10), cases.indices.filter { cases[it].bool("iosMatchesSharedRule") == false })
     }
 
     @Test
