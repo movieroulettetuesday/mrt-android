@@ -1,7 +1,7 @@
 {
   "_generated" : {
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "7322559",
+    "iosCommit" : "38d24af",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
   },
   "catalogRefresh" : {

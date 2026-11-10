@@ -52,7 +52,8 @@ class ParamountProviderTest {
 
     @Test fun bundledCatalogMoviesShowOneParamountPlus() {
         val catalog = CatalogJson.decode(File("src/main/assets/movies.json").readBytes())
-        val marathon = catalog.movie("marathon-man-1976")!!
+        // Marathon Man left Paramount+ in the 183-movie catalog (iOS 38d24af); There Will Be Blood has 4 Paramount+ ids.
+        val marathon = catalog.movie("there-will-be-blood-2007")!!
         val streaming = marathon.streaming!!
         val raw = streaming.stream + streaming.free
         assertTrue("fixture still has the duplicate ids", raw.count(::isParamount) > 1)
