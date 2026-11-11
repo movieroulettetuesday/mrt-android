@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.movieroulettetuesday.app.MrtApplication
@@ -119,6 +120,70 @@ class DeepLinkAppTest {
         compose.onNodeWithTag("watch-suggestion-offer-spin").assertIsDisplayed()
         assertEquals(before, app.spinHistory.totalSpins)
         assertTrue(app.spoken.any { it == ActionSpeech.SUGGESTIONS_UNAVAILABLE })
+    }
+
+    @Test
+    fun watchlistDeepLinkPopsAnOpenMovieDetail() {
+        start()
+        val catalog = app.catalogRepository.catalog!!
+        val movie = catalog.movie("laura-1944") ?: catalog.movies.first()
+        app.personalRatings.setStatus(WatchStatus.WantToWatch, movie.id)
+        app.dispatch(DeepLink.OpenMovie(movie.id))
+        compose.waitForIdle()
+        compose.waitUntil(5_000) { compose.onAllNodesWithTag("movie-detail").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithTag("movie-detail").assertIsDisplayed()
+
+        app.dispatch(DeepLink.Watchlist)
+        compose.waitForIdle()
+        compose.waitUntil(5_000) { compose.onAllNodesWithTag("screen-movies").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithTag("tab-movies").assertIsSelected()
+        compose.onNodeWithTag("screen-movies").assertIsDisplayed()
+        compose.onNodeWithTag("movie-detail").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Watchlist").assertIsDisplayed()
+        compose.onAllNodesWithText(movie.title).onFirst().assertIsDisplayed()
+    }
+
+    @Test
+    fun watchlistDeepLinkDismissesALeftoverReveal() {
+        start()
+        val catalog = app.catalogRepository.catalog!!
+        val movie = catalog.movie("laura-1944") ?: catalog.movies.first()
+        app.personalRatings.setStatus(WatchStatus.WantToWatch, movie.id)
+        // Open a movie from the Movies tab, then a leftover reveal on Roulette — the same
+        // stacked state the smoke test hit after a spin.
+        app.dispatch(DeepLink.OpenMovie(movie.id))
+        compose.waitForIdle()
+        compose.waitUntil(5_000) { compose.onAllNodesWithTag("movie-detail").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithTag("tab-roulette").performClick()
+        compose.waitForIdle()
+        // A reveal may already be gone; start a spin and stop it early so the sheet is up.
+        app.dispatch(DeepLink.Spin)
+        compose.waitForIdle()
+        val deadline = System.currentTimeMillis() + 12_000
+        while (System.currentTimeMillis() < deadline) {
+            val revealed = compose.onAllNodesWithTag("reveal-sheet").fetchSemanticsNodes().isNotEmpty() ||
+                compose.onAllNodesWithTag("reveal-inline").fetchSemanticsNodes().isNotEmpty()
+            if (revealed) break
+            val hubs = compose.onAllNodesWithTag("spin-hub").fetchSemanticsNodes()
+            if (hubs.isNotEmpty()) {
+                runCatching { compose.onNodeWithTag("spin-hub").performClick() }
+            }
+            compose.waitForIdle()
+        }
+        compose.waitUntil(8_000) {
+            compose.onAllNodesWithTag("reveal-sheet").fetchSemanticsNodes().isNotEmpty() ||
+                compose.onAllNodesWithTag("reveal-inline").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        app.dispatch(DeepLink.Watchlist)
+        compose.waitForIdle()
+        compose.waitUntil(5_000) { compose.onAllNodesWithTag("screen-movies").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithTag("tab-movies").assertIsSelected()
+        compose.onNodeWithTag("screen-movies").assertIsDisplayed()
+        compose.onNodeWithTag("movie-detail").assertDoesNotExist()
+        compose.onNodeWithTag("reveal-sheet").assertDoesNotExist()
+        compose.onNodeWithTag("reveal-inline").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Watchlist").assertIsDisplayed()
     }
 
     @Test

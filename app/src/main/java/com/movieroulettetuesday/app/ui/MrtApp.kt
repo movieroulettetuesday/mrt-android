@@ -226,14 +226,40 @@ private fun MrtAppContent(layout: WindowLayout) {
             restoreState = true
         }
     }
+
+    /**
+     * Deep links (cold start or [android.app.Activity.onNewIntent]) must leave any pushed
+     * movie/episode/settings page and any leftover Roulette reveal, then land on [dest]'s
+     * root. Regular tab taps still use [openTab], which restores the user's place.
+     */
+    fun openTabForDeepLink(dest: TopLevelDestination) {
+        suggestOpen = false
+        app.dismissOverlays()
+        navController.navigate(dest.route) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+        val root = when (dest) {
+            TopLevelDestination.Roulette -> "roulette/home"
+            TopLevelDestination.Episodes -> "episodes/list"
+            TopLevelDestination.Movies -> "movies/list"
+            TopLevelDestination.Stats -> dest.route
+        }
+        navController.popBackStack(root, inclusive = false)
+        when (dest) {
+            TopLevelDestination.Movies -> panes.movie = null
+            TopLevelDestination.Episodes -> panes.episode = null
+            else -> Unit
+        }
+    }
     // Deep links (widget, notification): a pushed page on phones, the detail pane on tablets.
     val pendingMovie by app.pendingMovie.collectAsStateWithLifecycle()
     LaunchedEffect(pendingMovie) {
         val id = pendingMovie ?: return@LaunchedEffect
         app.pendingMovie.value = null
-        openTab(TopLevelDestination.Movies)
+        openTabForDeepLink(TopLevelDestination.Movies)
         if (regular) {
-            navController.popBackStack("movies/list", inclusive = false)
             panes.showMovie(id)
         } else {
             navController.navigate(Routes.movie("movies", id))
@@ -243,9 +269,8 @@ private fun MrtAppContent(layout: WindowLayout) {
     LaunchedEffect(pendingEpisode) {
         val guid = pendingEpisode ?: return@LaunchedEffect
         app.pendingEpisode.value = null
-        openTab(TopLevelDestination.Episodes)
+        openTabForDeepLink(TopLevelDestination.Episodes)
         if (regular) {
-            navController.popBackStack("episodes/list", inclusive = false)
             panes.showEpisode(guid)
         } else {
             navController.navigate(Routes.episode("episodes", guid))
@@ -264,9 +289,11 @@ private fun MrtAppContent(layout: WindowLayout) {
         if (needsCatalog && catalogStateForActions is CatalogRepository.State.Loading) return@LaunchedEffect
         app.pendingLink.value = null
         val plan = app.coordinator().plan(link)
+        // Every mrt:// link pops pushed details and leftover overlays first, then
+        // navigates to its target — cold start and warm onNewIntent share this path.
         if (plan.openWatchlist) {
             app.pendingWatchlist.value = true
-            openTab(TopLevelDestination.Movies)
+            openTabForDeepLink(TopLevelDestination.Movies)
         }
         if (plan.openMovieId != null) {
             if (plan.focusWhereToWatch) app.pendingWhereToWatch.value = plan.openMovieId
@@ -276,9 +303,14 @@ private fun MrtAppContent(layout: WindowLayout) {
         if (plan.openEpisodeGuid != null) {
             app.pendingEpisode.value = plan.openEpisodeGuid
         }
-        if (plan.openEpisodesTab) openTab(TopLevelDestination.Episodes)
+        if (plan.openEpisodesTab) openTabForDeepLink(TopLevelDestination.Episodes)
         if (plan.openRoulette || plan.startSpin || plan.startSuggest) {
-            openTab(TopLevelDestination.Roulette)
+            openTabForDeepLink(TopLevelDestination.Roulette)
+        }
+        if (!plan.openWatchlist && plan.openMovieId == null && plan.openEpisodeGuid == null &&
+            !plan.openEpisodesTab && !plan.openRoulette && !plan.startSpin && !plan.startSuggest
+        ) {
+            app.dismissOverlays()
         }
         if (plan.startSpin) app.pendingSpin.value = true
         if (plan.startSuggest) app.pendingSuggest.value = true

@@ -216,6 +216,15 @@ class MrtApplication : Application() {
         appleMap = { appleEpisodeLinks.trackIds.value },
     )
 
+    /**
+     * Dismisses a leftover Roulette reveal (or suggestion card). [RouletteRoute] registers
+     * the implementation while it is composed, and keeps a ViewModel-only fallback after
+     * that so a deep link can still clear leftover overlay state.
+     */
+    @Volatile var overlayDismiss: (() -> Unit)? = null
+
+    fun dismissOverlays() { overlayDismiss?.invoke() }
+
     /** Queue a deep link for [com.movieroulettetuesday.app.ui.MrtApp] to execute. */
     fun dispatch(link: DeepLink) {
         pendingLink.value = link

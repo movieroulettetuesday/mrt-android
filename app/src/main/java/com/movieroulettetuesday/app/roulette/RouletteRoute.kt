@@ -71,7 +71,6 @@ fun RouletteRoute(
             }
         },
     )
-    androidx.compose.runtime.DisposableEffect(vm) { onDispose { vm.stopFeedback() } }
     LaunchedEffect(Unit) {
         app.catalogRepository.load()
         app.catalogRepository.refresh()
@@ -91,6 +90,18 @@ fun RouletteRoute(
     }
 
     var suggestUi by remember { mutableStateOf<SuggestUi>(SuggestUi.None) }
+    androidx.compose.runtime.DisposableEffect(vm) {
+        app.overlayDismiss = {
+            vm.dismissReveal()
+            suggestUi = SuggestUi.None
+        }
+        onDispose {
+            // Keep a ViewModel-only dismiss so a deep link can clear a leftover reveal
+            // after this route leaves the composition (saved back stack).
+            app.overlayDismiss = { vm.dismissReveal() }
+            vm.stopFeedback()
+        }
+    }
     val scope = rememberCoroutineScope()
     val suggester = remember(app.suggestionModel) {
         WatchSuggester(app.suggestionModel) { app.catalogRepository.catalog }
