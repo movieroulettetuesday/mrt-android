@@ -26,11 +26,28 @@ android {
         minSdk = 26
         targetSdk = 36
         // versionCode: monotonically increasing integer, +1 for every build uploaded to Play (never reused).
-        // 1 is the held 1.0.0 AAB (7d85952). No higher code is reserved in this repo.
+        // 1 is the held 1.0.0 AAB (7d85952). 2 is the signed 1.0.2 AAB (dbba62d). 3 is 1.1.
         // versionName: semantic version shown to users (MAJOR.MINOR.PATCH). See docs/NOTES.md.
-        versionCode = 2
-        versionName = "1.0.2"
+        versionCode = 3
+        versionName = "1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // App Functions (Android 16 / androidx.appfunctions) stay behind this flag. The default
+        // is OFF: the Jetpack library needs compileSdk 37, and a preview artifact must never
+        // break the flag-off build. See app/src/appfunctions/README.md.
+        val wantAppFunctions = providers.gradleProperty("mrt.appFunctions")
+            .orElse(providers.environmentVariable("MRT_APP_FUNCTIONS"))
+            .orElse("false")
+            .map { it.equals("true", ignoreCase = true) }
+            .get()
+        if (wantAppFunctions) {
+            throw GradleException(
+                "mrt.appFunctions=true is not supported while compileSdk is 36. " +
+                    "App Functions requires compileSdk 37 (https://developer.android.com/ai/appfunctions/add-appfunctions). " +
+                    "See app/src/appfunctions/README.md. The default flag-off build does not depend on androidx.appfunctions.",
+            )
+        }
+        buildConfigField("boolean", "APP_FUNCTIONS_ENABLED", "false")
 
         // Community (polls + listener ratings), off unless both are provided at build time:
         // MRT_CLOUDKIT_API_TOKEN = CloudKit Web Services READ-ONLY API token for the public DB
@@ -133,6 +150,13 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.glance.appwidget)
+    // AppSearch: platform storage on API 31+ (system / Pixel device search). Loaded at runtime
+    // through CatalogIndexer; failures are swallowed. No Play-services storage dependency.
+    implementation(libs.androidx.appsearch)
+    implementation(libs.androidx.appsearch.platform.storage)
+    // ML Kit GenAI Prompt (Gemini Nano / AICore). On-device only, called through
+    // MlKitSuggestionModel’s reflective client so a missing AICore never crashes the app.
+    implementation(libs.mlkit.genai.prompt)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

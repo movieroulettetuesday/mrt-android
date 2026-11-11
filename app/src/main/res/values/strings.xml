@@ -6,6 +6,22 @@
     <string name="tab_stats">Stats</string>
     <string name="channel_new_episodes">New episodes</string>
     <string name="channel_new_episodes_description">An alert when a new episode of the show comes out.</string>
+    <string name="channel_action_results">Action results</string>
+    <string name="channel_action_results_description">A spoken or written result for a shortcut or deep link, used when the screen can’t be read out.</string>
     <string name="widget_name">Spin of the Day</string>
     <string name="widget_description">Today’s pick from the Movie Roulette Tuesday wheel, plus the latest episode.</string>
+
+    <string name="shortcut_spin_short">Spin</string>
+    <string name="shortcut_spin_long">Spin Movie Roulette</string>
+    <string name="shortcut_spin_feature">spin</string>
+    <string name="shortcut_latest_short">Latest</string>
+    <string name="shortcut_latest_long">Latest Episode</string>
+    <string name="shortcut_latest_feature">latest</string>
+    <string name="shortcut_watchlist_short">Watchlist</string>
+    <string name="shortcut_watchlist_long">Watchlist</string>
+    <string name="shortcut_watchlist_feature">watchlist</string>
+    <string name="shortcut_suggest_short">What to watch</string>
+    <string name="shortcut_suggest_long">What should I watch in Movie Roulette</string>
+    <string name="shortcut_suggest_feature">suggest</string>
+    <string name="shortcut_disabled">This shortcut is unavailable.</string>
 </resources>

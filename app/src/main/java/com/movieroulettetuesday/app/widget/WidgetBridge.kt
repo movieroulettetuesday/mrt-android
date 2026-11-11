@@ -42,6 +42,9 @@ class WidgetBridge(
     /** A refreshed movie list was cached; let the widget re-read it. */
     fun catalogUpdated() = refresh()
 
+    /** Current on-disk snapshot (latest episode, last spin); null if none has been written. */
+    fun snapshot(): WidgetSnapshot? = store.load()
+
     companion object {
         fun create(context: Context): WidgetBridge {
             val app = context.applicationContext

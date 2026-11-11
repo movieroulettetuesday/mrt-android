@@ -30,6 +30,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import com.movieroulettetuesday.app.actions.ActionCoordinator
+import com.movieroulettetuesday.app.actions.DeepLink
+import com.movieroulettetuesday.app.actions.PlatformActionSpeaker
+import com.movieroulettetuesday.app.search.CatalogIndexer
+import com.movieroulettetuesday.app.suggestions.MlKitSuggestionModel
+import com.movieroulettetuesday.app.suggestions.SuggestionModel
+import com.movieroulettetuesday.app.suggestions.UnavailableSuggestionModel
 
 /** Process-wide singletons (no DI framework yet). */
 class MrtApplication : Application() {
@@ -48,6 +55,7 @@ class MrtApplication : Application() {
         super.onCreate()
         ArtworkLoader.enabled = !isUnderTest
         ArtworkLoader.diskDir = File(cacheDir, "artwork")
+        if (!isUnderTest) suggestionModel = MlKitSuggestionModel()
         if (!isUnderTest && preferences.newEpisodeAlerts.value) NewEpisodeSchedule.schedule(this) // KEEP: no reset
         val config = if (isUnderTest) CommunityConfig.disabled
         else CommunityConfig.fromBuild(BuildConfig.MRT_CLOUDKIT_API_TOKEN, BuildConfig.MRT_RELAY_URL)
@@ -173,5 +181,50 @@ class MrtApplication : Application() {
 
     val spinHistory: SpinHistoryStore by lazy {
         SpinHistoryStore(if (isUnderTest) null else File(filesDir, SpinHistoryStore.FILE_NAME))
+    }
+
+    /** A launcher shortcut or `mrt://` intent waiting for the UI. */
+    val pendingLink = MutableStateFlow<DeepLink?>(null)
+    val pendingSpin = MutableStateFlow(false)
+    val pendingSuggest = MutableStateFlow(false)
+    val pendingWatchlist = MutableStateFlow(false)
+    /** Open this movie’s Where to Watch section after [pendingMovie] navigation. */
+    val pendingWhereToWatch = MutableStateFlow<String?>(null)
+
+    /** On-device “What should I watch?” model. Tests replace this with a fake. */
+    var suggestionModel: SuggestionModel = UnavailableSuggestionModel
+        get() = field
+        set(value) { field = value }
+
+    val catalogIndexer: CatalogIndexer by lazy {
+        CatalogIndexer(this, enabled = !isUnderTest)
+    }
+
+    private val platformSpeaker: PlatformActionSpeaker? by lazy {
+        if (isUnderTest) null else PlatformActionSpeaker(this)
+    }
+
+    /** Spoken lines captured under tests (no TTS). */
+    val spoken = mutableListOf<String>()
+
+    fun coordinator(): ActionCoordinator = ActionCoordinator(
+        catalog = { catalogRepository.catalog },
+        ratings = personalRatings,
+        episodes = { episodeRepository.state.value.episodes },
+        snapshot = { widgetBridge.snapshot() },
+        services = { myServices.value },
+        appleMap = { appleEpisodeLinks.trackIds.value },
+    )
+
+    /** Queue a deep link for [com.movieroulettetuesday.app.ui.MrtApp] to execute. */
+    fun dispatch(link: DeepLink) {
+        pendingLink.value = link
+    }
+
+    fun speak(text: String, screenVisible: Boolean = true) {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) return
+        spoken += trimmed
+        platformSpeaker?.deliver(trimmed, screenVisible)
     }
 }

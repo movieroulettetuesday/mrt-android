@@ -82,6 +82,11 @@ import com.movieroulettetuesday.app.movies.MoviesInputs
 import com.movieroulettetuesday.app.movies.MoviesScreen
 import com.movieroulettetuesday.app.roulette.RouletteRoute
 import com.movieroulettetuesday.app.roulette.SpinStats
+import com.movieroulettetuesday.app.actions.DeepLink
+import com.movieroulettetuesday.app.actions.MrtShortcuts
+import com.movieroulettetuesday.app.movies.MovieListFilter
+import com.movieroulettetuesday.app.movies.ProviderLaunch
+import com.movieroulettetuesday.app.search.CatalogDocuments
 
 /** The four iOS tabs (ContentView.swift): Roulette, Episodes, Movies, Stats. */
 enum class TopLevelDestination(val route: String, @param:StringRes val label: Int, val icon: ImageVector) {
@@ -246,6 +251,49 @@ private fun MrtAppContent(layout: WindowLayout) {
             navController.navigate(Routes.episode("episodes", guid))
         }
     }
+    val pendingLink by app.pendingLink.collectAsStateWithLifecycle()
+    val catalogStateForActions by app.catalogRepository.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    LaunchedEffect(pendingLink, catalogStateForActions) {
+        val link = pendingLink ?: return@LaunchedEffect
+        val needsCatalog = when (link) {
+            is DeepLink.AddToWatchlist, is DeepLink.MarkWatched, is DeepLink.WhereToWatch,
+            is DeepLink.OpenOnProvider, is DeepLink.FindMovie -> true
+            else -> false
+        }
+        if (needsCatalog && catalogStateForActions is CatalogRepository.State.Loading) return@LaunchedEffect
+        app.pendingLink.value = null
+        val plan = app.coordinator().plan(link)
+        if (plan.openWatchlist) {
+            app.pendingWatchlist.value = true
+            openTab(TopLevelDestination.Movies)
+        }
+        if (plan.openMovieId != null) {
+            if (plan.focusWhereToWatch) app.pendingWhereToWatch.value = plan.openMovieId
+            app.pendingMovie.value = plan.openMovieId
+            app.catalogRepository.catalog?.movie(plan.openMovieId)?.let { MrtShortcuts.rememberMovie(context, it) }
+        }
+        if (plan.openEpisodeGuid != null) {
+            app.pendingEpisode.value = plan.openEpisodeGuid
+        }
+        if (plan.openEpisodesTab) openTab(TopLevelDestination.Episodes)
+        if (plan.openRoulette || plan.startSpin || plan.startSuggest) {
+            openTab(TopLevelDestination.Roulette)
+        }
+        if (plan.startSpin) app.pendingSpin.value = true
+        if (plan.startSuggest) app.pendingSuggest.value = true
+        plan.providerPlan?.let { ProviderLaunch.open(context, it) }
+        if (plan.speech.isNotBlank()) {
+            app.speak(plan.speech, screenVisible = true)
+        }
+    }
+    val moviesInputsForIndex = rememberMoviesInputs(app)
+    LaunchedEffect(moviesInputsForIndex.catalog, moviesInputsForIndex.episodesByGUID, app.isUnderTest) {
+        if (app.isUnderTest) return@LaunchedEffect
+        val cat = moviesInputsForIndex.catalog ?: return@LaunchedEffect
+        app.catalogIndexer.reindex(CatalogDocuments.all(cat, moviesInputsForIndex.episodesByGUID.values.toList()))
+        MrtShortcuts.removeStale(context, cat.movies.map { it.id }.toSet())
+    }
     // iOS keeps the selection when the size class changes: a split-view pick (and anything pushed
     // inside its pane) becomes pushed pages, in the same order.
     LaunchedEffect(regular) {
@@ -273,6 +321,10 @@ private fun MrtAppContent(layout: WindowLayout) {
                     RouletteRoute(
                         Modifier.testTag("screen-roulette"),
                         onOpenMovie = { navController.navigate(Routes.movie("roulette", it)) },
+                        onWhereToWatch = { id ->
+                            app.pendingWhereToWatch.value = id
+                            navController.navigate(Routes.movie("roulette", id))
+                        },
                         topBar = {
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                                 IconButton({ navController.navigate("roulette/settings") }, Modifier.testTag("open-settings")) {
@@ -424,12 +476,18 @@ private fun MovieDetailContent(app: MrtApplication, movieId: String, onBack: (()
     val autoShare by app.preferences.autoShareRatings.collectAsStateWithLifecycle()
     val sharing = autoShare && community?.canWrite == true
     val scope = rememberCoroutineScope()
+    val pendingWtw by app.pendingWhereToWatch.collectAsStateWithLifecycle()
+    val focusWtw = pendingWtw == movieId
+    LaunchedEffect(focusWtw, movieId) {
+        if (focusWtw) app.pendingWhereToWatch.value = null
+    }
     MovieDetailScreen(
         movieId = movieId,
         inputs = inputs,
         ratingsStore = app.personalRatings,
         onBack = onBack,
         onOpenEpisode = onOpenEpisode,
+        focusWhereToWatch = focusWtw,
         ratingFooter = if (sharing) CommunityCopy.AUTO_SHARE_FOOTER else "Saved on this device.",
         // Clearing passes null. The relay accepts only half-stars 1..10 and has no delete, so unrated is not posted.
         onRated = { half ->
@@ -536,6 +594,7 @@ private fun NavGraphBuilder.moviesGraph(
     navigation(startDestination = "movies/list", route = TopLevelDestination.Movies.route) {
         composable("movies/list") {
             val list: @Composable () -> Unit = {
+                val pendingWatchlist by app.pendingWatchlist.collectAsStateWithLifecycle()
                 MoviesScreen(
                     inputs = rememberMoviesInputs(app),
                     onOpenMovie = { if (regular) panes.movie = it else nav.navigate(Routes.movie("movies", it)) },
@@ -543,6 +602,8 @@ private fun NavGraphBuilder.moviesGraph(
                     onRefresh = { app.catalogRepository.refresh() },
                     modifier = Modifier.testTag("screen-movies"),
                     selectedMovieId = if (regular) panes.movie else null,
+                    requestedFilter = if (pendingWatchlist) MovieListFilter.Watchlist else null,
+                    onRequestedFilterConsumed = { app.pendingWatchlist.value = false },
                 )
             }
             if (regular) {

@@ -137,4 +137,40 @@ class RouletteViewModelTest {
         assertEquals("Discussed on Ep a", EpisodeLabel.discussedText(m))
         assertEquals("Not discussed on the show yet", EpisodeLabel.discussedText(m.copy(episodeIds = emptyList())))
     }
+
+    @Test fun requestExternalSpinStartsOneSpinAndRecordsHistoryOnce() = runTest {
+        val history = SpinHistoryStore(null)
+        val vm = vm(history = history)
+        assertTrue(vm.requestExternalSpin())
+        val run = vm.state.value.spin!!
+        assertTrue(vm.requestExternalSpin()) // already spinning: consumed, no second spin
+        assertEquals(run, vm.state.value.spin)
+        vm.spinAnimationEnded(run.token)
+        assertEquals(1, history.totalSpins)
+        assertNotNull(vm.state.value.reveal)
+        // From a reveal, a new request queues spin-again (one more recording after that spin ends).
+        assertTrue(vm.requestExternalSpin())
+        assertNull(vm.state.value.reveal)
+        assertNotNull(vm.state.value.spin)
+        vm.spinAnimationEnded(vm.state.value.spin!!.token)
+        assertEquals(2, history.totalSpins)
+    }
+
+    @Test fun requestExternalSpinWaitsWhenCatalogIsNotReady() = runTest {
+        val flow = MutableStateFlow<CatalogRepository.State>(CatalogRepository.State.Loading)
+        val vm = RouletteViewModel(
+            catalogState = flow,
+            history = SpinHistoryStore(null),
+            scope = TestScope(UnconfinedTestDispatcher(testScheduler)).backgroundScope,
+            random = SeededRandom(5),
+            rarePolicy = RareOutcomePolicy(isEnabled = false),
+        )
+        runCurrent()
+        assertFalse(vm.state.value.canSpin)
+        assertFalse(vm.requestExternalSpin())
+        flow.value = CatalogRepository.State.Loaded(RouletteFixtures.catalog)
+        runCurrent()
+        assertTrue(vm.requestExternalSpin())
+        assertNotNull(vm.state.value.spin)
+    }
 }

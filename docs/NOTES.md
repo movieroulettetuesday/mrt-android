@@ -49,7 +49,7 @@ Branch per change (`setup/…`, `feature/…`, `fix/…`) → gate (tests + lint
 - minSdk 26, targetSdk/compileSdk 36 (Play requirement for new apps from Aug 31, 2026).
 - The single activity is Compose; tabs match iOS (Roulette, Episodes, Movies, Stats). The tab icon avoids dice (Matthew asked iOS to drop dice imagery).
 - The manifest removes `com.google.android.gms.permission.AD_ID` (`tools:node="remove"`; verified absent in merged debug and release manifests). `usesCleartextTraffic=false` plus a network security config with cleartext off. Backups are off (`allowBackup=false`).
-- Release signing comes only from `MRT_UPLOAD_KEYSTORE`, `MRT_UPLOAD_KEYSTORE_PASSWORD`, `MRT_UPLOAD_KEY_ALIAS` and `MRT_UPLOAD_KEY_PASSWORD`. When any is missing, the release build is unsigned (logged). No upload key exists yet. When one is made, it is generated on the box, stored outside git, and its passwords are kept in Grok Bot secrets/env. Matthew decides the backup plan.
+- Release signing comes only from `MRT_UPLOAD_KEYSTORE`, `MRT_UPLOAD_KEYSTORE_PASSWORD`, `MRT_UPLOAD_KEY_ALIAS` and `MRT_UPLOAD_KEY_PASSWORD`. When any is missing, the release build is unsigned (logged). Upload key lives at `/home/box/mrt-secrets/play-upload/` (outside git); passwords in env. **Backup plan still TBD** — tracked on the go-live checklist.
 - The repo is public. Never commit keystores, passwords, `local.properties`, `google-services.json` or `.env`; both `.gitignore` and the scanner enforce this.
 - Robolectric runs SDK 36 on JDK 21 (an Android 15+ runtime requirement) with `--add-exports java.base/jdk.internal.access`. The app itself compiles for Java 17.
 - Under Robolectric the app is offline and bundled-only (`MrtApplication.isUnderTest`), like iOS's `bundledOnly`.
@@ -71,3 +71,22 @@ Branch per change (`setup/…`, `feature/…`, `fix/…`) → gate (tests + lint
 - Local state uses the iOS keys and JSON (`community.votedPolls`, `community.listenerHalfStars`); bundled `assets/polls.json` is a copy of the iOS file.
 - Jackpot averages (iOS 56606a6): a bulk `IN` read of listener ratings after the catalog loads and after each feed fetch (5-minute throttle) is cached as `community.listenerRatingsSnapshot` (`{"version":1,"updatedAt":<epoch s>,"movies":{id:{count,average,histogram}}}`). `RatingWeightedSelector` (the default jackpot since the iOS 1.0.1 rules) reads it through `MrtApplication.listenerAverages`.
 - Tests: `community/*Test.kt` (cloudkit.json + pollTally/ratingAggregate vectors, a local `HttpServer` mock of `records/query` and the relay, service flows, Compose UI).
+
+## Go-live needs from Matthew
+No one-off reminders (Matthew, Oct 26). The five open asks live on the shared go-live checklist:
+`/workspace/mrt-release/release-checklist.md` → **Needs from Matthew (Android go-live)**
+(CloudKit token + S2S key, Cloudflare account, upload-key backup, privacy wording, $25 Play account). Detail: `KEYS_SETUP.md`, `PRIVACY_NOTES.md`.
+
+## App Actions and on-device suggestions (1.1, `feature/1.1-app-actions`)
+
+Matthew approved the plan on 2026-11-11, 5:25 PM ET (`/workspace/mrt-android/plans/1.1-app-actions-parity-plan.md`). Work lives on `feature/1.1-app-actions`, branched from main `dbba62d`. It is **not merged** and has **no signed AAB**. `versionName` is 1.1, `versionCode` is 3 (1 is the held 1.0.0 AAB; 2 is the held 1.0.2 AAB).
+
+- **Deep links** (`DeepLink`, `ActionCoordinator`): `mrt://spin`, `mrt://movie/<id>`, `mrt://episode/<guid>`, `mrt://latest`, `mrt://watchlist`, `mrt://watchlist/add/<id>`, `mrt://watched/<id>`, `mrt://wtw/<id>`, `mrt://movie/<id>/provider/<name>`, `mrt://suggest`, `mrt://find?title=&year=`. Latest Episode opens the in-app episode page (Matthew, 5:25 PM ET). Watchlist mutations go through `PersonalRatings.setStatus` and never invent a rating. Provider open reuses `ProviderLaunch`.
+- **Shortcuts:** static entries in `res/xml/shortcuts.xml` (Spin, Latest Episode, Watchlist, What should I watch?) with BII `OPEN_APP_FEATURE` / `GET_THING` where it fits. Dynamic shortcuts (`MrtShortcuts`) hold up to 3 recent movies. Spin phrases stay on Spin; “What should I watch in Movie Roulette” is the suggestion phrase.
+- **TTS:** `ActionSpeaker` speaks after the screen is shown; skips when TalkBack is already reading; notification fallback on `channel_action_results`. Under test, `MrtApplication.speak` records to `spoken` and does not start TTS.
+- **AppSearch:** `CatalogDocuments` + `CatalogIndexer`. Public catalog only (movie id/title/year/genre, episode guid/title/season). Never ratings, watchlist, or spin history. Platform storage on API 31+ via reflection; Play-services storage is intentionally not a dependency. Failures are swallowed. Skipped under `isUnderTest`.
+- **“What should I watch?”:** Roulette-tab button (`WatchSuggester`, `WatchSuggestionCard`). Production uses `MlKitSuggestionModel` (reflective ML Kit GenAI Prompt / Gemini Nano), set in `MrtApplication.onCreate` only when not under test. Default under test is `UnavailableSuggestionModel`, so existing Roulette screenshots stay unchanged. The button is hidden when the model is `Unavailable`. A shortcut when unavailable offers Spin and does not spin automatically. On-device only; compact prompt, no URLs, no raw `movies.json`, no personal-ratings file. Tests use `FakeSuggestionModel`.
+- **App Functions:** optional sources in `app/src/appfunctions/` are **not compiled** by the default build. `BuildConfig.APP_FUNCTIONS_ENABLED` is always `false`. `-Pmrt.appFunctions=true` (or `MRT_APP_FUNCTIONS=true`) throws a clear Gradle error because the Jetpack library needs compileSdk 37, and this project stays on compileSdk 36. The flag-off APK has no `androidx.appfunctions` dependency. EAP application drafted at `/workspace/mrt-android/plans/app-functions-eap-application.md`; **not submitted**. As of 2026-11-11 the official form (`https://goo.gle/eap-af`) is at capacity.
+- **Host Rating** (Karl/Rachael): dropped for good on 2026-11-10 (Matthew). It stays hidden behind its flag and will not be ported. Recorded in PARITY.md.
+- Gate (2026-11-11): 343 tests, 335 passed, 0 failed, 8 skipped; `lintDebug` / `lintRelease` “No issues found”; `:app:verifySharedContract` passed. Logs under `/workspace/mrt-android/release/1.1/`.
+

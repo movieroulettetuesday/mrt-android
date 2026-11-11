@@ -22,6 +22,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -44,6 +47,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,7 +75,7 @@ import com.movieroulettetuesday.app.ui.StarRating
 import com.movieroulettetuesday.app.ui.theme.BrandColors
 
 /** Movie page (iOS MoviePageView): header, episodes, Where to Watch, Your Rating, categories, Listen. */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MovieDetailScreen(
     movieId: String,
@@ -84,10 +89,18 @@ fun MovieDetailScreen(
     onRated: (Int?) -> Unit = {},
     /** Community listener-rating section (Option A), when configured. */
     extra: @Composable ColumnScope.(Movie) -> Unit = {},
+    /** A Where-to-Watch deep link: scroll that section into view. */
+    focusWhereToWatch: Boolean = false,
 ) {
     val catalog = inputs.catalog
     val movie = catalog?.movie(movieId)
     val context = LocalContext.current
+    val whereToWatchRequester = remember { BringIntoViewRequester() }
+    LaunchedEffect(focusWhereToWatch, movieId) {
+        if (focusWhereToWatch) {
+            whereToWatchRequester.bringIntoView()
+        }
+    }
     Column(modifier.fillMaxSize().testTag("movie-detail")) {
         TopAppBar(
             title = { Text(movie?.title ?: "Movie", maxLines = 1, overflow = TextOverflow.Ellipsis) },
@@ -128,7 +141,11 @@ fun MovieDetailScreen(
                     }
                 }
 
-                WhereToWatchSection(movie, inputs.services, onOpen = { ExternalLinks.open(context, it) })
+                WhereToWatchSection(
+                    movie, inputs.services,
+                    onOpen = { ExternalLinks.open(context, it) },
+                    modifier = Modifier.bringIntoViewRequester(whereToWatchRequester),
+                )
 
                 MrtSection("Your Rating") {
                     val half = inputs.ratings.halfStars(movie.id)
@@ -206,11 +223,11 @@ private fun EpisodeLinkRow(guid: String, movie: Movie, inputs: MoviesInputs, onO
 
 /** Stream / Free / Rent or buy rows, attribution, TMDB link (always shown). */
 @Composable
-fun WhereToWatchSection(movie: Movie, services: MyServices, onOpen: (String) -> Unit) {
+fun WhereToWatchSection(movie: Movie, services: MyServices, onOpen: (String) -> Unit, modifier: Modifier = Modifier) {
     val display = WhereToWatchDisplay.of(movie)
     val s = movie.streaming ?: StreamingInfo()
     val context = LocalContext.current
-    Column(Modifier.testTag("where-to-watch")) {
+    Column(modifier.testTag("where-to-watch")) {
         MrtSection("Where to Watch · ${display.region}") {
             if (display.showsEmptyMessage) {
                 Text(WhereToWatchDisplay.EMPTY_MESSAGE, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.testTag("streaming-empty"))

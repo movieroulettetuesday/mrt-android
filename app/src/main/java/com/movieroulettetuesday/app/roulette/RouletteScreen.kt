@@ -62,6 +62,8 @@ fun RouletteScreen(
     onOpenMovie: ((String) -> Unit)? = null,
     topBar: @Composable () -> Unit = {},
     haptics: Boolean = false,
+    /** Optional “What should I watch?” control, under the header. Hidden when empty. */
+    headerExtra: @Composable () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -89,6 +91,7 @@ fun RouletteScreen(
                 ) {
                     topBar()
                     RouletteHeader()
+                    headerExtra()
                     state.reveal?.let { reveal ->
                         Spacer(Modifier.height(24.dp))
                         Card(Modifier.fillMaxWidth().testTag("reveal-inline")) {
@@ -108,6 +111,7 @@ fun RouletteScreen(
                 Column(Modifier.padding(horizontal = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     topBar()
                     RouletteHeader()
+                    headerExtra()
                 }
                 WheelSlot(state, viewModel, haptics, arrangement, window.isRegularWidth, Modifier.weight(1f).fillMaxWidth())
             }

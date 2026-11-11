@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Static launcher shortcuts (long-press the icon) and optional App Actions BII bindings.
+  Spin phrases stay on Spin: "Spin Movie Roulette", "Spin the wheel in Movie Roulette",
+  and "What should we watch with Movie Roulette". "What should I watch in Movie Roulette"
+  is the suggestion shortcut. BIIs are declared, not relied on: Gemini often drops parameters.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="spin"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_spin"
+        android:shortcutShortLabel="@string/shortcut_spin_short"
+        android:shortcutLongLabel="@string/shortcut_spin_long"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="mrt://spin"
+            android:targetPackage="com.movieroulettetuesday.app"
+            android:targetClass="com.movieroulettetuesday.app.MainActivity" />
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding
+                android:key="feature"
+                android:value="@string/shortcut_spin_feature" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="latest"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_episode"
+        android:shortcutShortLabel="@string/shortcut_latest_short"
+        android:shortcutLongLabel="@string/shortcut_latest_long"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="mrt://latest"
+            android:targetPackage="com.movieroulettetuesday.app"
+            android:targetClass="com.movieroulettetuesday.app.MainActivity" />
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding
+                android:key="feature"
+                android:value="@string/shortcut_latest_feature" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="watchlist"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_watchlist"
+        android:shortcutShortLabel="@string/shortcut_watchlist_short"
+        android:shortcutLongLabel="@string/shortcut_watchlist_long"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="mrt://watchlist"
+            android:targetPackage="com.movieroulettetuesday.app"
+            android:targetClass="com.movieroulettetuesday.app.MainActivity" />
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding
+                android:key="feature"
+                android:value="@string/shortcut_watchlist_feature" />
+        </capability-binding>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="suggest"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_suggest"
+        android:shortcutShortLabel="@string/shortcut_suggest_short"
+        android:shortcutLongLabel="@string/shortcut_suggest_long"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="mrt://suggest"
+            android:targetPackage="com.movieroulettetuesday.app"
+            android:targetClass="com.movieroulettetuesday.app.MainActivity" />
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding
+                android:key="feature"
+                android:value="@string/shortcut_suggest_feature" />
+        </capability-binding>
+    </shortcut>
+
+    <!-- Optional Assistant / Gemini BIIs. Mapped to deep links; not a 1.1 promise. -->
+    <capability android:name="actions.intent.OPEN_APP_FEATURE">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.movieroulettetuesday.app"
+            android:targetClass="com.movieroulettetuesday.app.MainActivity">
+            <url android:value="mrt://{feature}" />
+            <parameter
+                android:name="feature"
+                android:key="feature" />
+        </intent>
+    </capability>
+
+    <capability android:name="actions.intent.GET_THING">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.movieroulettetuesday.app"
+            android:targetClass="com.movieroulettetuesday.app.MainActivity">
+            <url android:value="mrt://find?title={name}" />
+            <parameter
+                android:name="thing.name"
+                android:key="name" />
+        </intent>
+    </capability>
+</shortcuts>

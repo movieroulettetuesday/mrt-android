@@ -146,6 +146,22 @@ class RouletteViewModel(
 
     fun spin() = startSpin(isForcedRespin = false)
 
+    /**
+     * A deep-link or shortcut asked to spin. Returns true if the request was consumed (a spin
+     * started, a spin-again was queued from a reveal, or a spin is already running). Returns
+     * false if the catalog is not ready — the caller should keep the request pending.
+     * History is recorded once, by the same [finishSpin] path as a tap.
+     */
+    fun requestExternalSpin(): Boolean {
+        val s = _state.value
+        return when {
+            s.canSpin -> { spin(); true }
+            s.reveal != null -> { spinAgain(); true }
+            s.isSpinning || s.isAwaitingForcedRespin -> true
+            else -> false
+        }
+    }
+
     private fun startSpin(isForcedRespin: Boolean) {
         if (isForcedRespin) _state.update { it.copy(isAwaitingForcedRespin = false, rareBanner = null) }
         applyPendingIfIdle()

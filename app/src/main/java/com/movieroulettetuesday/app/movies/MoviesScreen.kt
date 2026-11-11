@@ -45,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,12 +91,20 @@ fun MoviesScreen(
     modifier: Modifier = Modifier,
     /** Highlighted row in the two-pane (regular width) layout. */
     selectedMovieId: String? = null,
+    /** A deep link asked to apply this filter (Watchlist). Ignored when null. */
+    requestedFilter: MovieListFilter? = null,
+    onRequestedFilterConsumed: () -> Unit = {},
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var categoryId by rememberSaveable { mutableStateOf<String?>(null) }
     var listFilter by rememberSaveable { mutableStateOf(MovieListFilter.All) }
     var sort by rememberSaveable { mutableStateOf(MovieSort.Title) }
     var onMyServices by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(requestedFilter) {
+        val f = requestedFilter ?: return@LaunchedEffect
+        listFilter = f
+        onRequestedFilterConsumed()
+    }
     var refreshing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val catalog = inputs.catalog
