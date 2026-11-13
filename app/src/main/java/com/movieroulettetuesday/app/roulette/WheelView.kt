@@ -203,13 +203,15 @@ fun RouletteWheel(
             }
             drawPath(p, pointerColor)
         }
-        // Hub button.
+        // Hub button. The drawn disc stays the existing 88 dp circle (visual polish
+        // to scale it with the wheel is still pending). The tappable frame is at
+        // least [RouletteLayout.MINIMUM_HUB_HIT_SIZE] so a small wheel never drops
+        // below a 48 dp touch target (iOS PR #29, 44 pt there).
+        val hubVisualDp = 88.0
+        val hubHitDp = maxOf(RouletteLayout.MINIMUM_HUB_HIT_SIZE, hubVisualDp)
         Box(
             Modifier
-                .size(88.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
-                .border(4.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                .size(hubHitDp.dp)
                 .clickable(
                     enabled = canSpin || canStop,
                     onClickLabel = if (spin != null) "Stop the wheel" else "Spin the wheel",
@@ -217,12 +219,21 @@ fun RouletteWheel(
                 .testTag("spin-hub"),
             contentAlignment = Alignment.Center,
         ) {
-            Text(
-                if (spin != null) (if (spin.stop == null && onStop != null) "STOP" else "…") else "SPIN",
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Black,
-                fontSize = 20.sp,
-            )
+            Box(
+                Modifier
+                    .size(hubVisualDp.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(4.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    if (spin != null) (if (spin.stop == null && onStop != null) "STOP" else "…") else "SPIN",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Black,
+                    fontSize = 20.sp,
+                )
+            }
         }
     }
 }
