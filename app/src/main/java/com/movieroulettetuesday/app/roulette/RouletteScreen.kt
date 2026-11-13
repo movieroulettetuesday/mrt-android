@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -218,7 +219,7 @@ fun RevealSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, modifier = Modifier.testTag("reveal-sheet")) {
-        RevealContent(reveal, episodesByGUID, onDismiss, onSpinAgain, onShare, onOpenMovie, pinActions = true)
+        RevealContent(reveal, episodesByGUID, onDismiss, onSpinAgain, onShare, onOpenMovie, scrollWhenOverflow = true)
     }
 }
 
@@ -264,9 +265,9 @@ internal fun revealTitleMaxLines(isRegularWidth: Boolean): Int = if (isRegularWi
 
 /**
  * The reveal itself: in the bottom sheet (stacked) or next to the wheel (side by side).
- * [pinActions] (the sheet): the details scroll in the space left over, so Share, Spin Again and
- * Movie page always stay on screen however long the title or large the font scale (iOS 78d72a7 only
- * shrinks the title; Android also lets the details scroll as a fallback).
+ * [scrollWhenOverflow] (the sheet): details and actions scroll as one block only when they
+ * do not fit, so Share and Movie page stay reachable at a large font scale (iOS PR #30
+ * `ViewThatFits`). When the content fits, nothing scrolls and the sheet looks the same.
  */
 @Composable
 fun RevealContent(
@@ -276,16 +277,15 @@ fun RevealContent(
     onSpinAgain: () -> Unit,
     onShare: () -> Unit,
     onOpenMovie: (() -> Unit)?,
-    pinActions: Boolean = false,
+    scrollWhenOverflow: Boolean = false,
 ) {
     val isRegularWidth = LocalWindowLayout.current.isRegularWidth
     Column(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         RevealTitleBar(reveal.isJackpot)
+        val body: @Composable ColumnScope.() -> Unit = {
         Column(
             Modifier
                 .fillMaxWidth()
-                // Only the sheet scrolls here; side by side, the whole column already scrolls.
-                .then(if (pinActions) Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()) else Modifier)
                 .padding(horizontal = 24.dp, vertical = 8.dp)
                 .testTag("reveal-details"),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -336,5 +336,33 @@ fun RevealContent(
             TextButton(onClick = onDismiss, modifier = Modifier.testTag("reveal-done")) { Text("Done") }
         }
         Spacer(Modifier.height(12.dp))
+        }
+        if (scrollWhenOverflow) {
+            OverflowVerticalColumn(Modifier.weight(1f, fill = false), content = body)
+        } else {
+            // Side by side: the parent column already scrolls.
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, content = body)
+        }
     }
+}
+
+/**
+ * Scrolls [content] only when it is taller than the available height, matching iOS
+ * `ViewThatFits` plus a `ScrollView` fallback. Short content is not scrollable.
+ */
+@Composable
+private fun OverflowVerticalColumn(
+    modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val scroll = rememberScrollState()
+    Column(
+        modifier
+            .fillMaxWidth()
+            .verticalScroll(scroll, enabled = scroll.maxValue > 0)
+            .testTag("reveal-scroll"),
+        horizontalAlignment = horizontalAlignment,
+        content = content,
+    )
 }

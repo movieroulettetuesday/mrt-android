@@ -39,6 +39,15 @@ object RouletteLayout {
     const val REGULAR_STACKED_CAP = 820.0
     const val SIDE_BY_SIDE_CAP = 860.0
     const val MINIMUM_DIAMETER = 120.0
+    /** Fraction of the wheel diameter used for the drawn hub disc (iOS `hubDiameterFraction`). */
+    const val HUB_DIAMETER_FRACTION = 0.23
+    /**
+     * Minimum hit area for the hub Spin / Stop control (Material 48 dp; iOS uses 44 pt).
+     * The drawn disc may shrink with the wheel; only the tappable frame is expanded when
+     * `diameter × HUB_DIAMETER_FRACTION` would drop below 48 dp (below about 209 dp,
+     * including [MINIMUM_DIAMETER] 120).
+     */
+    const val MINIMUM_HUB_HIT_SIZE = 48.0
     const val SHADOW_ALLOWANCE = 24.0
     const val TOP_GAP = 14.0
     /** Height of the "Tap to spin" line under the wheel (iOS reserves 40 pt). */
@@ -56,6 +65,15 @@ object RouletteLayout {
         val w = minOf(maxOf(sane(diameter) * 0.085, 28.0), 56.0)
         return w to w * 34 / 28
     }
+
+    /** Drawn hub disc diameter in dp (visuals only). */
+    fun hubVisualDiameter(diameter: Double): Double = sane(diameter) * HUB_DIAMETER_FRACTION
+
+    /**
+     * Tappable width and height of the hub Spin / Stop control, at least
+     * [MINIMUM_HUB_HIT_SIZE]. At [MINIMUM_DIAMETER] this is 48, not 27.6.
+     */
+    fun hubHitSize(diameter: Double): Double = maxOf(MINIMUM_HUB_HIT_SIZE, hubVisualDiameter(diameter))
 
     fun wheelDiameter(slotWidth: Double, slotHeight: Double, arrangement: Arrangement, isRegularWidth: Boolean, hintHeight: Double = 0.0): Double {
         val hint = sane(hintHeight)

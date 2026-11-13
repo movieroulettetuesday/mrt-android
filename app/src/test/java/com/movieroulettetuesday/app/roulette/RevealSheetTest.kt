@@ -17,6 +17,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.movieroulettetuesday.app.catalog.Movie
@@ -35,9 +36,9 @@ import kotlin.math.abs
 
 /**
  * Reveal sheet, iOS 1.0.1 parity: 99accd7 (the Infamous Jackpot banner is the sheet's title),
- * 6b88813 (the banner stays brand gold in light mode) and 78d72a7 (long titles keep Share and
- * Movie page on screen at phone size). Android goes further: the details scroll and the actions are
- * pinned, so even a huge font scale never pushes the buttons off-screen.
+ * 6b88813 (the banner stays brand gold in light mode), 78d72a7 (long titles keep Share and
+ * Movie page on screen at phone size) and PR #30 `fe9a364` (the sheet scrolls only when the
+ * content overflows, so the buttons stay reachable at a large font scale).
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -162,12 +163,26 @@ class RevealSheetTest {
         }
     }
 
-    /** Beyond iOS: at 2x font scale the details scroll and the actions stay pinned on screen. */
+    /** At 2x font scale the longest title may overflow; scrolling brings Share and Movie page on screen. */
     @Test @Config(qualifiers = "w360dp-h640dp", fontScale = 2.0f)
-    fun hugeFontScaleStillLeavesActionsOnScreen() {
+    fun hugeFontScaleKeepsShareAndMoviePageReachableByScroll() {
         show(reveal(LONG_TITLES.last(), jackpot = true))
-        assertActionsFullyOnScreen("font scale 2")
+        compose.onNodeWithTag("reveal-share").performScrollTo()
+        compose.onNodeWithTag("reveal-movie-page").performScrollTo()
+        compose.waitForIdle()
+        assertActionsFullyOnScreen("font scale 2 after scroll")
         compose.onNodeWithTag("reveal-jackpot-banner").assertIsDisplayed()
+    }
+
+    @Test @Config(qualifiers = "w360dp-h640dp")
+    fun shortRevealContentIsNotScrollable() {
+        show(reveal("The Room", jackpot = false))
+        assertActionsFullyOnScreen("short title")
+        val range = compose.onNodeWithTag("reveal-scroll").fetchSemanticsNode()
+            .config.getOrNull(SemanticsProperties.VerticalScrollAxisRange)
+        val max = range?.maxValue?.invoke() ?: 0f
+        val value = range?.value?.invoke() ?: 0f
+        assertTrue("short content should not scroll (value=$value max=$max)", max <= value + 0.5f)
     }
 
     @Test @Config(qualifiers = "w800dp-h1280dp")
