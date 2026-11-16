@@ -21,6 +21,8 @@ sealed class DeepLink {
     data object Suggest : DeepLink()
     /** Title (and optional year) lookup for App Actions `GET_THING`. */
     data class FindMovie(val title: String, val year: Int? = null) : DeepLink()
+    /** 1.1 search: `mrt://search?q=…` fills the Movies field; `&in=episodes` fills the Episodes field. */
+    data class Search(val query: String, val episodes: Boolean = false) : DeepLink()
 
     fun toUri(): Uri = when (this) {
         Spin -> uri(HOST_SPIN)
@@ -36,6 +38,11 @@ sealed class DeepLink {
         is FindMovie -> {
             val b = Uri.Builder().scheme(SCHEME).authority(HOST_FIND).appendQueryParameter("title", title)
             if (year != null) b.appendQueryParameter("year", year.toString())
+            b.build()
+        }
+        is Search -> {
+            val b = Uri.Builder().scheme(SCHEME).authority(HOST_SEARCH).appendQueryParameter("q", query)
+            if (episodes) b.appendQueryParameter("in", SCOPE_EPISODES)
             b.build()
         }
     }
@@ -57,6 +64,8 @@ sealed class DeepLink {
         const val HOST_WTW = "wtw"
         const val HOST_SUGGEST = "suggest"
         const val HOST_FIND = "find"
+        const val HOST_SEARCH = "search"
+        const val SCOPE_EPISODES = "episodes"
         const val SEG_ADD = "add"
         const val SEG_PROVIDER = "provider"
 
@@ -101,6 +110,17 @@ sealed class DeepLink {
                     if (title.isEmpty()) return null
                     val year = uri.getQueryParameter("year")?.toIntOrNull()
                     FindMovie(title, year)
+                }
+                HOST_SEARCH -> {
+                    if (parts.isNotEmpty()) return null
+                    val q = uri.getQueryParameter("q")?.trim().orEmpty()
+                    if (q.isEmpty()) return null
+                    val scope = uri.getQueryParameter("in")?.trim()?.lowercase()
+                    when (scope) {
+                        null, "", "movies" -> Search(q)
+                        SCOPE_EPISODES -> Search(q, episodes = true)
+                        else -> null
+                    }
                 }
                 else -> null
             }

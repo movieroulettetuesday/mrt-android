@@ -188,6 +188,9 @@ class MrtApplication : Application() {
     val pendingSpin = MutableStateFlow(false)
     val pendingSuggest = MutableStateFlow(false)
     val pendingWatchlist = MutableStateFlow(false)
+    /** `mrt://search` text for the Movies / Episodes field; consumed by the list screen. */
+    val pendingMovieSearch = MutableStateFlow<String?>(null)
+    val pendingEpisodeSearch = MutableStateFlow<String?>(null)
     /** Open this movie’s Where to Watch section after [pendingMovie] navigation. */
     val pendingWhereToWatch = MutableStateFlow<String?>(null)
 

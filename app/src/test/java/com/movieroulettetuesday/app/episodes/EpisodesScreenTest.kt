@@ -39,7 +39,10 @@ class EpisodesScreenTest {
         var opened: String? = null
         compose.setContent { MrtTheme { EpisodesScreen(repo, null, settings, onOpenEpisode = { opened = it }) } }
         compose.onNodeWithTag("episode-group-season-4").assertIsDisplayed()
+        // The 1.1 search field sits above the groups, so the bonus header may start below the fold.
+        compose.onNodeWithTag("episodes-list").performScrollToNode(hasTestTag("episode-group-bonus"))
         compose.onNodeWithTag("episode-group-bonus").assertIsDisplayed()
+        compose.onNodeWithTag("episodes-list").performScrollToNode(hasTestTag("episode-row-Buzzsprout-19980357"))
         compose.onNodeWithTag("episode-row-Buzzsprout-19980357").performClick()
         assertEquals("Buzzsprout-19980357", opened)
         // Bonus starts collapsed (not newest); tapping the header opens it and persists the state.

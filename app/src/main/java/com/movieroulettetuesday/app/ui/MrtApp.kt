@@ -304,11 +304,20 @@ private fun MrtAppContent(layout: WindowLayout) {
             app.pendingEpisode.value = plan.openEpisodeGuid
         }
         if (plan.openEpisodesTab) openTabForDeepLink(TopLevelDestination.Episodes)
+        plan.searchQuery?.let { q ->
+            if (plan.searchEpisodes) {
+                app.pendingEpisodeSearch.value = q
+                openTabForDeepLink(TopLevelDestination.Episodes)
+            } else {
+                app.pendingMovieSearch.value = q
+                openTabForDeepLink(TopLevelDestination.Movies)
+            }
+        }
         if (plan.openRoulette || plan.startSpin || plan.startSuggest) {
             openTabForDeepLink(TopLevelDestination.Roulette)
         }
         if (!plan.openWatchlist && plan.openMovieId == null && plan.openEpisodeGuid == null &&
-            !plan.openEpisodesTab && !plan.openRoulette && !plan.startSpin && !plan.startSuggest
+            !plan.openEpisodesTab && !plan.openRoulette && !plan.startSpin && !plan.startSuggest && plan.searchQuery == null
         ) {
             app.dismissOverlays()
         }
@@ -579,6 +588,7 @@ private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplic
     navigation(startDestination = "episodes/list", route = TopLevelDestination.Episodes.route) {
         composable("episodes/list") {
             val list: @Composable () -> Unit = {
+                val pendingSearch by app.pendingEpisodeSearch.collectAsStateWithLifecycle()
                 EpisodesScreen(
                     repository = app.episodeRepository,
                     catalog = rememberMoviesInputs(app).catalog,
@@ -586,6 +596,8 @@ private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplic
                     onOpenEpisode = { if (regular) panes.episode = it else nav.navigate(Routes.episode("episodes", it)) },
                     modifier = Modifier.testTag("screen-episodes"),
                     selectedGuid = if (regular) panes.episode else null,
+                    requestedQuery = pendingSearch,
+                    onRequestedQueryConsumed = { app.pendingEpisodeSearch.value = null },
                 )
             }
             if (regular) {
@@ -627,6 +639,7 @@ private fun NavGraphBuilder.moviesGraph(
         composable("movies/list") {
             val list: @Composable () -> Unit = {
                 val pendingWatchlist by app.pendingWatchlist.collectAsStateWithLifecycle()
+                val pendingSearch by app.pendingMovieSearch.collectAsStateWithLifecycle()
                 MoviesScreen(
                     inputs = rememberMoviesInputs(app),
                     onOpenMovie = { if (regular) panes.movie = it else nav.navigate(Routes.movie("movies", it)) },
@@ -636,6 +649,8 @@ private fun NavGraphBuilder.moviesGraph(
                     selectedMovieId = if (regular) panes.movie else null,
                     requestedFilter = if (pendingWatchlist) MovieListFilter.Watchlist else null,
                     onRequestedFilterConsumed = { app.pendingWatchlist.value = false },
+                    requestedQuery = pendingSearch,
+                    onRequestedQueryConsumed = { app.pendingMovieSearch.value = null },
                 )
             }
             if (regular) {

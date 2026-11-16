@@ -17,7 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
@@ -25,7 +27,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -38,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.movieroulettetuesday.app.catalog.MovieCatalog
 import com.movieroulettetuesday.app.data.KeyValueStore
+import com.movieroulettetuesday.app.search.CatalogSearch
 import com.movieroulettetuesday.app.ui.ArtworkImage
 import java.time.Instant
 import java.time.ZoneId
@@ -75,12 +81,23 @@ fun EpisodesScreen(
     modifier: Modifier = Modifier,
     /** Highlighted row in the two-pane (regular width) layout. */
     selectedGuid: String? = null,
+    /** A `mrt://search` link asked to fill the search field. Ignored when null. */
+    requestedQuery: String? = null,
+    onRequestedQueryConsumed: () -> Unit = {},
 ) {
     val state by repository.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var groupingKey by remember { mutableStateOf(settings.getString(EpisodeRepository.GROUPING_KEY)) }
     var expansion by remember { mutableStateOf(EpisodeGroupExpansion.parse(settings.getString(EpisodeRepository.EXPANDED_KEY).orEmpty())) }
     val grouping = EpisodeGrouping.fromKey(groupingKey)
+    // Saveable so the query survives rotation and the compact/regular switch (iOS keeps it too).
+    var query by rememberSaveable { mutableStateOf("") }
+    val isSearching = query.isNotBlank()
+    LaunchedEffect(requestedQuery) {
+        val text = requestedQuery ?: return@LaunchedEffect
+        query = text
+        onRequestedQueryConsumed()
+    }
 
     LaunchedEffect(Unit) { repository.load() }
     LaunchedEffect(state.episodes) { repository.markViewed() }
@@ -119,7 +136,34 @@ fun EpisodesScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 LazyColumn(Modifier.fillMaxSize().testTag("episodes-list")) {
-                    item {
+                    item(key = "episodes-search-field") {
+                        EpisodesSearchField(query) { query = it }
+                    }
+                    if (isSearching) {
+                        // Shared 1.1 matcher: title, S#E# / episode number, year, and the linked movie
+                        // (title, genre, category, provider). Results replace the grouped sections so a
+                        // hit is never hidden inside a collapsed season.
+                        val hits = CatalogSearch.episodes(state.episodes, query, catalog)
+                        if (hits.isEmpty()) {
+                            item(key = "episodes-search-empty") { SearchEmptyState(query) }
+                        } else {
+                            item(key = "episodes-search-count") {
+                                Text(
+                                    if (hits.size == 1) "1 result" else "${hits.size} results",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(16.dp, 8.dp).testTag("episodes-search-count").semantics { heading() },
+                                )
+                            }
+                            items(hits, key = { "search/${it.episode.guid}" }) { hit ->
+                                EpisodeRow(hit.episode, catalog, state.showArtworkURL, selected = hit.episode.guid == selectedGuid) {
+                                    onOpenEpisode(hit.episode.guid)
+                                }
+                                HorizontalDivider(Modifier.padding(start = 84.dp))
+                            }
+                        }
+                    }
+                    if (!isSearching) item {
                         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(16.dp, 4.dp).testTag("episodes-grouping")) {
                             EpisodeGrouping.entries.forEachIndexed { i, g ->
                                 SegmentedButton(
@@ -131,7 +175,7 @@ fun EpisodesScreen(
                             }
                         }
                     }
-                    state.lastError?.let { err ->
+                    if (!isSearching) state.lastError?.let { err ->
                         item {
                             Row(Modifier.padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Filled.WarningAmber, null, Modifier.padding(end = 8.dp))
@@ -139,7 +183,7 @@ fun EpisodesScreen(
                             }
                         }
                     }
-                    val groups = EpisodeGrouper.groups(state.episodes, grouping)
+                    val groups = if (isSearching) emptyList() else EpisodeGrouper.groups(state.episodes, grouping)
                     groups.forEachIndexed { index, group ->
                         val isNewest = index == 0
                         val expanded = grouping == EpisodeGrouping.All || expansion.isExpanded(group.id, isNewest)
@@ -211,5 +255,37 @@ private fun EpisodeRow(episode: PodcastEpisode, catalog: MovieCatalog?, showArtw
                 Text(catalog.subtitle(movie), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
             }
         }
+    }
+}
+
+@Composable
+private fun EpisodesSearchField(query: String, onChange: (String) -> Unit) {
+    OutlinedTextField(
+        value = query,
+        onValueChange = onChange,
+        placeholder = { Text("Title, S4E39, or movie") },
+        leadingIcon = { Icon(Icons.Filled.Search, null) },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onChange("") }, modifier = Modifier.testTag("episodes-search-clear")) {
+                    Icon(Icons.Filled.Close, "Clear search")
+                }
+            }
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth().padding(16.dp, 4.dp).testTag("episodes-search"),
+    )
+}
+
+/** iOS `ContentUnavailableView.search(text:)`. */
+@Composable
+private fun SearchEmptyState(query: String) {
+    Column(
+        Modifier.fillMaxWidth().padding(32.dp).testTag("episodes-search-empty"),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(Icons.Filled.Search, null)
+        Text("No Results for “$query”", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+        Text("Check the spelling or try a new search.", style = MaterialTheme.typography.bodyMedium)
     }
 }
