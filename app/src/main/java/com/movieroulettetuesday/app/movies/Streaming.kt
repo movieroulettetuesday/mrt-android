@@ -2,6 +2,7 @@ package com.movieroulettetuesday.app.movies
 
 import com.movieroulettetuesday.app.catalog.Movie
 import com.movieroulettetuesday.app.catalog.StreamingInfo
+import com.movieroulettetuesday.app.search.CatalogSearch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -126,26 +127,38 @@ data class MovieQuery(
     val sort: MovieSort = MovieSort.Title,
     val onMyServices: Boolean = false,
 ) {
-    val isPlain: Boolean get() = text.isEmpty() && categoryId == null && listFilter == MovieListFilter.All && !onMyServices
+    /** iOS `isSearching`: the field has something other than whitespace. */
+    val isSearching: Boolean get() = text.isNotBlank()
 
-    fun apply(movies: List<Movie>, ratings: PersonalRatings, stats: com.movieroulettetuesday.app.roulette.SpinStats, services: MyServices): List<Movie> {
+    val isPlain: Boolean get() = !isSearching && categoryId == null && listFilter == MovieListFilter.All && !onMyServices
+
+    fun apply(
+        movies: List<Movie>,
+        ratings: PersonalRatings,
+        stats: com.movieroulettetuesday.app.roulette.SpinStats,
+        services: MyServices,
+        catalog: com.movieroulettetuesday.app.catalog.MovieCatalog? = null,
+        episodesByGUID: Map<String, com.movieroulettetuesday.app.episodes.PodcastEpisode> = emptyMap(),
+    ): List<Movie> {
         var list = listFilter.apply(movies, ratings, stats)
         categoryId?.let { c -> list = list.filter { c in it.categories } }
         if (onMyServices) list = StreamingCatalog.filter(list, services)
-        if (text.isNotEmpty()) {
-            val q = text.lowercase(Locale.ROOT)
-            list = list.filter {
-                it.title.lowercase(Locale.ROOT).contains(q) || it.genre.lowercase(Locale.ROOT).contains(q) ||
-                    (it.episodeTitle?.lowercase(Locale.ROOT)?.contains(q) ?: false)
-            }
+        // Shared 1.1 matcher (same as the Episodes list and mrt://find).
+        var ranks: Map<String, CatalogSearch.Rank> = emptyMap()
+        if (isSearching) {
+            val hits = CatalogSearch.movies(list, text, catalog, episodesByGUID)
+            ranks = hits.reversed().associate { it.movie.id to it.rank }
+            list = hits.map { it.movie }
         }
         val byTitle = compareBy(String.CASE_INSENSITIVE_ORDER) { m: Movie -> m.title }
-        return when (sort) {
+        val sorted = when (sort) {
             MovieSort.Title -> list.sortedWith(byTitle)
             MovieSort.YearNewest -> list.sortedWith(compareByDescending<Movie> { it.year }.thenBy { it.title })
             MovieSort.YearOldest -> list.sortedWith(compareBy<Movie> { it.year }.thenBy { it.title })
             MovieSort.Spins -> list.sortedWith(compareByDescending<Movie> { stats.spinCount(it.id) }.thenBy { it.title })
             MovieSort.AvailableFirst -> StreamingCatalog.availableFirst(list.sortedWith(byTitle), services)
         }
+        // Best match first; the chosen sort orders movies within a rank (stable sort).
+        return if (ranks.isEmpty()) sorted else sorted.sortedBy { ranks[it.id] ?: CatalogSearch.Rank.Provider }
     }
 }

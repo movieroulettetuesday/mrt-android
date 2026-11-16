@@ -27,6 +27,9 @@ class DeepLinkTest {
         assertEquals(DeepLink.Suggest, parse("mrt://suggest"))
         assertEquals(DeepLink.FindMovie("Laura", 1944), parse("mrt://find?title=Laura&year=1944"))
         assertEquals(DeepLink.FindMovie("Laura", null), parse("mrt://find?title=Laura"))
+        assertEquals(DeepLink.Search("the thing 1982"), parse("mrt://search?q=the%20thing%201982"))
+        assertEquals(DeepLink.Search("S4E39", episodes = true), parse("mrt://search?q=S4E39&in=episodes"))
+        assertEquals(DeepLink.Search("x"), parse("mrt://search?q=x&in=movies"))
     }
 
     @Test
@@ -50,6 +53,8 @@ class DeepLinkTest {
             DeepLink.OpenOnProvider("x", "Shudder"),
             DeepLink.Suggest,
             DeepLink.FindMovie("The Thing", 1982),
+            DeepLink.Search("devil's rain"),
+            DeepLink.Search("S4E39", episodes = true),
         )
         for (link in links) {
             assertEquals(link, DeepLink.parse(link.toUri()))
@@ -65,6 +70,10 @@ class DeepLinkTest {
         assertNull(parse("mrt://watchlist/remove/x"))
         assertNull(parse("mrt://find"))
         assertNull(parse("mrt://episode/"))
+        assertNull(parse("mrt://search"))
+        assertNull(parse("mrt://search?q=%20"))
+        assertNull(parse("mrt://search?q=x&in=hosts"))
+        assertNull(parse("mrt://search/extra?q=x"))
         assertNull(DeepLink.parse(Intent(Intent.ACTION_VIEW)))
         assertNull(DeepLink.parse(null as Intent?))
     }

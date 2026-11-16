@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Movie
@@ -94,6 +95,9 @@ fun MoviesScreen(
     /** A deep link asked to apply this filter (Watchlist). Ignored when null. */
     requestedFilter: MovieListFilter? = null,
     onRequestedFilterConsumed: () -> Unit = {},
+    /** A `mrt://search` link asked to fill the search field. Ignored when null. */
+    requestedQuery: String? = null,
+    onRequestedQueryConsumed: () -> Unit = {},
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var categoryId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -104,6 +108,11 @@ fun MoviesScreen(
         val f = requestedFilter ?: return@LaunchedEffect
         listFilter = f
         onRequestedFilterConsumed()
+    }
+    LaunchedEffect(requestedQuery) {
+        val text = requestedQuery ?: return@LaunchedEffect
+        query = text
+        onRequestedQueryConsumed()
     }
     var refreshing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -128,7 +137,7 @@ fun MoviesScreen(
             }
             return@Column
         }
-        val rows = q.apply(catalog.movies, inputs.ratings, inputs.stats, inputs.services)
+        val rows = q.apply(catalog.movies, inputs.ratings, inputs.stats, inputs.services, catalog, inputs.episodesByGUID)
         PullToRefreshBox(
             isRefreshing = refreshing,
             onRefresh = { scope.launch { refreshing = true; try { onRefresh() } finally { refreshing = false } } },
@@ -139,7 +148,14 @@ fun MoviesScreen(
                     OutlinedTextField(
                         value = query,
                         onValueChange = { query = it },
-                        placeholder = { Text("Title, genre, episode") },
+                        trailingIcon = {
+                            if (query.isNotEmpty()) {
+                                IconButton(onClick = { query = "" }, modifier = Modifier.testTag("movies-search-clear")) {
+                                    Icon(Icons.Filled.Close, "Clear search")
+                                }
+                            }
+                        },
+                        placeholder = { Text("Title, year, S4E39, service") },
                         leadingIcon = { Icon(Icons.Filled.Search, null) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().padding(16.dp, 4.dp).testTag("movies-search"),
@@ -195,15 +211,16 @@ fun MoviesScreen(
 @Composable
 private fun EmptyState(query: String, filter: MovieListFilter) {
     val (title, message) = when {
-        query.isNotEmpty() -> "No Results for “$query”" to "Check the spelling or try a new search."
+        query.isNotBlank() -> "No Results for “$query”" to "Check the spelling or try a new search."
         filter == MovieListFilter.Watchlist -> "Watchlist Is Empty" to "Open a movie and set its status to Want to watch."
         filter == MovieListFilter.Watched -> "Nothing Marked Watched" to "Open a movie to rate it or mark it watched."
         filter == MovieListFilter.Rated -> "No Ratings Yet" to "Open a movie to rate it or mark it watched."
         filter == MovieListFilter.NotSpunYet -> "You’ve Spun Them All" to "Every movie in this view has come up on the wheel."
         else -> "No Matches" to "Try a different category or service filter."
     }
-    Column(Modifier.fillMaxWidth().padding(32.dp).testTag("movies-empty"), horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(Icons.Filled.Movie, null)
+    val tag = if (query.isNotBlank()) "movies-search-empty" else "movies-empty"
+    Column(Modifier.fillMaxWidth().padding(32.dp).testTag(tag), horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(if (query.isNotBlank()) Icons.Filled.Search else Icons.Filled.Movie, null)
         Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
         Text(message, style = MaterialTheme.typography.bodyMedium)
     }

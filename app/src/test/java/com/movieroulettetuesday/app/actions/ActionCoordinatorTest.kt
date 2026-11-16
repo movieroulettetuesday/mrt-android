@@ -196,6 +196,34 @@ class ActionCoordinatorTest {
     }
 
     @Test
+    fun findMovieUsesTheSharedMatcher() {
+        val c = coordinator(cat = MovieCatalog(
+            categories = catalog.categories,
+            movies = listOf(laura, rain, Movie("the-thing-1982", "The Thing", 1982, "Horror"), Movie("the-thing-2011", "The Thing", 2011, "Horror")),
+        ))
+        // Two exact "Thing"s still disambiguate; a genre match ("horror") does not join them.
+        assertNull(c.findMovie("thing", null).openMovieId)
+        assertTrue(c.findMovie("thing", null).speech.contains("2011"))
+        // Apostrophes, case and the leading article fold away; the year picks the film.
+        assertEquals("the-devils-rain-1975", c.findMovie("devils rain", null).openMovieId)
+        assertEquals("the-thing-1982", c.findMovie("the thing", 1982).openMovieId)
+        assertEquals("the-thing-1982", c.findMovie("The Thing 1982", null).openMovieId)
+        assertNull(c.findMovie("zzqx", null).openMovieId)
+    }
+
+    @Test
+    fun searchLinkOnlyFillsTheField() {
+        val movies = coordinator().plan(DeepLink.Search("devils rain"))
+        assertEquals("devils rain", movies.searchQuery)
+        assertFalse(movies.searchEpisodes)
+        assertNull(movies.openMovieId)
+        assertEquals("", movies.speech)
+        val eps = coordinator().plan(DeepLink.Search("S4E39", episodes = true))
+        assertTrue(eps.searchEpisodes)
+        assertEquals("S4E39", eps.searchQuery)
+    }
+
+    @Test
     fun spinAndSuggestOnlyOpenRoulette() {
         val spin = coordinator().plan(DeepLink.Spin)
         assertTrue(spin.startSpin && spin.openRoulette)

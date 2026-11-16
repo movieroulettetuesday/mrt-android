@@ -14,6 +14,7 @@ import com.movieroulettetuesday.app.movies.ProviderLaunch
 import com.movieroulettetuesday.app.movies.StreamingCatalog
 import com.movieroulettetuesday.app.movies.WatchStatus
 import com.movieroulettetuesday.app.movies.WhereToWatchDisplay
+import com.movieroulettetuesday.app.search.CatalogSearch
 import com.movieroulettetuesday.app.widget.WidgetSnapshot
 import java.time.ZoneId
 import java.util.Locale
@@ -35,6 +36,9 @@ data class ActionPlan(
     val offerSpin: Boolean = false,
     val providerPlan: ProviderLaunch.Plan? = null,
     val listenLinks: List<ListenLink> = emptyList(),
+    /** Fill the Movies (or, with [searchEpisodes], the Episodes) search field. */
+    val searchQuery: String? = null,
+    val searchEpisodes: Boolean = false,
 )
 
 class ActionCoordinator(
@@ -66,6 +70,7 @@ class ActionCoordinator(
             startSuggest = true,
         )
         is DeepLink.FindMovie -> findMovie(link.title, link.year)
+        is DeepLink.Search -> ActionPlan(speech = "", searchQuery = link.query, searchEpisodes = link.episodes)
     }
 
     fun openMovie(id: String): ActionPlan {
@@ -152,7 +157,7 @@ class ActionCoordinator(
 
     fun findMovie(title: String, year: Int?): ActionPlan {
         val cat = catalog() ?: return ActionPlan(speech = ActionSpeech.CATALOG_UNAVAILABLE)
-        val matches = resolveMovies(cat, title, year)
+        val matches = resolveMovies(cat, title, year, PodcastEpisode.byGUID(episodes()))
         return when (matches.size) {
             0 -> ActionPlan(speech = ActionSpeech.noMovieNamed(title, year))
             1 -> openMovie(matches[0].id)
@@ -189,15 +194,25 @@ class ActionCoordinator(
                 ?: all.firstOrNull { q.contains(it.name.lowercase(Locale.ROOT)) }
         }
 
-        fun resolveMovies(catalog: MovieCatalog, title: String, year: Int?): List<Movie> {
+        /**
+         * An id, else the shared 1.1 matcher ([CatalogSearch], same as iOS `MovieEntityQuery`):
+         * title (with or without "The"), apostrophes and accents folded, a year as a disambiguator,
+         * then S#E#, episode title, genre / category, provider. Only the best rank is kept, so a
+         * spoken "The Thing" offers both Things, not every horror film.
+         */
+        fun resolveMovies(
+            catalog: MovieCatalog,
+            title: String,
+            year: Int?,
+            episodesByGUID: Map<String, PodcastEpisode> = emptyMap(),
+        ): List<Movie> {
             val q = title.trim()
             if (q.isEmpty()) return emptyList()
             catalog.movie(q)?.let { return listOf(it) }
-            fun yearOk(m: Movie) = year == null || m.year == year
-            val exact = catalog.movies.filter { it.title.equals(q, ignoreCase = true) && yearOk(it) }
-            if (exact.isNotEmpty()) return exact.sortedBy { it.year }
-            val contains = catalog.movies.filter { it.title.contains(q, ignoreCase = true) && yearOk(it) }
-            return contains.sortedBy { it.year }
+            val raw = if (year != null) "$q $year" else q
+            val hits = CatalogSearch.movies(catalog.movies, raw, catalog, episodesByGUID)
+            val best = hits.firstOrNull()?.rank ?: return emptyList()
+            return hits.filter { it.rank == best }.map { it.movie }
         }
 
         fun providerGroups(movie: Movie, services: MyServices): ProviderGroups {

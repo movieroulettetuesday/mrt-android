@@ -70,7 +70,16 @@ class StreamingTest {
         val r = PersonalRatings()
         fun ids(q: MovieQuery, s: MyServices = MyServices()) = q.apply(movies, r, stats, s).map { it.id }
         assertEquals(listOf("m2", "m3", "m4", "m1"), ids(MovieQuery()))
-        assertEquals("title, genre and episode title searched", listOf("m4", "m1"), ids(MovieQuery(text = "ZED")))
+        // 1.1 search: rank first (title beats episode title), then the chosen sort within a rank.
+        assertEquals("title, genre and episode title searched", listOf("m1", "m4"), ids(MovieQuery(text = "ZED")))
+        assertEquals(listOf("m1", "m4"), ids(MovieQuery(text = "zed", sort = MovieSort.YearOldest)))
+        assertEquals(listOf("m3", "m4"), ids(MovieQuery(text = "drama", sort = MovieSort.YearNewest)))
+        assertEquals(listOf("m4", "m3"), ids(MovieQuery(text = "drama", sort = MovieSort.YearOldest)))
+        assertEquals("rent / buy providers are not searched", emptyList<String>(), ids(MovieQuery(text = "apple")))
+        assertEquals(listOf("m2"), ids(MovieQuery(text = "roku")))
+        assertTrue("whitespace is not a search", MovieQuery(text = "   ").isPlain)
+        assertEquals(listOf("m2", "m3", "m4", "m1"), ids(MovieQuery(text = "   ")))
+        assertEquals("punctuation-only search matches nothing", emptyList<String>(), ids(MovieQuery(text = "!!!")))
         assertEquals(listOf("m2", "m3", "m1", "m4"), ids(MovieQuery(sort = MovieSort.YearNewest)))
         assertEquals(listOf("m4", "m3", "m1", "m2"), ids(MovieQuery(sort = MovieSort.YearOldest)))
         assertEquals(listOf("m3", "m1", "m2", "m4"), ids(MovieQuery(sort = MovieSort.Spins)))
