@@ -208,6 +208,37 @@ class WatchSuggesterTest {
     }
 
     @Test
+    fun bannedCheckIsForModelTextOnlyAppCopyLikeACultFavouriteIsExempt() {
+        // The app's own line would trip the list (“favourite”) if it were checked; it must not be.
+        assertTrue(BannedPhrases.matches(Vibe.Cult.line, emptySet()))
+        val cands = PickCandidates.select(catalog, PersonalRatings(), emptySet(), MyServices(), seed = 1)
+        val i = cands.indexOfFirst { it.movie == evil } + 1
+        val out = WatchSuggester.resolve("""{"pick":$i,"vibe":"cult"}""", cands, catalog, input())
+        assertEquals(evil, out.movie)
+        assertTrue(out.reason.fromModel)
+        assertEquals("A cult favourite.", out.reason.headline)
+        // Facts are app-written too and say “watchlist”/“Streaming” freely.
+        val ratings = PersonalRatings().withStatus(WatchStatus.WantToWatch, laura.id, 1)
+        val j = PickCandidates.select(catalog, ratings, emptySet(), MyServices(setOf(8)), seed = 1).indexOfFirst { it.movie == laura } + 1
+        val lauraOut = WatchSuggester.resolve(
+            """{"pick":$j,"vibe":"thrills"}""",
+            PickCandidates.select(catalog, ratings, emptySet(), MyServices(setOf(8)), seed = 1), catalog, input(ratings, services = MyServices(setOf(8))),
+        )
+        assertTrue(lauraOut.reason.fromModel)
+        assertEquals(listOf("On your watchlist", "Not watched yet", "Streaming on Netflix", "From the Noir category"), lauraOut.reason.facts.map { it.text })
+    }
+
+    @Test
+    fun spokenPickFollowsTheIosFormat() {
+        val reason = PickReason(Vibe.Scares, listOf(Fact.OnWatchlist, Fact.NotWatched, Fact.Streaming("Netflix"), Fact.Category("Horror")), fromModel = true)
+        assertEquals("Try Christmas Evil (1980). Good for a scare. It’s on your watchlist and streaming on Netflix.", reason.spoken(evil))
+        val alien = Movie("alien-1979", "Alien", 1979, "Sci-Fi")
+        val rewatch = PickReason(null, listOf(Fact.Rated(9), Fact.Free("Tubi")), fromModel = false)
+        assertEquals("Try Alien (1979). You rated it 4.5 stars. It’s free on Tubi.", rewatch.spoken(alien))
+        assertEquals(reason.spoken(evil), com.movieroulettetuesday.app.actions.ActionSpeech.suggestion(evil, reason))
+    }
+
+    @Test
     fun bannedPhrasesCoverWatchlistRatingsServicesAndProviders() {
         val providers = setOf("Netflix", "Max")
         listOf("on your watchlist", "Watch list pick", "you rated it", "4 stars", "★★★", "3/5", "out of ten", "you haven’t seen it",

@@ -114,8 +114,11 @@ class HouseRulesTest {
             sections.map { it.title },
         )
         val spin = sections[1].rows
-        assertEquals("Pick for Me is on purpose: it picks one you haven't watched, favouring your watchlist and your services, and tells you why.", spin[1])
-        assertTrue(spin.last().contains("Gemini Nano"))
+        assertEquals("Pick for Me is on purpose: it picks one you haven’t watched, favouring your watchlist and your services, and tells you why.", spin[1])
+        assertEquals("Runs on your device with Gemini Nano. Nothing leaves your device. If your device can’t run it, the button is hidden.", spin.last())
+        assertFalse("no Apple in Android copy", text.contains("Apple"))
+        assertFalse(text.contains("Siri"))
+        assertFalse(text.contains("Spotlight"))
         assertFalse(text.contains("Suggest a Movie"))
         assertFalse(text.contains("What should we watch", ignoreCase = true))
         assertEquals(HouseRules.FOOTER, sections.last().footer)

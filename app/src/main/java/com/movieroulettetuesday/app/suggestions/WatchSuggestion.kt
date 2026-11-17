@@ -103,14 +103,15 @@ class WatchSuggester(
          */
         fun resolve(raw: String?, candidates: List<PickCandidates.Candidate>, catalog: MovieCatalog, input: PickInput): SuggestionOutcome.Ready {
             val parsed = PickParser.parse(raw, candidates.size)
-            if (parsed == null) {
+            // The banned-phrase check runs on model-authored text only (the vibe value it returned),
+            // as on iOS: a banned value means the app's own pick. App-written copy, such as the vibe
+            // line “A cult favourite.” or the facts, is never checked.
+            if (parsed == null || BannedPhrases.matches(parsed.vibe.raw, BannedPhrases.providerNames(catalog))) {
                 val top = candidates.first()
                 return SuggestionOutcome.Ready(top.movie, ReasonComposer.fallback(top.movie, catalog, input.ratings, input.services))
             }
             val chosen = candidates[parsed.index]
-            // Defence in depth: any banned phrase anywhere in the model’s text drops its vibe too.
-            val banned = BannedPhrases.matches(raw.orEmpty(), BannedPhrases.providerNames(catalog))
-            val vibe = if (banned) Vibes.fromGenre(chosen.movie) else Vibes.validated(parsed.vibe, chosen.movie)
+            val vibe = Vibes.validated(parsed.vibe, chosen.movie)
             return SuggestionOutcome.Ready(chosen.movie, ReasonComposer.picked(chosen.movie, vibe, catalog, input.ratings, input.services))
         }
 

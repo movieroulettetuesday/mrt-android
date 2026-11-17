@@ -41,8 +41,7 @@ import com.movieroulettetuesday.app.widget.SpinOfTheDayWidget
 
 /**
  * Android House Rules (plan §3c, with Pick for Me; Matthew Nov 17: also explain the less obvious
- * features that exist in this build). All wording is here so it is easy to change when the iOS
- * copy lands. Shortcut labels, Assistant synonyms and the widget name come from the same string
+ * features that exist in this build). All wording is here, matched to the final iOS copy. Shortcut labels, Assistant synonyms and the widget name come from the same string
  * resources as res/xml/shortcuts.xml and the widget receiver; HouseRulesTest fails if a shortcut,
  * synonym, widget or widget size is added without a row here.
  */
@@ -57,21 +56,27 @@ object HouseRules {
     const val TITLE = "House Rules"
     const val FOOTER = "Dinner, discussion, and the wheel. Spin responsibly."
 
-    /** What each static shortcut does, by shortcutId. A new shortcut needs a line here (test-enforced). */
+    /** What each static shortcut does, by shortcutId (iOS house-rules-ios.md wording where it applies). Test-enforced. */
     val shortcutActions: Map<String, String> = mapOf(
-        "spin" to "spins the wheel and shows the result",
-        "latest" to "opens the latest episode",
-        "watchlist" to "opens your watchlist",
-        "suggest" to "picks a movie for you, with the reason",
+        "spin" to "spins the wheel and opens the result",
+        "latest" to "opens the newest episode",
+        "watchlist" to "lists the movies you marked Want to watch",
+        "suggest" to "picks one movie you haven’t watched and says why. Not random",
     )
 
     /** One line per widget size the code renders (SpinOfTheDayWidget.sizeMode). Test-enforced. */
     val widgetSizes: Map<DpSize, String> = mapOf(
         SpinOfTheDayWidget.SMALL to "Small: today’s pick, plus a line when there’s a new episode.",
-        SpinOfTheDayWidget.MEDIUM to "Wide: today’s pick beside the latest episode (or your last spin).",
+        SpinOfTheDayWidget.MEDIUM to "Medium: today’s pick beside the latest episode (or your last spin).",
         SpinOfTheDayWidget.LARGE to "Large: today’s pick and its genre, the latest episode, and your last spin.",
     )
 
+    /**
+     * Wording follows mrt-shared `wsiw/house-rules-ios.md` (sha256 4d7107fd…, iOS PR #37). Android
+     * differs only where iOS doesn't apply: the SPIN/STOP hub, Gemini Nano, Assistant and launcher
+     * shortcuts instead of Siri, the Android widget sizes and how to add one, and on-device search
+     * instead of Spotlight.
+     */
     fun sections(labels: Labels): List<Section> {
         val app = labels.appName
         return listOf(
@@ -87,16 +92,16 @@ object HouseRules {
                 "Spin or Pick for Me",
                 listOf(
                     "Spin is pure chance: the wheel picks a category, then a movie from it.",
-                    "Pick for Me is on purpose: it picks one you haven't watched, favouring your watchlist and your services, and tells you why.",
-                    "The reason only says what the app knows: your watchlist, your ratings, and where it's streaming.",
-                    "Runs on your device with Gemini Nano. Nothing leaves your device. If your phone can't run it, the button is hidden.",
+                    "Pick for Me is on purpose: it picks one you haven’t watched, favouring your watchlist and your services, and tells you why.",
+                    "The reason only says what the app knows: your watchlist, your ratings, and where it’s streaming.",
+                    "Runs on your device with Gemini Nano. Nothing leaves your device. If your device can’t run it, the button is hidden.",
                 ),
             ),
             Section(
                 "Search",
                 listOf(
                     "Search Movies or Episodes by title, year, episode (S4E39), genre or service.",
-                    "Or ask a question, like “comedies from the 90s on Netflix”. It becomes filter chips; tap a chip's × to remove it.",
+                    "Or ask a question, like “comedies from the 90s on Netflix”. It becomes filter chips; tap a chip’s × to remove it.",
                     "Without Gemini Nano, search matches keywords only.",
                 ),
             ),
@@ -105,14 +110,18 @@ object HouseRules {
                 listOf(
                     "Want to watch puts a movie on your watchlist.",
                     "Rating a movie marks it watched. You can clear a rating any time.",
-                    "Tap a star to rate; the left half of a star gives a half star. Drag across the stars to slide, and tap your rating again to clear it.",
+                    "Tap the left half of a star for a half star, the right half for the whole star, or drag across the stars. Tap your rating again, or Clear rating, to remove it.",
                 ),
             ),
-            Section("Assistant and Shortcuts", assistantRows(labels)),
+            Section(
+                "Assistant and Shortcuts",
+                assistantRows(labels),
+                footer = "Shortcuts work as soon as the app is installed. Google Assistant support depends on your device and language.",
+            ),
             Section(
                 "Home-Screen Widget",
                 listOf(
-                    "${labels.widgetName} shows today’s pick from the wheel (the same for everyone that day) and the latest episode. Tap it to open that movie.",
+                    "${labels.widgetName} shows today’s pick from the wheel (the same for everyone that day) and the latest episode. A new pick arrives at midnight. Tap it to open that movie.",
                 ) + widgetSizes.values + listOf(
                     "To add it, long-press an empty spot on your home screen, tap Widgets, then find $app.",
                 ),
@@ -120,8 +129,9 @@ object HouseRules {
             Section(
                 "Good to Know",
                 listOf(
-                    "Links that start with mrt:// open the app at a spin, a movie, an episode, your watchlist, a pick or a search, for example mrt://spin.",
-                    "On Android 12 and later, movies and episodes are added to your phone’s on-device search, so they can show up in system search if your launcher supports it.",
+                    "Pick for Me and question search use Gemini Nano, so they depend on your device and on Gemini Nano being ready on it. Without it, the wheel, keyword search and shortcuts still work.",
+                    "On Android 12 and later, movies and episodes from the show are added to your device’s on-device search, so they can show up in system search if your launcher supports it.",
+                    "Links that start with mrt:// open the app at a spin, a movie, an episode, the latest episode, your watchlist, a pick or a search, for example mrt://spin.",
                 ),
                 footer = FOOTER,
             ),
@@ -133,14 +143,14 @@ object HouseRules {
         val shorts = labels.shortcuts.map { it.shortLabel }
         val names = labels.shortcuts.flatMap { it.assistantNames }.distinct()
         return buildList {
+            add("“Spin $app” spins the wheel and opens the result.")
+            add("“Pick a movie for me in $app” or “What should I watch in $app” picks one movie you haven’t watched and says why. Not random.")
+            add("Google Assistant can also open these by name: ${join(names.map { "“$it”" })}. It can find a movie by title, too.")
             add("Long-press the app icon for ${join(shorts)}.")
             labels.shortcuts.forEach { s ->
                 add("${s.longLabel}: ${shortcutActions[s.id] ?: "opens $app"}.")
             }
             add("Movies you open from Pick for Me or a link are added there too, up to 3.")
-            add("“Spin $app” spins the wheel and opens the result.")
-            add("“Pick a movie for me in $app” gets a pick with a reason.")
-            add("Google Assistant can also open these by name: ${join(names.map { "“$it”" })}. It can look up a movie by title, too. Support depends on your phone.")
         }
     }
 
