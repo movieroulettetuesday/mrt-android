@@ -7,6 +7,7 @@ import com.movieroulettetuesday.app.movies.MyServices
 import com.movieroulettetuesday.app.movies.PersonalRatings
 import com.movieroulettetuesday.app.movies.StreamingCatalog
 import com.movieroulettetuesday.app.movies.WatchStatus
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -128,7 +129,13 @@ class WatchSuggester(
         val cat = catalog() ?: return SuggestionOutcome.OfferSpin
         val text = prompt(ctx)
         repeat(2) {
-            val raw = runCatching { model.generate(text) }.getOrNull() ?: return@repeat
+            val raw = try {
+                model.generate(text)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Throwable) {
+                null
+            } ?: return@repeat
             val movie = cat.movie(raw.movieId.trim())
             if (movie != null) {
                 val why = raw.why.trim()
