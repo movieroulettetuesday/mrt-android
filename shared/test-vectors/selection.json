@@ -1,7 +1,7 @@
 {
   "_generated" : {
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "38d24af",
+    "iosCommit" : "a0433b7",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
   },
   "appSpinSequence" : {
@@ -71,7 +71,7 @@
           {
             "categoryId" : "cat-horror",
             "landed" : "cat-horror",
-            "movieId" : "night-of-the-living-dead-1990",
+            "movieId" : "leviathan-1989",
             "outcome" : "normal",
             "rotation" : 21224.503931765503,
             "wasForcedRespin" : false
@@ -103,7 +103,7 @@
           {
             "categoryId" : "cat-cult",
             "landed" : "cat-cult",
-            "movieId" : "mirrormask-2005",
+            "movieId" : "strawberry-mansion-2021",
             "outcome" : "normal",
             "rotation" : 30892.291577054493,
             "wasForcedRespin" : false
@@ -247,7 +247,7 @@
           {
             "categoryId" : "cat-cult",
             "landed" : "cat-cult",
-            "movieId" : "palmer-rockeys-scarlet-warning-666-1982",
+            "movieId" : "piranha-ii-the-spawning-1982",
             "outcome" : "normal",
             "rotation" : 2454.9159484461479,
             "wasForcedRespin" : false
@@ -791,7 +791,7 @@
     "description" : "RouletteViewModel order per spin: randomTargetRotation(from: current rotation, 5...8 or 1...2 with reduce motion) -> landed = segmentIndex -> roll(allowRespin: !lastWasForced) -> forced: next step is the automatic re-spin; jackpot: jackpotPick; else selectMovie(history so far). History accumulates."
   },
   "bundledHorrorWeights" : {
-    "candidateCount" : 40,
+    "candidateCount" : 41,
     "catalog" : "bundled",
     "categoryId" : "cat-horror",
     "historyMovieIds" : [
@@ -801,22 +801,22 @@
       "x",
       "x"
     ],
-    "otherProbability" : 0.025693730729701953,
+    "otherProbability" : 0.025050100200400799,
     "otherWeight" : 1,
     "weights" : [
       {
         "movieId" : "deadly-games-1989",
-        "probability" : 0.0118191161356629,
+        "probability" : 0.01152304609218437,
         "weight" : 0.46000000000000008
       },
       {
         "movieId" : "the-vanishing-1988",
-        "probability" : 0.01644398766700925,
+        "probability" : 0.016032064128256512,
         "weight" : 0.64000000000000001
       },
       {
         "movieId" : "what-ever-happened-to-baby-jane-1962",
-        "probability" : 0.021068859198355602,
+        "probability" : 0.020541082164328657,
         "weight" : 0.82000000000000006
       }
     ]
@@ -1941,17 +1941,17 @@
       ],
       "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
       "picks" : [
-        "palmer-rockeys-scarlet-warning-666-1982",
-        "palmer-rockeys-scarlet-warning-666-1982",
-        "leviathan-1989",
+        "the-ugly-stepsister-2025",
+        "the-ugly-stepsister-2025",
+        "the-thing-1982",
         "the-vanishing-1988",
-        "talk-to-me-2022",
-        "weapons-2025",
+        "infinity-pool-2023",
+        "night-of-the-living-dead-1990",
         "lord-of-illusions-1995",
         "leviathan-1989",
         "lord-of-illusions-1995",
         "martin-1977",
-        "diabolique-1955",
+        "antichrist-2009",
         "the-grave-1996"
       ],
       "seed" : 2026

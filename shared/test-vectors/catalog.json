@@ -1,17 +1,17 @@
 {
   "_generated" : {
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "38d24af",
+    "iosCommit" : "a0433b7",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
   },
   "bundled" : {
     "candidateCounts" : {
       "cat-action" : 28,
       "cat-criterion" : 21,
-      "cat-cult" : 36,
+      "cat-cult" : 37,
       "cat-dark-comedy" : 21,
       "cat-escape" : 21,
-      "cat-horror" : 40,
+      "cat-horror" : 41,
       "cat-listener" : 7,
       "cat-love" : 13,
       "cat-prestige" : 30,
@@ -35,9 +35,9 @@
       "Matt"
     ],
     "infamousCount" : 0,
-    "movieCount" : 183,
+    "movieCount" : 184,
     "path" : "MovieRouletteTuesday/Resources/movies.json",
-    "sha256" : "84eac40cea9901a4dcedaddf1749d0887e9a69b7bc9acf40b1d77d42b17b64b3",
+    "sha256" : "58b09e7670ebda6dc6052fe5159e385fd3fc65eeabda507b8aab15e57284a2c8",
     "validationIssues" : [
 
     ]

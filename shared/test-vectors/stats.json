@@ -1,7 +1,7 @@
 {
   "_generated" : {
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "38d24af",
+    "iosCommit" : "a0433b7",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
   },
   "catalogForGenres" : {
@@ -1576,13 +1576,13 @@
         "catalog" : "bundled",
         "categoryId" : "cat-horror",
         "dayKey" : "2026-10-20",
-        "movieId" : "the-grave-1996"
+        "movieId" : "diabolique-1955"
       },
       {
         "catalog" : "bundled",
         "categoryId" : "cat-cult",
         "dayKey" : "2026-10-21",
-        "movieId" : "martin-1977"
+        "movieId" : "run-lola-run-1998"
       },
       {
         "catalog" : "bundled",
