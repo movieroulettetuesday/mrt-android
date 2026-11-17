@@ -79,17 +79,30 @@ class NLSearchValidatorTest {
     }
 
     @Test
-    fun yearsClampSwapAndDropNonYears() {
-        assertEquals(NLSearchFilter(yearMin = 1880, yearMax = 2100), filter("""{"yearMin":1850,"yearMax":2500}"""))
+    fun yearsOutsideTheWindowAreDroppedNotClamped() {
+        assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"yearMin":1850,"yearMax":2500}""", names))
+        assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"yearMin":1700,"yearMax":3000}""", names))
+        assertEquals(NLSearchFilter(yearMax = 1985), filter("""{"yearMin":1700,"yearMax":1985}"""))
+        assertEquals(NLSearchFilter(yearMin = 1980), filter("""{"yearMin":1980,"yearMax":99}"""))
+        assertEquals(NLSearchFilter(yearMin = 1880, yearMax = 2100), filter("""{"yearMin":1880,"yearMax":2100}"""))
         assertEquals(NLSearchFilter(yearMin = 1980, yearMax = 1989), filter("""{"yearMin":1989,"yearMax":1980}"""))
+        assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"yearMin":1879,"yearMax":2101,"genre":"Horror"}"""))
         assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"yearMin":80,"yearMax":89,"genre":"Horror"}"""))
         assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"yearMin":1980.5,"genre":"Horror"}"""))
     }
 
     @Test
-    fun ratingsSnapToHalfStarsAndDropOutOfRange() {
+    fun ratingsAreRangeCheckedRawThenRoundedHalfAwayFromZero() {
         assertEquals(NLSearchFilter(ratingMin = 3.5), filter("""{"ratingMin":3.3}"""))
+        assertEquals(NLSearchFilter(ratingMin = 3.5), filter("""{"ratingMin":3.25}"""))
+        assertEquals(NLSearchFilter(ratingMin = 5.0), filter("""{"ratingMin":4.75}"""))
+        assertEquals(NLSearchFilter(ratingMin = 4.0), filter("""{"ratingMin":4.2}"""))
+        assertEquals(NLSearchFilter(ratingMin = 0.5, ratingMax = 5.0), filter("""{"ratingMin":0.5,"ratingMax":5}"""))
         assertEquals(NLSearchFilter(ratingMin = 3.0, ratingMax = 4.5), filter("""{"ratingMin":4.5,"ratingMax":3}"""))
+        // Raw value outside 0.5–5 is dropped even when it would round into range (5.2 → 5, 0.4 → 0.5).
+        assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"genre":"Horror","ratingMax":5.2}"""))
+        assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"genre":"Horror","ratingMin":0.4}"""))
+        assertEquals(NLSearchFilter(ratingMin = 3.0), filter("""{"ratingMin":3,"ratingMax":6}"""))
         assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"ratingMin":8,"ratingMax":0,"season":0,"episode":-1}""", names))
         assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"ratingMin":0.1}""", names))
     }

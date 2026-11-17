@@ -23,8 +23,9 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 /**
- * All 32 shared cases (mrt-shared `nl-search-test-cases.json`, pinned in repo `shared/`). A real model is
- * non-deterministic, so each case feeds the engine fake replies built from the case and checks, with the
+ * All 43 shared cases (mrt-shared `nl-search-test-cases.json`, pinned in repo `shared/`). A real model is
+ * non-deterministic, so each case feeds the engine fake replies (its raw `parse` output when present, else
+ * replies built from `required`) and checks, with the
  * file's loose-compare rules, what reaches apply: `required` equal, `optional` allowed, nothing else
  * non-null, `mustBeNull` null, `disallowedValues` absent, the `outcome`, and `switchesTo` from both lists.
  */
@@ -54,8 +55,15 @@ class NLSharedCasesTest(private val id: String, private val case: JsonObject) {
     private val titleFolded = case["titleFolded"]?.jsonPrimitive?.content
     private val switchesTo = case["switchesTo"]!!.jsonPrimitive.content
 
-    /** Replies a well-behaved model could give: exactly the required keys, plus optional keys, plus explicit nulls / any. */
+    private val parse = case["parse"]?.jsonObject
+
+    /**
+     * Fake model replies. A case with a `parse` object (validation-rules cases) feeds exactly that raw model
+     * output, so the validator is what's tested. Otherwise: replies a well-behaved model could give, built from
+     * `required` (plus optional keys, explicit nulls / any, provider aliases, and disallowed values).
+     */
     private fun replies(): List<String> {
+        parse?.let { return listOf(it.toString()) }
         val base = LinkedHashMap<String, JsonElement>(required)
         val out = mutableListOf<JsonObject>()
         out += JsonObject(base)
@@ -153,9 +161,10 @@ class NLSharedCasesTest(private val id: String, private val case: JsonObject) {
 
 class NLSharedCasesFileTest {
     @Test
-    fun pinnedFileHas32CasesAndTheSchemaVocab() {
+    fun pinnedFileHas43CasesAndTheSchemaVocab() {
         val root = NLFixtures.sharedCases
-        assertEquals(32, root["cases"]!!.jsonArray.size)
+        assertEquals(43, root["cases"]!!.jsonArray.size)
+        assertEquals(11, root["cases"]!!.jsonArray.count { it.jsonObject["parse"] != null })
         assertEquals(NLSearchVocab.GENRES, root["genres"]!!.jsonArray.map { it.jsonPrimitive.content })
         assertEquals(
             NLSearchVocab.CATEGORIES.map { listOf(it.name, it.fullName, it.id) },

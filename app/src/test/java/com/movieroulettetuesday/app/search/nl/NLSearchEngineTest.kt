@@ -80,7 +80,7 @@ class NLSearchEngineTest {
     fun outOfRangeValuesNeverReachApply() = runTest {
         val out = engine(FakeNLModel { """{"genre":"Horror","yearMin":3000,"yearMax":1200,"ratingMin":9,"season":-2,"provider":"Blockbuster"}""" })
             .resolve(question)
-        assertEquals(NLOutcome.Parsed(NLSearchFilter(genre = "Horror", yearMin = 1880, yearMax = 2100)), out)
+        assertEquals(NLOutcome.Parsed(NLSearchFilter(genre = "Horror")), out)
     }
 
     @Test
