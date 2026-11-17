@@ -1,18 +1,26 @@
 package com.movieroulettetuesday.app.suggestions
 
+import com.google.mlkit.genai.common.FeatureStatus
+import com.google.mlkit.genai.prompt.Generation
+import com.google.mlkit.genai.prompt.GenerativeModel
+import kotlinx.coroutines.CancellationException
+
 /**
  * Gemini Nano through ML Kit GenAI (Prompt API / AICore), on-device only.
  *
- * The ML Kit classes are loaded reflectively so a preview client, a missing AICore, or a
- * Robolectric classpath without the library can never crash the app: every failure is
- * [SuggestionAvailability.Unavailable]. Inference is only attempted while the caller is in the
- * foreground (the Roulette tab / `mrt://suggest` opens the app first).
+ * Calls the typed, suspend Prompt API (`com.google.mlkit:genai-prompt` 1.0.0-beta5):
+ * [GenerativeModel.checkStatus] and [GenerativeModel.generateContent] `(prompt: String)`.
+ * Beta5 has no non-suspend `generateContent(String)`; looking that method up reflectively
+ * never resolved, so this client never received a model reply.
  *
- * The `com.google.mlkit:genai-prompt` dependency is on the compile classpath so a supported
- * device can actually run; it is not invoked at process start.
+ * Every call is guarded so a missing AICore, an old Play services build, or a preview-API
+ * change can never crash the app: failures become [SuggestionAvailability.Unavailable] or
+ * a null suggestion. Cancellation is not swallowed. The library is not invoked at process
+ * start. Inference is only attempted while the caller is in the foreground (the Roulette
+ * tab / `mrt://suggest` opens the app first).
  */
 class MlKitSuggestionModel(
-    private val client: Client = ReflectiveClient,
+    private val client: Client = PromptApiClient,
 ) : SuggestionModel {
 
     interface Client {
@@ -21,47 +29,42 @@ class MlKitSuggestionModel(
     }
 
     override suspend fun availability(): SuggestionAvailability =
-        runCatching { client.status() }.getOrDefault(SuggestionAvailability.Unavailable)
+        guarded(SuggestionAvailability.Unavailable) { client.status() }
 
     override suspend fun generate(prompt: String): WatchSuggestion? {
-        val text = runCatching { client.generate(prompt) }.getOrNull()
+        val text = guarded(null) { client.generate(prompt) }
         return WatchSuggester.parseResponse(text)
     }
 
     /**
-     * Reflective ML Kit Prompt API (`com.google.mlkit.genai.prompt.Generation.getClient()`).
+     * Typed ML Kit Prompt API (`com.google.mlkit.genai.prompt.Generation.getClient()`).
      * FeatureStatus values: AVAILABLE, DOWNLOADABLE, DOWNLOADING, UNAVAILABLE.
      */
-    object ReflectiveClient : Client {
+    object PromptApiClient : Client {
+        private val model: GenerativeModel? by lazy { runCatching { Generation.getClient() }.getOrNull() }
+
         override suspend fun status(): SuggestionAvailability {
-            val model = model() ?: return SuggestionAvailability.Unavailable
-            val raw = model.javaClass.methods.firstOrNull { it.name == "checkStatus" && it.parameterCount == 0 }
-                ?.invoke(model)?.toString()?.uppercase() ?: return SuggestionAvailability.Unavailable
-            return when {
-                raw.contains("AVAILABLE") && !raw.contains("UNAVAILABLE") && !raw.contains("DOWNLOAD") ->
-                    SuggestionAvailability.Available
-                raw.contains("DOWNLOADING") -> SuggestionAvailability.Downloading
-                raw.contains("DOWNLOADABLE") -> SuggestionAvailability.Downloadable
+            val m = model ?: return SuggestionAvailability.Unavailable
+            return when (m.checkStatus()) {
+                FeatureStatus.AVAILABLE -> SuggestionAvailability.Available
+                FeatureStatus.DOWNLOADABLE -> SuggestionAvailability.Downloadable
+                FeatureStatus.DOWNLOADING -> SuggestionAvailability.Downloading
                 else -> SuggestionAvailability.Unavailable
             }
         }
 
         override suspend fun generate(prompt: String): String? {
-            val model = model() ?: return null
-            // Convenience: generateContent(String) returns a response with a `getText()` / `text`.
-            val response = model.javaClass.methods.firstOrNull {
-                it.name == "generateContent" && it.parameterCount == 1 && it.parameterTypes[0] == String::class.java
-            }?.invoke(model, prompt) ?: return null
-            val text = response.javaClass.methods.firstOrNull { it.name == "getText" && it.parameterCount == 0 }
-                ?.invoke(response)
-                ?: response.javaClass.methods.firstOrNull { it.name == "text" && it.parameterCount == 0 }?.invoke(response)
-            return text as? String
+            val m = model ?: return null
+            // Suspend convenience overload (beta5): wraps the prompt in a default GenerateContentRequest.
+            return m.generateContent(prompt).candidates.firstOrNull()?.text
         }
-
-        private fun model(): Any? = runCatching {
-            val gen = Class.forName("com.google.mlkit.genai.prompt.Generation")
-            val instance = gen.getField("INSTANCE").get(null) ?: gen.getMethod("getInstance").invoke(null)
-            gen.getMethod("getClient").invoke(instance)
-        }.getOrNull()
     }
+}
+
+private suspend fun <T> guarded(fallback: T, block: suspend () -> T): T = try {
+    block()
+} catch (e: CancellationException) {
+    throw e
+} catch (_: Throwable) {
+    fallback
 }

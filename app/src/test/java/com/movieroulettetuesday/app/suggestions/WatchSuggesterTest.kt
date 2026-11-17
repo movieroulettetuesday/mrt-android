@@ -8,7 +8,11 @@ import com.movieroulettetuesday.app.catalog.StreamingInfo.Provider
 import com.movieroulettetuesday.app.movies.MyServices
 import com.movieroulettetuesday.app.movies.PersonalRatings
 import com.movieroulettetuesday.app.movies.WatchStatus
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.currentTime
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -28,6 +32,7 @@ class FakeSuggestionModel(
     }
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class WatchSuggesterTest {
     private val netflix = Provider(8, "Netflix")
     private val laura = Movie("laura-1944", "Laura", 1944, "Thriller", categories = listOf("noir"), streaming = StreamingInfo(stream = listOf(netflix)))
@@ -136,5 +141,25 @@ class WatchSuggesterTest {
         val ctx = suggester(model).buildContext(PersonalRatings(), emptySet(), MyServices())!!
         assertEquals(SuggestionOutcome.Hidden, suggester(model).suggest(ctx, fromShortcut = false))
         assertEquals(0, model.calls)
+    }
+
+    @Test
+    fun hungGenerateTimesOutAndOffersSpin() = runTest {
+        var cancelled = 0
+        val model = object : SuggestionModel {
+            override suspend fun availability() = SuggestionAvailability.Available
+            override suspend fun generate(prompt: String): WatchSuggestion? {
+                try {
+                    awaitCancellation()
+                } finally {
+                    cancelled += 1
+                }
+            }
+        }
+        val ctx = suggester(model).buildContext(PersonalRatings(), emptySet(), MyServices())!!
+        val inApp = suggester(model).suggest(ctx, fromShortcut = false)
+        assertEquals(SuggestionOutcome.OfferSpin, inApp)
+        assertEquals("timeout uses the shared generate budget", WatchSuggester.GENERATE_TIMEOUT_MS, currentTime)
+        assertEquals("the hung generate call was cancelled", 1, cancelled)
     }
 }
