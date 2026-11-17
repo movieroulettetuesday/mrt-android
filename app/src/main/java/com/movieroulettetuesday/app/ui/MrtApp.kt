@@ -1,5 +1,6 @@
 package com.movieroulettetuesday.app.ui
 
+import com.movieroulettetuesday.app.search.nl.NLSearchFilter
 import android.Manifest
 import android.net.Uri
 import android.os.Build
@@ -253,6 +254,24 @@ private fun MrtAppContent(layout: WindowLayout) {
             else -> Unit
         }
     }
+    /**
+     * 1.1 NL search list switch (shared rule): a parsed question named the other list. The query and chips
+     * move to that tab's root (detail pane reset, like iPad); the source screen has already cleared its own.
+     */
+    fun switchNLList(kind: NLSearchFilter.Kind, query: String, filter: NLSearchFilter) {
+        when (kind) {
+            NLSearchFilter.Kind.Episode -> {
+                app.pendingEpisodeNLFilter.value = filter
+                app.pendingEpisodeSearch.value = query
+                openTabForDeepLink(TopLevelDestination.Episodes)
+            }
+            NLSearchFilter.Kind.Movie -> {
+                app.pendingMovieNLFilter.value = filter
+                app.pendingMovieSearch.value = query
+                openTabForDeepLink(TopLevelDestination.Movies)
+            }
+        }
+    }
     // Deep links (widget, notification): a pushed page on phones, the detail pane on tablets.
     val pendingMovie by app.pendingMovie.collectAsStateWithLifecycle()
     LaunchedEffect(pendingMovie) {
@@ -379,8 +398,8 @@ private fun MrtAppContent(layout: WindowLayout) {
                 movieDetail("roulette", navController, app, linkEpisodes = true)
                 episodeDetail("roulette", navController, app, linkMovie = false)
             }
-            episodesGraph(navController, app, panes, regular)
-            moviesGraph(navController, app, onSuggest = { suggestOpen = true }, panes, regular)
+            episodesGraph(navController, app, panes, regular, ::switchNLList)
+            moviesGraph(navController, app, onSuggest = { suggestOpen = true }, panes, regular, ::switchNLList)
             composable(TopLevelDestination.Stats.route) {
                 val inputs = rememberMoviesInputs(app)
                 val log by app.spinHistory.log.collectAsStateWithLifecycle()
@@ -584,20 +603,34 @@ private fun PanePageContent(
     }
 }
 
-private fun NavGraphBuilder.episodesGraph(nav: NavHostController, app: MrtApplication, panes: PaneSelection, regular: Boolean) {
+private fun NavGraphBuilder.episodesGraph(
+    nav: NavHostController,
+    app: MrtApplication,
+    panes: PaneSelection,
+    regular: Boolean,
+    onNLSwitch: (NLSearchFilter.Kind, String, NLSearchFilter) -> Unit,
+) {
     navigation(startDestination = "episodes/list", route = TopLevelDestination.Episodes.route) {
         composable("episodes/list") {
             val list: @Composable () -> Unit = {
                 val pendingSearch by app.pendingEpisodeSearch.collectAsStateWithLifecycle()
+                val pendingNL by app.pendingEpisodeNLFilter.collectAsStateWithLifecycle()
+                val inputs = rememberMoviesInputs(app)
                 EpisodesScreen(
                     repository = app.episodeRepository,
-                    catalog = rememberMoviesInputs(app).catalog,
+                    catalog = inputs.catalog,
                     settings = app.settings,
                     onOpenEpisode = { if (regular) panes.episode = it else nav.navigate(Routes.episode("episodes", it)) },
                     modifier = Modifier.testTag("screen-episodes"),
                     selectedGuid = if (regular) panes.episode else null,
                     requestedQuery = pendingSearch,
-                    onRequestedQueryConsumed = { app.pendingEpisodeSearch.value = null },
+                    onRequestedQueryConsumed = { app.pendingEpisodeSearch.value = null; app.pendingEpisodeNLFilter.value = null },
+                    ratings = inputs.ratings,
+                    services = inputs.services,
+                    nlModel = app.nlSearchModel,
+                    requestedNLFilter = pendingNL,
+                    onNLSwitch = onNLSwitch,
+                    onNLDownloadable = app::requestNLModelDownload,
                 )
             }
             if (regular) {
@@ -634,12 +667,14 @@ private fun NavGraphBuilder.moviesGraph(
     onSuggest: () -> Unit,
     panes: PaneSelection,
     regular: Boolean,
+    onNLSwitch: (NLSearchFilter.Kind, String, NLSearchFilter) -> Unit,
 ) {
     navigation(startDestination = "movies/list", route = TopLevelDestination.Movies.route) {
         composable("movies/list") {
             val list: @Composable () -> Unit = {
                 val pendingWatchlist by app.pendingWatchlist.collectAsStateWithLifecycle()
                 val pendingSearch by app.pendingMovieSearch.collectAsStateWithLifecycle()
+                val pendingNL by app.pendingMovieNLFilter.collectAsStateWithLifecycle()
                 MoviesScreen(
                     inputs = rememberMoviesInputs(app),
                     onOpenMovie = { if (regular) panes.movie = it else nav.navigate(Routes.movie("movies", it)) },
@@ -650,7 +685,11 @@ private fun NavGraphBuilder.moviesGraph(
                     requestedFilter = if (pendingWatchlist) MovieListFilter.Watchlist else null,
                     onRequestedFilterConsumed = { app.pendingWatchlist.value = false },
                     requestedQuery = pendingSearch,
-                    onRequestedQueryConsumed = { app.pendingMovieSearch.value = null },
+                    onRequestedQueryConsumed = { app.pendingMovieSearch.value = null; app.pendingMovieNLFilter.value = null },
+                    nlModel = app.nlSearchModel,
+                    requestedNLFilter = pendingNL,
+                    onNLSwitch = onNLSwitch,
+                    onNLDownloadable = app::requestNLModelDownload,
                 )
             }
             if (regular) {
