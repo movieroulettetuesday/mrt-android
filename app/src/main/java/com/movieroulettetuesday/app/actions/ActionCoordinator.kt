@@ -302,11 +302,8 @@ object ActionSpeech {
         return parts.joinToString(". ") + "."
     }
 
-    fun suggestion(movie: Movie, why: String): String {
-        val trimmed = why.trim()
-        val reason = if (trimmed.isEmpty()) "" else " $trimmed"
-        return "How about ${titleAndYear(movie)}.$reason"
-    }
+    /** Pick for Me, spoken: the app’s own vibe line and facts, never model text. */
+    fun suggestion(movie: Movie, reason: com.movieroulettetuesday.app.suggestions.PickReason): String = reason.spoken(movie)
 
     fun join(names: List<String>): String = when (names.size) {
         0 -> ""

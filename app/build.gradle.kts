@@ -181,7 +181,7 @@ dependencies {
 val sharedDir = rootProject.layout.projectDirectory.dir("shared")
 val externalSharedDir: String = providers.environmentVariable("MRT_SHARED_DIR").orNull ?: "/workspace/mrt-shared"
 
-/** mrt-shared root files pinned beside data/ and test-vectors/ (1.1 NL search question cases; also named in the task class). */
+/** mrt-shared root files pinned beside data/, test-vectors/ and wsiw/ (1.1 NL search question cases; also named in the task class). */
 val rootSharedFiles = listOf("nl-search-test-cases.json")
 
 abstract class VerifySharedContract : DefaultTask() {
@@ -208,7 +208,7 @@ abstract class VerifySharedContract : DefaultTask() {
         if (File(external, "test-vectors").isDirectory) {
             val ext = external.walkTopDown().filter { it.isFile && it.extension == "json" }
                 .map { it.relativeTo(external).invariantSeparatorsPath }
-                .filter { it.startsWith("data/") || it.startsWith("test-vectors/") || it == "nl-search-test-cases.json" }.toSet()
+                .filter { it.startsWith("data/") || it.startsWith("test-vectors/") || it.startsWith("wsiw/") || it == "nl-search-test-cases.json" }.toSet()
             if (ext != sums.keys) {
                 throw GradleException("shared/ is stale vs ${external.path}: missing ${ext - sums.keys}, extra ${sums.keys - ext}. Run scripts/sync-shared.sh.")
             }
@@ -228,7 +228,7 @@ val verifySharedContract = tasks.register<VerifySharedContract>("verifySharedCon
     description = "Checks shared/ against shared/SHA256SUMS (and against mrt-shared when present)."
     pinnedDir.set(sharedDir)
     externalDir.set(externalSharedDir)
-    externalFiles.from(fileTree(externalSharedDir) { include(listOf("data/**/*.json", "test-vectors/**/*.json") + rootSharedFiles) })
+    externalFiles.from(fileTree(externalSharedDir) { include(listOf("data/**/*.json", "test-vectors/**/*.json", "wsiw/*.json") + rootSharedFiles) })
     stamp.set(layout.buildDirectory.file("shared-contract/verified.txt"))
 }
 

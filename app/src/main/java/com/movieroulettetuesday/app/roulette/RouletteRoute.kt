@@ -3,6 +3,9 @@ package com.movieroulettetuesday.app.roulette
 import android.provider.Settings
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,6 +23,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.movieroulettetuesday.app.MrtApplication
 import com.movieroulettetuesday.app.actions.ActionSpeech
 import com.movieroulettetuesday.app.actions.MrtShortcuts
+import com.movieroulettetuesday.app.suggestions.PickForMeButton
+import com.movieroulettetuesday.app.suggestions.PickInput
+import com.movieroulettetuesday.app.suggestions.PickReason
 import com.movieroulettetuesday.app.suggestions.SuggestionAvailability
 import com.movieroulettetuesday.app.suggestions.SuggestionOutcome
 import com.movieroulettetuesday.app.suggestions.SuggestionLoadingCard
@@ -27,9 +33,9 @@ import com.movieroulettetuesday.app.suggestions.SuggestionNotReadyCard
 import com.movieroulettetuesday.app.suggestions.SuggestionUnavailableCard
 import com.movieroulettetuesday.app.suggestions.WatchSuggester
 import com.movieroulettetuesday.app.suggestions.WatchSuggestionCard
-import com.movieroulettetuesday.app.suggestions.WhatShouldIWatchButton
 import com.movieroulettetuesday.app.catalog.Movie
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -38,7 +44,7 @@ private sealed class SuggestUi {
     data object None : SuggestUi()
     data object Loading : SuggestUi()
     data object NotReady : SuggestUi()
-    data class Ready(val movie: Movie, val why: String) : SuggestUi()
+    data class Ready(val movie: Movie, val reason: PickReason) : SuggestUi()
     data class OfferSpin(val message: String) : SuggestUi()
 }
 
@@ -85,9 +91,14 @@ fun RouletteRoute(
     }
 
     var availability by remember { mutableStateOf(SuggestionAvailability.Unavailable) }
+    // Opening the Roulette screen creates the model client (status check) and warms it once it is
+    // AVAILABLE, so the first Pick for Me tap does not pay the cold load.
     LaunchedEffect(app.suggestionModel) {
-        availability = runCatching { app.suggestionModel.availability() }.getOrDefault(SuggestionAvailability.Unavailable)
+        val model = app.suggestionModel
+        availability = runCatching { model.availability() }.getOrDefault(SuggestionAvailability.Unavailable)
+        if (availability == SuggestionAvailability.Available) runCatching { model.warmup() }
     }
+    var showHouseRules by remember { mutableStateOf(false) }
 
     var suggestUi by remember { mutableStateOf<SuggestUi>(SuggestUi.None) }
     androidx.compose.runtime.DisposableEffect(vm) {
@@ -107,17 +118,25 @@ fun RouletteRoute(
         WatchSuggester(app.suggestionModel) { app.catalogRepository.catalog }
     }
 
+    var suggestJob by remember { mutableStateOf<Job?>(null) }
+    fun cancelSuggestion() {
+        suggestJob?.cancel()
+        suggestJob = null
+        suggestUi = SuggestUi.None
+    }
+
     fun runSuggestion(fromShortcut: Boolean) {
-        scope.launch {
+        suggestJob?.cancel()
+        suggestJob = scope.launch {
             suggestUi = SuggestUi.Loading
-            val ratings = app.personalRatings.ratings.value
-            val recent = WatchSuggester.recentIds(app.spinHistory.results.asReversed().map { it.movieId })
-            val ctx = suggester.buildContext(ratings, recent, app.myServices.value)
-            val outcome = if (ctx == null) {
-                if (fromShortcut) SuggestionOutcome.OfferSpin else SuggestionOutcome.Hidden
-            } else {
-                suggester.suggest(ctx, fromShortcut)
-            }
+            val input = PickInput(
+                ratings = app.personalRatings.ratings.value,
+                recentIds = WatchSuggester.recentIds(app.spinHistory.results.asReversed().map { it.movieId }),
+                services = app.myServices.value,
+                // One seed per tap: equal-scored movies rotate between taps.
+                seed = System.currentTimeMillis(),
+            )
+            val outcome = suggester.suggest(input, fromShortcut)
             suggestUi = when (outcome) {
                 SuggestionOutcome.Hidden -> {
                     if (fromShortcut) {
@@ -143,9 +162,9 @@ fun RouletteRoute(
                     SuggestUi.OfferSpin(msg)
                 }
                 is SuggestionOutcome.Ready -> {
-                    app.speak(ActionSpeech.suggestion(outcome.movie, outcome.why))
+                    app.speak(ActionSpeech.suggestion(outcome.movie, outcome.reason))
                     MrtShortcuts.rememberMovie(context, outcome.movie)
-                    SuggestUi.Ready(outcome.movie, outcome.why)
+                    SuggestUi.Ready(outcome.movie, outcome.reason)
                 }
             }
         }
@@ -168,10 +187,15 @@ fun RouletteRoute(
         vm, modifier,
         episodesByGUID = episodes.byGuid,
         onOpenMovie = onOpenMovie,
-        topBar = topBar,
+        topBar = {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.weight(1f)) { topBar() }
+                RouletteOverflowMenu(onHouseRules = { showHouseRules = true })
+            }
+        },
         haptics = haptics,
         headerExtra = {
-            WhatShouldIWatchButton(
+            PickForMeButton(
                 visible = showButton,
                 notReady = notReady,
                 onClick = { runSuggestion(fromShortcut = false) },
@@ -179,11 +203,18 @@ fun RouletteRoute(
             val cardMod = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
             when (val ui = suggestUi) {
                 SuggestUi.None -> Unit
-                SuggestUi.Loading -> SuggestionLoadingCard(cardMod)
+                SuggestUi.Loading -> SuggestionLoadingCard(
+                    onCancel = ::cancelSuggestion,
+                    onSpinInstead = {
+                        cancelSuggestion()
+                        vm.requestExternalSpin()
+                    },
+                    modifier = cardMod,
+                )
                 SuggestUi.NotReady -> SuggestionNotReadyCard(onDismiss = { suggestUi = SuggestUi.None }, modifier = cardMod)
                 is SuggestUi.Ready -> WatchSuggestionCard(
                     movie = ui.movie,
-                    why = ui.why,
+                    reason = ui.reason,
                     onOpenMovie = {
                         suggestUi = SuggestUi.None
                         onOpenMovie?.invoke(ui.movie.id)
@@ -211,4 +242,5 @@ fun RouletteRoute(
             }
         },
     )
+    if (showHouseRules) HouseRulesSheet(onDismiss = { showHouseRules = false })
 }
