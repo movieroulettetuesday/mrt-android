@@ -97,7 +97,7 @@ class NLSearchValidatorTest {
     @Test
     fun unratedRules() {
         assertEquals(NLSearchFilter(unrated = true), filter("""{"unrated":true,"ratingMin":4}"""))
-        assertEquals(NLSearchFilter(ratingMin = 4.0), filter("""{"unrated":false,"ratingMin":4}"""))
+        assertEquals(NLSearchFilter(ratingMin = 4.0, unrated = false), filter("""{"unrated":false,"ratingMin":4}"""))
         assertEquals(NLSearchFilter(unrated = false), filter("""{"unrated":false}"""))
     }
 
@@ -110,6 +110,46 @@ class NLSearchValidatorTest {
         for (bad in listOf("Blockbuster", "HBO Go", "Vudu", "x", "+")) {
             assertEquals(bad, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$bad"}""", names))
         }
+    }
+
+    @Test
+    fun unratedFalseIsKeptWithARatingRangeAndChipsDoNotChange() {
+        val f = filter("""{"unrated":false,"ratingMin":4}""")
+        assertEquals(false, f.unrated)
+        assertEquals(4.0, f.ratingMin)
+        assertEquals(NLSearchFilter(ratingMin = 4.0, ratingMax = 4.5, unrated = false), filter("""{"unrated":false,"ratingMin":4.5,"ratingMax":4}"""))
+        assertEquals(listOf("Rated 4★ or more"), f.chips().map { it.label })
+        assertEquals(NLSearchFilter(ratingMin = 4.0).chips(), f.chips())
+        assertEquals(NLSearchFilter.EMPTY, f.removing(NLChip.Field.Rating))
+        // unrated:true still nulls min and max.
+        assertEquals(NLSearchFilter(unrated = true), filter("""{"unrated":true,"ratingMin":4,"ratingMax":5}"""))
+    }
+
+    @Test
+    fun multiWordProviderMatchesOnEveryWord() {
+        // Not a substring of any name, but every word is in "Shudder Amazon Channel" / "Shudder Apple TV channel".
+        assertTrue(names.none { com.movieroulettetuesday.app.search.CatalogSearch.fold(it).contains("shudder channel") })
+        assertEquals("Shudder Channel", filter("""{"provider":"Shudder Channel"}""").provider)
+        assertEquals("Prime Amazon", filter("""{"provider":"Prime Amazon"}""").provider)
+        assertTrue(NLSearchVocab.providerMatches("Shudder Amazon Channel", "Shudder Channel"))
+        assertTrue(NLSearchVocab.providerMatches("HBO Max", "Max"))
+        assertTrue(!NLSearchVocab.providerMatches("Shudder", "Shudder Channel"))
+    }
+
+    @Test
+    fun oneCharacterProviderStringsAndWordsAreRejected() {
+        // Whole string of one folded character.
+        for (q in listOf("x", "a", "+", "N.", " T ")) {
+            assertEquals(q, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$q"}""", names))
+            assertTrue(q, names.none { NLSearchVocab.providerMatches(it, q) })
+        }
+        // A one-character word: "a" is in "Netflix Standard with Ads", but single-letter words never count.
+        assertTrue(names.any { NLSearchVocab.providerMatches(it, "Netflix") })
+        for (q in listOf("Netflix a", "Shudder x", "a Hulu")) {
+            assertEquals(q, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$q"}""", names))
+            assertTrue(q, names.none { NLSearchVocab.providerMatches(it, q) })
+        }
+        assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"provider":""}""", names))
     }
 
     @Test

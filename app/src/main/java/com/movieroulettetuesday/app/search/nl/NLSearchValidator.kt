@@ -28,11 +28,11 @@ sealed interface NLParse {
  * - The reply must contain one JSON object (a Markdown code fence or a stray sentence around it is
  *   tolerated); anything else is [NLParse.Rejected].
  * - Unknown keys are ignored. A field with the wrong type or an unknown value (genre, category, kind,
- *   watched, or a provider that is not in any catalog stream/free list) is nulled, so it can never reach
+ *   watched, or a provider that does not match any catalog stream/free name) is nulled, so it can never reach
  *   apply; the rest of the reply is kept (shared cases `unknown-genre-animation`, `unknown-provider-blockbuster`).
  * - Years: integers only; values that are not 4-digit years are dropped, others clamp to 1880–2100; swapped
  *   ranges are put in order. Ratings: snapped to 0.5 steps, dropped outside 0.5–5, swapped if reversed.
- *   `unrated: true` drops min/max; `unrated: false` with min/max is redundant and dropped.
+ *   `unrated: true` drops min/max; `unrated: false` is kept ("has any rating"), with or without min/max.
  * - `kind: any`, `watched: any`, and `false` for freeOnly / onMyServices mean "no filter" and become null.
  */
 object NLSearchValidator {
@@ -95,11 +95,7 @@ object NLSearchValidator {
         var ratingMax = rating(obj["ratingMax"])
         if (ratingMin != null && ratingMax != null && ratingMin > ratingMax) ratingMin = ratingMax.also { ratingMax = ratingMin }
         if (unrated == true) { ratingMin = null; ratingMax = null }
-        val unratedOut = when {
-            unrated == true -> true
-            unrated == false && ratingMin == null && ratingMax == null -> false
-            else -> null
-        }
+        val unratedOut = unrated
         val watched = when (string(obj["watched"])?.trim()?.lowercase()) {
             "watched" -> NLSearchFilter.Watched.Watched
             "unwatched" -> NLSearchFilter.Watched.Unwatched
@@ -116,12 +112,9 @@ object NLSearchValidator {
         )
     }
 
-    /** A provider is valid when its fold is contained in the fold of some catalog stream/free name ("Max" → "HBO Max"). */
-    fun isKnownProvider(raw: String, providerNames: List<String>): Boolean {
-        val f = CatalogSearch.fold(raw)
-        if (f.length < 2) return false
-        return providerNames.any { CatalogSearch.fold(it).contains(f) }
-    }
+    /** Kept only if [NLSearchVocab.providerMatches] matches at least one catalog stream/free name ("Max" → "HBO Max"). */
+    fun isKnownProvider(raw: String, providerNames: List<String>): Boolean =
+        providerNames.any { NLSearchVocab.providerMatches(it, raw) }
 
     private fun string(e: JsonElement?): String? = (e as? JsonPrimitive)?.takeIf { it !is JsonNull && it.isString }?.content
 
