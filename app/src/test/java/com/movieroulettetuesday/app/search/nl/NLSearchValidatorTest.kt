@@ -79,17 +79,30 @@ class NLSearchValidatorTest {
     }
 
     @Test
-    fun yearsClampSwapAndDropNonYears() {
-        assertEquals(NLSearchFilter(yearMin = 1880, yearMax = 2100), filter("""{"yearMin":1850,"yearMax":2500}"""))
+    fun yearsOutsideTheWindowAreDroppedNotClamped() {
+        assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"yearMin":1850,"yearMax":2500}""", names))
+        assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"yearMin":1700,"yearMax":3000}""", names))
+        assertEquals(NLSearchFilter(yearMax = 1985), filter("""{"yearMin":1700,"yearMax":1985}"""))
+        assertEquals(NLSearchFilter(yearMin = 1980), filter("""{"yearMin":1980,"yearMax":99}"""))
+        assertEquals(NLSearchFilter(yearMin = 1880, yearMax = 2100), filter("""{"yearMin":1880,"yearMax":2100}"""))
         assertEquals(NLSearchFilter(yearMin = 1980, yearMax = 1989), filter("""{"yearMin":1989,"yearMax":1980}"""))
+        assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"yearMin":1879,"yearMax":2101,"genre":"Horror"}"""))
         assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"yearMin":80,"yearMax":89,"genre":"Horror"}"""))
         assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"yearMin":1980.5,"genre":"Horror"}"""))
     }
 
     @Test
-    fun ratingsSnapToHalfStarsAndDropOutOfRange() {
+    fun ratingsAreRangeCheckedRawThenRoundedHalfAwayFromZero() {
         assertEquals(NLSearchFilter(ratingMin = 3.5), filter("""{"ratingMin":3.3}"""))
+        assertEquals(NLSearchFilter(ratingMin = 3.5), filter("""{"ratingMin":3.25}"""))
+        assertEquals(NLSearchFilter(ratingMin = 5.0), filter("""{"ratingMin":4.75}"""))
+        assertEquals(NLSearchFilter(ratingMin = 4.0), filter("""{"ratingMin":4.2}"""))
+        assertEquals(NLSearchFilter(ratingMin = 0.5, ratingMax = 5.0), filter("""{"ratingMin":0.5,"ratingMax":5}"""))
         assertEquals(NLSearchFilter(ratingMin = 3.0, ratingMax = 4.5), filter("""{"ratingMin":4.5,"ratingMax":3}"""))
+        // Raw value outside 0.5–5 is dropped even when it would round into range (5.2 → 5, 0.4 → 0.5).
+        assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"genre":"Horror","ratingMax":5.2}"""))
+        assertEquals(NLSearchFilter(genre = "Horror"), filter("""{"genre":"Horror","ratingMin":0.4}"""))
+        assertEquals(NLSearchFilter(ratingMin = 3.0), filter("""{"ratingMin":3,"ratingMax":6}"""))
         assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"ratingMin":8,"ratingMax":0,"season":0,"episode":-1}""", names))
         assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"ratingMin":0.1}""", names))
     }
@@ -97,7 +110,7 @@ class NLSearchValidatorTest {
     @Test
     fun unratedRules() {
         assertEquals(NLSearchFilter(unrated = true), filter("""{"unrated":true,"ratingMin":4}"""))
-        assertEquals(NLSearchFilter(ratingMin = 4.0), filter("""{"unrated":false,"ratingMin":4}"""))
+        assertEquals(NLSearchFilter(ratingMin = 4.0, unrated = false), filter("""{"unrated":false,"ratingMin":4}"""))
         assertEquals(NLSearchFilter(unrated = false), filter("""{"unrated":false}"""))
     }
 
@@ -110,6 +123,65 @@ class NLSearchValidatorTest {
         for (bad in listOf("Blockbuster", "HBO Go", "Vudu", "x", "+")) {
             assertEquals(bad, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$bad"}""", names))
         }
+    }
+
+    @Test
+    fun unratedFalseIsKeptWithARatingRangeAndChipsDoNotChange() {
+        val f = filter("""{"unrated":false,"ratingMin":4}""")
+        assertEquals(false, f.unrated)
+        assertEquals(4.0, f.ratingMin)
+        assertEquals(NLSearchFilter(ratingMin = 4.0, ratingMax = 4.5, unrated = false), filter("""{"unrated":false,"ratingMin":4.5,"ratingMax":4}"""))
+        assertEquals(listOf("Rated 4★ or more"), f.chips().map { it.label })
+        assertEquals(NLSearchFilter(ratingMin = 4.0).chips(), f.chips())
+        assertEquals(NLSearchFilter.EMPTY, f.removing(NLChip.Field.Rating))
+        // unrated:true still nulls min and max.
+        assertEquals(NLSearchFilter(unrated = true), filter("""{"unrated":true,"ratingMin":4,"ratingMax":5}"""))
+    }
+
+    @Test
+    fun multiWordProviderMatchesOnEveryWord() {
+        // Not a substring of any name, but every word is in "Shudder Amazon Channel" / "Shudder Apple TV channel".
+        assertTrue(names.none { com.movieroulettetuesday.app.search.CatalogSearch.fold(it).contains("shudder channel") })
+        assertEquals("Shudder Channel", filter("""{"provider":"Shudder Channel"}""").provider)
+        assertEquals("Prime Amazon", filter("""{"provider":"Prime Amazon"}""").provider)
+        assertTrue(NLSearchVocab.providerMatches("Shudder Amazon Channel", "Shudder Channel"))
+        assertTrue(NLSearchVocab.providerMatches("HBO Max", "Max"))
+        assertTrue(!NLSearchVocab.providerMatches("Shudder", "Shudder Channel"))
+    }
+
+    @Test
+    fun oneCharacterQueryIsRejected() {
+        for (q in listOf("x", "a", "+", "N.", " T ")) {
+            assertEquals(q, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$q"}""", names))
+            assertTrue(q, names.none { NLSearchVocab.providerMatches(it, q) })
+            assertTrue(q, !NLSearchVocab.providerMatches("x a n t", q))
+        }
+        assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"provider":""}""", names))
+    }
+
+    @Test
+    fun wholeStringMatchCountsEvenWithAOneCharacterWord() {
+        // "Channel 4" has a 1-character word, but the whole folded string is in the name.
+        assertTrue(NLSearchVocab.providerMatches("Channel 4 Plus", "Channel 4"))
+        assertTrue(NLSearchVocab.providerMatches("UK Channel 4", "channel-4"))
+        assertEquals("Channel 4", (NLSearchValidator.parse("""{"provider":"Channel 4"}""", names + "Channel 4 Plus") as NLParse.Filter).filter.provider)
+        // No whole-string hit and a 1-character word: no word fallback.
+        assertTrue(!NLSearchVocab.providerMatches("Channel 5 4", "Channel 4"))
+    }
+
+    @Test
+    fun oneCharacterWordFailsTheWordFallback() {
+        // "netflix" and "a" are both in "Netflix Standard with Ads", but "a" is too short for the word fallback.
+        assertTrue(!NLSearchVocab.providerMatches("Netflix Standard with Ads", "Netflix a"))
+        assertTrue(names.none { com.movieroulettetuesday.app.search.CatalogSearch.fold(it).contains("netflix a") })
+        for (q in listOf("Netflix a", "Shudder x", "a Hulu")) {
+            assertEquals(q, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$q"}""", names))
+        }
+        // It still matches as a whole string when a name contains "netflix a".
+        assertTrue(NLSearchVocab.providerMatches("Netflix Asia", "Netflix a"))
+        assertEquals("Netflix a", (NLSearchValidator.parse("""{"provider":"Netflix a"}""", names + "Netflix Asia") as NLParse.Filter).filter.provider)
+        // Words of 2+ characters still use the fallback.
+        assertTrue(NLSearchVocab.providerMatches("Netflix Standard with Ads", "Netflix Ads"))
     }
 
     @Test

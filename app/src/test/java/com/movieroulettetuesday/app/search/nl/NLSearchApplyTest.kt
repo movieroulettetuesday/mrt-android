@@ -76,6 +76,36 @@ class NLSearchApplyTest {
     }
 
     @Test
+    fun multiWordProviderMatchedOnEveryWordReturnsResults() {
+        val got = ids(NLSearchFilter(provider = "Shudder Channel"))
+        val channelVariants = movies.filter { m ->
+            m.streaming?.let { it.stream + it.free }.orEmpty().any { it.name == "Shudder Amazon Channel" || it.name == "Shudder Apple TV channel" }
+        }.map { it.id }
+        assertEquals(channelVariants, got)
+        assertTrue(got.size >= 4)
+        assertTrue("the-texas-chainsaw-massacre-1974" in got)
+    }
+
+    @Test
+    fun anyProviderTheValidatorKeepsMatchesInApply() {
+        val queries = NLFixtures.providerNames + listOf(
+            "Shudder", "Shudder Channel", "Prime Amazon", "Max", "Disney+", "Tubi", "Pluto", "Netflix Ads", "Roku", "Criterion",
+            "Blockbuster", "Vudu", "HBO Go", "x", "Netflix a",
+        )
+        for (q in queries) {
+            val kept = (NLSearchValidator.parse("""{"provider":${kotlinx.serialization.json.JsonPrimitive(q)}}""", NLFixtures.providerNames) as? NLParse.Filter)
+                ?.filter?.provider ?: continue
+            assertTrue("validator kept $q but apply is empty", ids(NLSearchFilter(provider = kept)).isNotEmpty())
+        }
+    }
+
+    @Test
+    fun unratedFalseWithMinKeepsOnlyRatedMoviesInRange() {
+        val r = ratings("the-thing-1982" to PersonalMovieEntry(halfStars = 8), "possession-1981" to PersonalMovieEntry(halfStars = 5))
+        assertEquals(listOf("the-thing-1982"), ids(NLSearchFilter(ratingMin = 4.0, unrated = false), r))
+    }
+
+    @Test
     fun ratingsUseHalfStars() {
         val r = ratings(
             "the-thing-1982" to PersonalMovieEntry(halfStars = 8),

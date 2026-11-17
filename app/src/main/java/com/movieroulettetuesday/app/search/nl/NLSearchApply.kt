@@ -89,16 +89,14 @@ object NLSearchApply {
         return true
     }
 
-    /** freeOnly: non-empty free list; with a provider, the name must be in the free list. */
+    /** freeOnly: non-empty free list; with a provider, the name must be in the free list. Same matcher as the validator. */
     internal fun providerMatches(f: NLSearchFilter, m: Movie): Boolean {
         val s = m.streaming
         val free = s?.free.orEmpty()
         if (f.freeOnly == true && free.isEmpty()) return false
         val provider = f.provider ?: return true
-        val needle = CatalogSearch.fold(provider)
-        if (needle.isEmpty()) return true
         val names = if (f.freeOnly == true) free else s?.stream.orEmpty() + free
-        return names.any { CatalogSearch.fold(it.name).contains(needle) }
+        return names.any { NLSearchVocab.providerMatches(it.name, provider) }
     }
 
     /** Half-star comparison (never whole stars). unrated true → no rating; false with no range → any rating. */

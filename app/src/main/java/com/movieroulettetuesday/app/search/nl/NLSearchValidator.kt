@@ -28,11 +28,13 @@ sealed interface NLParse {
  * - The reply must contain one JSON object (a Markdown code fence or a stray sentence around it is
  *   tolerated); anything else is [NLParse.Rejected].
  * - Unknown keys are ignored. A field with the wrong type or an unknown value (genre, category, kind,
- *   watched, or a provider that is not in any catalog stream/free list) is nulled, so it can never reach
+ *   watched, or a provider that does not match any catalog stream/free name) is nulled, so it can never reach
  *   apply; the rest of the reply is kept (shared cases `unknown-genre-animation`, `unknown-provider-blockbuster`).
- * - Years: integers only; values that are not 4-digit years are dropped, others clamp to 1880–2100; swapped
- *   ranges are put in order. Ratings: snapped to 0.5 steps, dropped outside 0.5–5, swapped if reversed.
- *   `unrated: true` drops min/max; `unrated: false` with min/max is redundant and dropped.
+ * - Out-of-range values are dropped, never clamped (Matthew, 17 Nov 2026). Years: each kept only if it is an
+ *   integer in 1880–2100, then swapped if reversed. Ratings: each dropped if not finite or if the raw value is
+ *   outside 0.5–5 (checked before rounding, so 5.2 is dropped); in range, rounded to the nearest half star with
+ *   ties away from zero (3.25 → 3.5), then swapped if reversed.
+ *   `unrated: true` drops min/max; `unrated: false` is kept ("has any rating"), with or without min/max.
  * - `kind: any`, `watched: any`, and `false` for freeOnly / onMyServices mean "no filter" and become null.
  */
 object NLSearchValidator {
@@ -95,11 +97,7 @@ object NLSearchValidator {
         var ratingMax = rating(obj["ratingMax"])
         if (ratingMin != null && ratingMax != null && ratingMin > ratingMax) ratingMin = ratingMax.also { ratingMax = ratingMin }
         if (unrated == true) { ratingMin = null; ratingMax = null }
-        val unratedOut = when {
-            unrated == true -> true
-            unrated == false && ratingMin == null && ratingMax == null -> false
-            else -> null
-        }
+        val unratedOut = unrated
         val watched = when (string(obj["watched"])?.trim()?.lowercase()) {
             "watched" -> NLSearchFilter.Watched.Watched
             "unwatched" -> NLSearchFilter.Watched.Unwatched
@@ -116,12 +114,9 @@ object NLSearchValidator {
         )
     }
 
-    /** A provider is valid when its fold is contained in the fold of some catalog stream/free name ("Max" → "HBO Max"). */
-    fun isKnownProvider(raw: String, providerNames: List<String>): Boolean {
-        val f = CatalogSearch.fold(raw)
-        if (f.length < 2) return false
-        return providerNames.any { CatalogSearch.fold(it).contains(f) }
-    }
+    /** Kept only if [NLSearchVocab.providerMatches] matches at least one catalog stream/free name ("Max" → "HBO Max"). */
+    fun isKnownProvider(raw: String, providerNames: List<String>): Boolean =
+        providerNames.any { NLSearchVocab.providerMatches(it, raw) }
 
     private fun string(e: JsonElement?): String? = (e as? JsonPrimitive)?.takeIf { it !is JsonNull && it.isString }?.content
 
@@ -132,7 +127,8 @@ object NLSearchValidator {
 
     private fun int(e: JsonElement?): Int? = number(e)?.takeIf { it == floor(it) && it in -1e9..1e9 }?.toInt()
 
-    private fun year(e: JsonElement?): Int? = int(e)?.takeIf { it in 1000..9999 }?.coerceIn(YEAR_MIN, YEAR_MAX)
+    private fun year(e: JsonElement?): Int? = int(e)?.takeIf { it in YEAR_MIN..YEAR_MAX }
 
-    private fun rating(e: JsonElement?): Double? = number(e)?.let(HalfStars::roundedToHalf)?.takeIf { it in 0.5..5.0 }
+    /** Range check on the raw value, then half-star rounding (ties away from zero). */
+    private fun rating(e: JsonElement?): Double? = number(e)?.takeIf { it in 0.5..5.0 }?.let(HalfStars::roundedToHalf)
 }
