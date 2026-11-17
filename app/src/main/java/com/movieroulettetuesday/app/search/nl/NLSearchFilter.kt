@@ -153,16 +153,19 @@ object NLSearchVocab {
     /**
      * The one provider matcher, shared by [NLSearchValidator] and [NLSearchApply] (and aligned with iOS
      * `NLSearch.providerNameMatches`), so a provider the validator keeps always matches in apply. The folded
-     * [name] must contain the whole folded [query], or every query word. The folded query must be at least
-     * [MIN_PROVIDER_CHARS] long and so must each of its words; otherwise nothing matches ("x", "Netflix a").
+     * [name] must contain the whole folded [query], or every query word.
+     * - A query that folds to fewer than [MIN_PROVIDER_CHARS] characters never matches ("x").
+     * - The whole-string match counts for any longer query ("Channel 4" matches a name containing "channel 4").
+     * - The every-word fallback applies only when every folded word has at least [MIN_PROVIDER_CHARS]
+     *   characters; otherwise there is no word match ("Netflix a" only matches as a whole string).
      */
     fun providerMatches(name: String, query: String): Boolean {
         val q = CatalogSearch.fold(query)
         if (q.length < MIN_PROVIDER_CHARS) return false
-        val words = q.split(' ').filter { it.isNotEmpty() }
-        if (words.any { it.length < MIN_PROVIDER_CHARS }) return false
         val folded = CatalogSearch.fold(name)
-        return folded.contains(q) || words.all { folded.contains(it) }
+        if (folded.contains(q)) return true
+        val words = q.split(' ').filter { it.isNotEmpty() }
+        return words.all { it.length >= MIN_PROVIDER_CHARS } && words.all { folded.contains(it) }
     }
 
     /** Distinct stream + free provider names in the catalog (rent and buy are never searched). */

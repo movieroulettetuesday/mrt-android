@@ -137,19 +137,38 @@ class NLSearchValidatorTest {
     }
 
     @Test
-    fun oneCharacterProviderStringsAndWordsAreRejected() {
-        // Whole string of one folded character.
+    fun oneCharacterQueryIsRejected() {
         for (q in listOf("x", "a", "+", "N.", " T ")) {
             assertEquals(q, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$q"}""", names))
             assertTrue(q, names.none { NLSearchVocab.providerMatches(it, q) })
-        }
-        // A one-character word: "a" is in "Netflix Standard with Ads", but single-letter words never count.
-        assertTrue(names.any { NLSearchVocab.providerMatches(it, "Netflix") })
-        for (q in listOf("Netflix a", "Shudder x", "a Hulu")) {
-            assertEquals(q, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$q"}""", names))
-            assertTrue(q, names.none { NLSearchVocab.providerMatches(it, q) })
+            assertTrue(q, !NLSearchVocab.providerMatches("x a n t", q))
         }
         assertEquals(NLParse.Empty, NLSearchValidator.parse("""{"provider":""}""", names))
+    }
+
+    @Test
+    fun wholeStringMatchCountsEvenWithAOneCharacterWord() {
+        // "Channel 4" has a 1-character word, but the whole folded string is in the name.
+        assertTrue(NLSearchVocab.providerMatches("Channel 4 Plus", "Channel 4"))
+        assertTrue(NLSearchVocab.providerMatches("UK Channel 4", "channel-4"))
+        assertEquals("Channel 4", (NLSearchValidator.parse("""{"provider":"Channel 4"}""", names + "Channel 4 Plus") as NLParse.Filter).filter.provider)
+        // No whole-string hit and a 1-character word: no word fallback.
+        assertTrue(!NLSearchVocab.providerMatches("Channel 5 4", "Channel 4"))
+    }
+
+    @Test
+    fun oneCharacterWordFailsTheWordFallback() {
+        // "netflix" and "a" are both in "Netflix Standard with Ads", but "a" is too short for the word fallback.
+        assertTrue(!NLSearchVocab.providerMatches("Netflix Standard with Ads", "Netflix a"))
+        assertTrue(names.none { com.movieroulettetuesday.app.search.CatalogSearch.fold(it).contains("netflix a") })
+        for (q in listOf("Netflix a", "Shudder x", "a Hulu")) {
+            assertEquals(q, NLParse.Empty, NLSearchValidator.parse("""{"provider":"$q"}""", names))
+        }
+        // It still matches as a whole string when a name contains "netflix a".
+        assertTrue(NLSearchVocab.providerMatches("Netflix Asia", "Netflix a"))
+        assertEquals("Netflix a", (NLSearchValidator.parse("""{"provider":"Netflix a"}""", names + "Netflix Asia") as NLParse.Filter).filter.provider)
+        // Words of 2+ characters still use the fallback.
+        assertTrue(NLSearchVocab.providerMatches("Netflix Standard with Ads", "Netflix Ads"))
     }
 
     @Test
