@@ -13,7 +13,7 @@ import java.util.Locale
  * `mrt://find` / `mrt://search` links. A line-for-line port of iOS 1.1
  * `RouletteCore/CatalogSearch.swift` (movie-roulette-tuesday PR #32). Local data only.
  *
- * - [fold]: lowercase, strip diacritics, delete apostrophes (' ’ ‘ ʼ ` ´), turn every other run of
+ * - [fold]: lowercase (ß → ss), strip diacritics, delete apostrophes (' ’ ‘ ʼ ` ´), turn every other run of
  *   non-letters/non-digits into one space, trim.
  * - Query tokens: `s4e39`, `s4 e39`, `4x39`, `season 4 episode 39` set a season and/or episode;
  *   `e39`, `ep39`, `ep 39`, `episode 39` set an episode number; the first 4-digit number in
@@ -127,9 +127,16 @@ object CatalogSearch {
     private val apostrophes = setOf('\''.code, 0x2019, 0x2018, 0x02BC, '`'.code, 0x00B4)
     private val combiningMarks = Regex("\\p{M}+")
 
-    /** Lowercased, diacritics stripped, apostrophes deleted, other punctuation and whitespace collapsed to single spaces. */
+    /**
+     * Lowercased, diacritics stripped, apostrophes deleted, other punctuation and whitespace collapsed to single spaces.
+     *
+     * Matches iOS `CatalogSearch.fold` (Foundation case + diacritic folding, en_US_POSIX) per the shared
+     * NL search schema: `İstanbul` → `istanbul`, `Ærø` → `ærø` (æ and ø are letters, not diacritics), and
+     * German ß / ẞ → `ss` (Foundation case-folds ß to ss; `lowercase(Locale.ROOT)` alone does not).
+     */
     fun fold(text: String): String {
         val folded = combiningMarks.replace(Normalizer.normalize(text, Normalizer.Form.NFD), "").lowercase(Locale.ROOT)
+            .replace("\u00DF", "ss").replace("\u1E9E", "ss")
         val out = StringBuilder()
         var pendingSpace = false
         var i = 0

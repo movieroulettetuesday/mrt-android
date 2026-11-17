@@ -126,6 +126,11 @@ data class MovieQuery(
     val listFilter: MovieListFilter = MovieListFilter.All,
     val sort: MovieSort = MovieSort.Title,
     val onMyServices: Boolean = false,
+    /**
+     * 1.1 natural-language chips parsed from [text] on a supported device. When set (and not empty) it
+     * replaces the keyword CatalogSearch step and is ANDed with the toolbar filters above.
+     */
+    val nl: com.movieroulettetuesday.app.search.nl.NLSearchFilter? = null,
 ) {
     /** iOS `isSearching`: the field has something other than whitespace. */
     val isSearching: Boolean get() = text.isNotBlank()
@@ -145,7 +150,12 @@ data class MovieQuery(
         if (onMyServices) list = StreamingCatalog.filter(list, services)
         // Shared 1.1 matcher (same as the Episodes list and mrt://find).
         var ranks: Map<String, CatalogSearch.Rank> = emptyMap()
-        if (isSearching) {
+        val nlFilter = nl?.takeIf { !it.isEmpty }
+        if (nlFilter != null) {
+            val result = com.movieroulettetuesday.app.search.nl.NLSearchApply.movies(nlFilter, list, ratings, services, catalog, episodesByGUID)
+            list = result.movies
+            ranks = result.ranks.orEmpty()
+        } else if (isSearching) {
             val hits = CatalogSearch.movies(list, text, catalog, episodesByGUID)
             ranks = hits.reversed().associate { it.movie.id to it.rank }
             list = hits.map { it.movie }

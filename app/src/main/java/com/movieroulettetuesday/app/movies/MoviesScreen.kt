@@ -71,6 +71,12 @@ import com.movieroulettetuesday.app.episodes.PodcastEpisode
 import com.movieroulettetuesday.app.roulette.SpinStats
 import com.movieroulettetuesday.app.ui.ArtworkImage
 import com.movieroulettetuesday.app.ui.theme.BrandColors
+import com.movieroulettetuesday.app.search.nl.NLChipsRow
+import com.movieroulettetuesday.app.search.nl.NLSearchFilter
+import com.movieroulettetuesday.app.search.nl.NLSearchModel
+import com.movieroulettetuesday.app.search.nl.NLSearchVocab
+import com.movieroulettetuesday.app.search.nl.UnavailableNLSearchModel
+import com.movieroulettetuesday.app.search.nl.rememberNLSearch
 import kotlinx.coroutines.launch
 
 data class MoviesInputs(
@@ -98,6 +104,13 @@ fun MoviesScreen(
     /** A `mrt://search` link asked to fill the search field. Ignored when null. */
     requestedQuery: String? = null,
     onRequestedQueryConsumed: () -> Unit = {},
+    /** On-device NL search model (Gemini Nano). Unavailable hides every AI affordance. */
+    nlModel: NLSearchModel = UnavailableNLSearchModel,
+    /** Chips handed over with [requestedQuery] by a list switch from Episodes. */
+    requestedNLFilter: NLSearchFilter? = null,
+    /** A parsed question named the Episodes list: move the query and chips there. */
+    onNLSwitch: (NLSearchFilter.Kind, String, NLSearchFilter) -> Unit = { _, _, _ -> },
+    onNLDownloadable: () -> Unit = {},
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var categoryId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -109,15 +122,28 @@ fun MoviesScreen(
         listFilter = f
         onRequestedFilterConsumed()
     }
+    val catalog = inputs.catalog
+    val providerNames = remember(catalog) { NLSearchVocab.providerNames(catalog) }
+    val nl = rememberNLSearch(nlModel, providerNames, NLSearchFilter.Kind.Movie, onNLDownloadable)
     LaunchedEffect(requestedQuery) {
         val text = requestedQuery ?: return@LaunchedEffect
+        nl.seed(text, requestedNLFilter)
         query = text
         onRequestedQueryConsumed()
     }
+    LaunchedEffect(nl) { nl.refreshStatus() }
+    LaunchedEffect(query, nl) {
+        nl.run(query) { kind, text, filter ->
+            // Shared switch rule: hand the query and chips to Episodes, then clear ours so Back doesn't bounce.
+            query = ""
+            nl.clear()
+            onNLSwitch(kind, text, filter)
+        }
+    }
     var refreshing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val catalog = inputs.catalog
-    val q = MovieQuery(query, categoryId, listFilter, sort, onMyServices)
+    val nlFilter = nl.filterFor(query)
+    val q = MovieQuery(query, categoryId, listFilter, sort, onMyServices, nlFilter)
 
     Column(modifier.fillMaxSize()) {
         TopAppBar(
@@ -161,6 +187,7 @@ fun MoviesScreen(
                         modifier = Modifier.fillMaxWidth().padding(16.dp, 4.dp).testTag("movies-search"),
                     )
                 }
+                if (nlFilter != null) item(key = "nl-chips") { NLChipsRow(nlFilter, nl::remove) }
                 if (catalog.movies.any { it.streaming != null }) {
                     item {
                         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {

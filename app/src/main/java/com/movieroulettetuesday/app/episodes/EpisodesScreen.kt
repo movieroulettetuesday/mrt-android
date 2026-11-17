@@ -57,7 +57,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.movieroulettetuesday.app.catalog.MovieCatalog
 import com.movieroulettetuesday.app.data.KeyValueStore
+import com.movieroulettetuesday.app.movies.MyServices
+import com.movieroulettetuesday.app.movies.PersonalRatings
 import com.movieroulettetuesday.app.search.CatalogSearch
+import com.movieroulettetuesday.app.search.nl.NLChipsRow
+import com.movieroulettetuesday.app.search.nl.NLSearchApply
+import com.movieroulettetuesday.app.search.nl.NLSearchFilter
+import com.movieroulettetuesday.app.search.nl.NLSearchModel
+import com.movieroulettetuesday.app.search.nl.NLSearchVocab
+import com.movieroulettetuesday.app.search.nl.UnavailableNLSearchModel
+import com.movieroulettetuesday.app.search.nl.rememberNLSearch
 import com.movieroulettetuesday.app.ui.ArtworkImage
 import java.time.Instant
 import java.time.ZoneId
@@ -84,6 +93,16 @@ fun EpisodesScreen(
     /** A `mrt://search` link asked to fill the search field. Ignored when null. */
     requestedQuery: String? = null,
     onRequestedQueryConsumed: () -> Unit = {},
+    /** Ratings and services for NL chips that filter on the linked movie (watched, rating, On my services). */
+    ratings: PersonalRatings = PersonalRatings(),
+    services: MyServices = MyServices(),
+    /** On-device NL search model (Gemini Nano). Unavailable hides every AI affordance. */
+    nlModel: NLSearchModel = UnavailableNLSearchModel,
+    /** Chips handed over with [requestedQuery] by a list switch from Movies. */
+    requestedNLFilter: NLSearchFilter? = null,
+    /** A parsed question named the Movies list: move the query and chips there. */
+    onNLSwitch: (NLSearchFilter.Kind, String, NLSearchFilter) -> Unit = { _, _, _ -> },
+    onNLDownloadable: () -> Unit = {},
 ) {
     val state by repository.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -93,11 +112,24 @@ fun EpisodesScreen(
     // Saveable so the query survives rotation and the compact/regular switch (iOS keeps it too).
     var query by rememberSaveable { mutableStateOf("") }
     val isSearching = query.isNotBlank()
+    val providerNames = remember(catalog) { NLSearchVocab.providerNames(catalog) }
+    val nl = rememberNLSearch(nlModel, providerNames, NLSearchFilter.Kind.Episode, onNLDownloadable)
     LaunchedEffect(requestedQuery) {
         val text = requestedQuery ?: return@LaunchedEffect
+        nl.seed(text, requestedNLFilter)
         query = text
         onRequestedQueryConsumed()
     }
+    LaunchedEffect(nl) { nl.refreshStatus() }
+    LaunchedEffect(query, nl) {
+        nl.run(query) { kind, text, filter ->
+            // Shared switch rule: hand the query and chips to Movies, then clear ours so Back doesn't bounce.
+            query = ""
+            nl.clear()
+            onNLSwitch(kind, text, filter)
+        }
+    }
+    val nlFilter = nl.filterFor(query)
 
     LaunchedEffect(Unit) { repository.load() }
     LaunchedEffect(state.episodes) { repository.markViewed() }
@@ -139,11 +171,18 @@ fun EpisodesScreen(
                     item(key = "episodes-search-field") {
                         EpisodesSearchField(query) { query = it }
                     }
+                    if (nlFilter != null) item(key = "nl-chips") { NLChipsRow(nlFilter, nl::remove) }
                     if (isSearching) {
                         // Shared 1.1 matcher: title, S#E# / episode number, year, and the linked movie
                         // (title, genre, category, provider). Results replace the grouped sections so a
-                        // hit is never hidden inside a collapsed season.
-                        val hits = CatalogSearch.episodes(state.episodes, query, catalog)
+                        // hit is never hidden inside a collapsed season. NL chips, when parsed, replace
+                        // the keyword step with the deterministic apply.
+                        val hits = if (nlFilter != null) {
+                            NLSearchApply.episodes(nlFilter, state.episodes, ratings, services, catalog)
+                                .map { CatalogSearch.EpisodeHit(it, CatalogSearch.Rank.TitleWords) }
+                        } else {
+                            CatalogSearch.episodes(state.episodes, query, catalog)
+                        }
                         if (hits.isEmpty()) {
                             item(key = "episodes-search-empty") { SearchEmptyState(query) }
                         } else {

@@ -9,6 +9,9 @@ src="${1:-${MRT_SHARED_DIR:-/workspace/mrt-shared}}"
 rm -rf shared/data shared/test-vectors
 mkdir -p shared
 cp -r "$src/data" "$src/test-vectors" shared/
-(cd shared && find data test-vectors -type f -name '*.json' | LC_ALL=C sort | xargs sha256sum > SHA256SUMS)
+# 1.1 NL search: the shared question cases (mrt-shared root) live beside the vectors.
+rm -f shared/nl-search-test-cases.json
+[ -f "$src/nl-search-test-cases.json" ] && cp "$src/nl-search-test-cases.json" shared/
+(cd shared && { find data test-vectors -type f -name '*.json'; ls nl-search-test-cases.json 2>/dev/null; } | LC_ALL=C sort | xargs sha256sum > SHA256SUMS)
 commit=$(python3 -c "import json;print(json.load(open('shared/test-vectors/catalog.json'))['_generated'].get('iosCommit',''))")
 echo "synced from $src (vectors generated from iOS $commit)"

@@ -56,6 +56,7 @@ class MrtApplication : Application() {
         ArtworkLoader.enabled = !isUnderTest
         ArtworkLoader.diskDir = File(cacheDir, "artwork")
         if (!isUnderTest) suggestionModel = MlKitSuggestionModel()
+        if (!isUnderTest) nlSearchModel = com.movieroulettetuesday.app.search.nl.MlKitNLSearchModel()
         if (!isUnderTest && preferences.newEpisodeAlerts.value) NewEpisodeSchedule.schedule(this) // KEEP: no reset
         val config = if (isUnderTest) CommunityConfig.disabled
         else CommunityConfig.fromBuild(BuildConfig.MRT_CLOUDKIT_API_TOKEN, BuildConfig.MRT_RELAY_URL)
@@ -191,6 +192,21 @@ class MrtApplication : Application() {
     /** `mrt://search` text for the Movies / Episodes field; consumed by the list screen. */
     val pendingMovieSearch = MutableStateFlow<String?>(null)
     val pendingEpisodeSearch = MutableStateFlow<String?>(null)
+    /** NL chips that travel with [pendingMovieSearch] / [pendingEpisodeSearch] on a list switch (null for deep links). */
+    val pendingMovieNLFilter = MutableStateFlow<com.movieroulettetuesday.app.search.nl.NLSearchFilter?>(null)
+    val pendingEpisodeNLFilter = MutableStateFlow<com.movieroulettetuesday.app.search.nl.NLSearchFilter?>(null)
+
+    /** On-device NL search model (Gemini Nano via ML Kit Prompt API). Tests replace this with a fake. */
+    var nlSearchModel: com.movieroulettetuesday.app.search.nl.NLSearchModel = com.movieroulettetuesday.app.search.nl.UnavailableNLSearchModel
+    private var nlDownloadRequested = false
+
+    /** checkStatus() said DOWNLOADABLE: ask AICore for the model once per process (never a cloud fallback). */
+    fun requestNLModelDownload() {
+        if (nlDownloadRequested) return
+        nlDownloadRequested = true
+        val model = nlSearchModel
+        appScope.launch { model.download() }
+    }
     /** Open this movie’s Where to Watch section after [pendingMovie] navigation. */
     val pendingWhereToWatch = MutableStateFlow<String?>(null)
 

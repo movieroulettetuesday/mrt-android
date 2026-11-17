@@ -154,8 +154,9 @@ dependencies {
     // through CatalogIndexer; failures are swallowed. No Play-services storage dependency.
     implementation(libs.androidx.appsearch)
     implementation(libs.androidx.appsearch.platform.storage)
-    // ML Kit GenAI Prompt (Gemini Nano / AICore). On-device only, called through
-    // MlKitSuggestionModel’s reflective client so a missing AICore never crashes the app.
+    // ML Kit GenAI Prompt (Gemini Nano / AICore). On-device only, never a cloud fallback. Called through
+    // MlKitSuggestionModel’s reflective client and MlKitNLSearchModel (1.1 NL search), both guarded so a
+    // missing AICore never crashes the app.
     implementation(libs.mlkit.genai.prompt)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
@@ -179,6 +180,9 @@ dependencies {
 // ---------------------------------------------------------------------------------------------
 val sharedDir = rootProject.layout.projectDirectory.dir("shared")
 val externalSharedDir: String = providers.environmentVariable("MRT_SHARED_DIR").orNull ?: "/workspace/mrt-shared"
+
+/** mrt-shared root files pinned beside data/ and test-vectors/ (1.1 NL search question cases; also named in the task class). */
+val rootSharedFiles = listOf("nl-search-test-cases.json")
 
 abstract class VerifySharedContract : DefaultTask() {
     @get:InputDirectory abstract val pinnedDir: DirectoryProperty
@@ -204,7 +208,7 @@ abstract class VerifySharedContract : DefaultTask() {
         if (File(external, "test-vectors").isDirectory) {
             val ext = external.walkTopDown().filter { it.isFile && it.extension == "json" }
                 .map { it.relativeTo(external).invariantSeparatorsPath }
-                .filter { it.startsWith("data/") || it.startsWith("test-vectors/") }.toSet()
+                .filter { it.startsWith("data/") || it.startsWith("test-vectors/") || it == "nl-search-test-cases.json" }.toSet()
             if (ext != sums.keys) {
                 throw GradleException("shared/ is stale vs ${external.path}: missing ${ext - sums.keys}, extra ${sums.keys - ext}. Run scripts/sync-shared.sh.")
             }
@@ -224,7 +228,7 @@ val verifySharedContract = tasks.register<VerifySharedContract>("verifySharedCon
     description = "Checks shared/ against shared/SHA256SUMS (and against mrt-shared when present)."
     pinnedDir.set(sharedDir)
     externalDir.set(externalSharedDir)
-    externalFiles.from(fileTree(externalSharedDir) { include("data/**/*.json", "test-vectors/**/*.json") })
+    externalFiles.from(fileTree(externalSharedDir) { include(listOf("data/**/*.json", "test-vectors/**/*.json") + rootSharedFiles) })
     stamp.set(layout.buildDirectory.file("shared-contract/verified.txt"))
 }
 

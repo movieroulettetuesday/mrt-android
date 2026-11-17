@@ -39,6 +39,31 @@ class CatalogSearchTest {
         assertEquals("π", CatalogSearch.fold("π"))
     }
 
+    /** Shared NL schema folding rule (iOS Foundation folding, en_US_POSIX), measured on Xcode 27.2. */
+    @Test fun foldMatchesTheSharedRuleForEszettAeroAndIstanbul() {
+        assertEquals("strasse", CatalogSearch.fold("Straße"))
+        assertEquals("strasse", CatalogSearch.fold("STRASSE"))
+        assertEquals("strasse", CatalogSearch.fold("strasse"))
+        assertEquals("ss", CatalogSearch.fold("ß"))
+        assertEquals("ss", CatalogSearch.fold("ẞ"))
+        assertEquals("strasse", CatalogSearch.fold("STRAẞE"))
+        assertEquals("ærø", CatalogSearch.fold("Ærø"))
+        assertTrue(CatalogSearch.fold("Ærø") != CatalogSearch.fold("aero"))
+        assertEquals("istanbul", CatalogSearch.fold("İstanbul"))
+        assertEquals("istanbul", CatalogSearch.fold("Istanbul"))
+        assertEquals("amelie", CatalogSearch.fold("Amélie"))
+        assertEquals("the devils rain", CatalogSearch.fold("The Devil's Rain"))
+        // Device locale must not matter (tr_TR would make İ → dotless ı).
+        val saved = java.util.Locale.getDefault()
+        try {
+            java.util.Locale.setDefault(java.util.Locale.forLanguageTag("tr-TR"))
+            assertEquals("istanbul", CatalogSearch.fold("İstanbul"))
+            assertEquals("istanbul", CatalogSearch.fold("ISTANBUL"))
+        } finally {
+            java.util.Locale.setDefault(saved)
+        }
+    }
+
     @Test fun caseInsensitive() {
         assertEquals(listOf("the-devils-rain-1975"), movieIDs("DEVILS RAIN"))
         assertEquals(listOf("the-devils-rain-1975"), movieIDs("devils rain"))
