@@ -8,6 +8,7 @@ import com.movieroulettetuesday.app.movies.PersonalRatings
 import com.movieroulettetuesday.app.movies.StreamingCatalog
 import com.movieroulettetuesday.app.movies.WatchStatus
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -128,24 +129,35 @@ class WatchSuggester(
     private suspend fun generateValidated(ctx: SuggestionContext): SuggestionOutcome {
         val cat = catalog() ?: return SuggestionOutcome.OfferSpin
         val text = prompt(ctx)
-        repeat(2) {
-            val raw = try {
-                model.generate(text)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Throwable) {
-                null
-            } ?: return@repeat
-            val movie = cat.movie(raw.movieId.trim())
-            if (movie != null) {
-                val why = raw.why.trim()
-                if (why.isNotEmpty()) return SuggestionOutcome.Ready(movie, why)
+        // One budget for the call and its one retry. A timeout is a failure: no suggestion, offer Spin.
+        // withTimeoutOrNull returns null on this timeout; other cancellation still propagates.
+        return withTimeoutOrNull(GENERATE_TIMEOUT_MS) {
+            repeat(2) {
+                val raw = try {
+                    model.generate(text)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Throwable) {
+                    null
+                } ?: return@repeat
+                val movie = cat.movie(raw.movieId.trim())
+                if (movie != null) {
+                    val why = raw.why.trim()
+                    if (why.isNotEmpty()) return@withTimeoutOrNull SuggestionOutcome.Ready(movie, why)
+                }
             }
-        }
-        return SuggestionOutcome.OfferSpin
+            SuggestionOutcome.OfferSpin
+        } ?: SuggestionOutcome.OfferSpin
     }
 
     companion object {
+        /**
+         * Budget for one on-device recommendation, including a single retry. Longer than
+         * natural-language search's 2 s because the prompt carries the compact catalog and
+         * the model writes a short why; one shared budget avoids a 16 s hang on a stuck model.
+         */
+        const val GENERATE_TIMEOUT_MS = 8_000L
+
         const val INSTRUCTIONS =
             "Pick one catalog movie for tonight. Prefer watchlist titles that are on the listener’s services. " +
                 "Weigh their ratings. Avoid movies flagged recent. Do not invent a movie or an id: copy movieId " +
