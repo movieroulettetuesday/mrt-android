@@ -1,6 +1,7 @@
 package com.movieroulettetuesday.app.actions
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.w3c.dom.Element
@@ -32,5 +33,26 @@ class ShortcutsXmlTest {
         val names = (0 until caps.length).map { (caps.item(it) as Element).getAttribute("android:name") }
         assertTrue(names.contains("actions.intent.OPEN_APP_FEATURE"))
         assertTrue(names.contains("actions.intent.GET_THING"))
+    }
+
+    @Test
+    fun pickForMeKeepsWhatShouldIWatchAndSpinDropsWhatShouldWeWatch() {
+        val res = listOf("src/main/res", "app/src/main/res").map(::File).first { it.isDirectory }
+        val strings = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(File(res, "values/strings.xml"))
+        fun string(name: String) = (0 until strings.getElementsByTagName("string").length)
+            .map { strings.getElementsByTagName("string").item(it) as Element }.first { it.getAttribute("name") == name }.textContent
+        assertEquals("Pick for me", string("shortcut_suggest_short"))
+        assertEquals("Pick a movie for me", string("shortcut_suggest_long"))
+        assertEquals("Spin Movie Roulette", string("shortcut_spin_long"))
+        val arrays = strings.getElementsByTagName("string-array")
+        val suggest = (0 until arrays.length).map { arrays.item(it) as Element }.first { it.getAttribute("name") == "shortcut_suggest_features" }
+        val items = suggest.getElementsByTagName("item").let { nl -> (0 until nl.length).map { nl.item(it).textContent } }
+        assertEquals(listOf("Pick for me", "Pick a movie for me", "What should I watch"), items)
+        val xml = file().readText()
+        assertTrue(xml.contains("@array/shortcut_suggest_features"))
+        listOf(xml, File(res, "values/strings.xml").readText()).forEach {
+            assertFalse(it.contains("What should we watch", ignoreCase = true))
+            assertFalse(it.contains("Suggest a Movie", ignoreCase = true))
+        }
     }
 }

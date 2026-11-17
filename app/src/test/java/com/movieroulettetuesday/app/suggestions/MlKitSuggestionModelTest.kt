@@ -30,6 +30,12 @@ private suspend fun beta5Generate(model: GenerativeModel, request: GenerateConte
 
 private suspend fun beta5Status(model: GenerativeModel): Int = model.checkStatus()
 
+/** Pick for Me uses these beta5 suspend calls too (verified against the 1.0.0-beta5 jar). */
+private suspend fun beta5Warmup(model: GenerativeModel) = model.warmup()
+
+private suspend fun beta5Budget(model: GenerativeModel, request: GenerateContentRequest): Pair<Int, Int> =
+    model.countTokens(request).totalTokens to model.getTokenLimit()
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class MlKitSuggestionModelTest {
     private fun client(
@@ -49,6 +55,10 @@ class MlKitSuggestionModelTest {
         assertNotNull(fromPrompt)
         assertNotNull(fromRequest)
         assertNotNull(status)
+        val warmup: suspend (GenerativeModel) -> Unit = ::beta5Warmup
+        val budget: suspend (GenerativeModel, GenerateContentRequest) -> Pair<Int, Int> = ::beta5Budget
+        assertNotNull(warmup)
+        assertNotNull(budget)
 
         val blockingString = GenerativeModel::class.java.methods.filter { method ->
             method.name == "generateContent" &&
@@ -77,15 +87,44 @@ class MlKitSuggestionModelTest {
     }
 
     @Test
-    fun successfulReplyIsParsed() = runTest {
-        val model = MlKitSuggestionModel(
-            client { """{"movieId":"laura-1944","why":"It's on your watchlist."}""" },
-        )
-        assertEquals(
-            WatchSuggestion("laura-1944", "It's on your watchlist."),
-            model.generate("pick one"),
-        )
+    fun replyTextIsPassedThroughForTheStrictParser() = runTest {
+        val model = MlKitSuggestionModel(client { """{"pick":3,"vibe":"cult"}""" })
+        assertEquals("""{"pick":3,"vibe":"cult"}""", model.generate("pick one"))
         assertEquals(SuggestionAvailability.Available, model.availability())
+    }
+
+    @Test
+    fun requestCapsOutputAtTwentyFourTokensWithLowTemperature() {
+        val req = MlKitSuggestionModel.request("1. Laura (1944) · Thriller")
+        assertEquals(24, req.maxOutputTokens)
+        assertEquals(0.3f, req.temperature, 0.0001f)
+        assertEquals("1. Laura (1944) · Thriller", req.text?.textString)
+    }
+
+    @Test
+    fun tokenBudgetLeavesRoomForTheReply() {
+        assertTrue(MlKitSuggestionModel.fitsTokenLimit(500, 4_000))
+        assertTrue(MlKitSuggestionModel.fitsTokenLimit(3_976, 4_000))
+        assertTrue(!MlKitSuggestionModel.fitsTokenLimit(3_977, 4_000))
+        assertTrue("unknown limit: try", MlKitSuggestionModel.fitsTokenLimit(9_999, 0))
+    }
+
+    @Test
+    fun warmupIsForwardedAndAFailedWarmupIsHarmless() = runTest {
+        var warmed = 0
+        val ok = object : MlKitSuggestionModel.Client {
+            override suspend fun status() = SuggestionAvailability.Available
+            override suspend fun warmup() { warmed++ }
+            override suspend fun generate(prompt: String): String? = null
+        }
+        MlKitSuggestionModel(ok).warmup()
+        assertEquals(1, warmed)
+        val broken = object : MlKitSuggestionModel.Client {
+            override suspend fun status() = SuggestionAvailability.Available
+            override suspend fun warmup(): Unit = error("AICore busy")
+            override suspend fun generate(prompt: String): String? = null
+        }
+        MlKitSuggestionModel(broken).warmup()
     }
 
     @Test
@@ -124,7 +163,6 @@ class MlKitSuggestionModelTest {
     fun generateFailureOrUnusableReplyIsNull() = runTest {
         assertEquals(null, MlKitSuggestionModel(client { error("BUSY") }).generate("pick one"))
         assertEquals(null, MlKitSuggestionModel(client { null }).generate("pick one"))
-        assertEquals(null, MlKitSuggestionModel(client { "not json" }).generate("pick one"))
     }
 
     @Test

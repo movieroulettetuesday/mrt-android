@@ -67,7 +67,7 @@ abstract class MrtAppFunctionService {
         dispatch(DeepLink.OpenOnProvider(movieId, provider))
 
     /**
-     * On-device “What should I watch?”. Offers Spin when the model is unavailable. Does not spin
+     * On-device Pick for Me. Offers Spin when the model is unavailable. Does not spin
      * automatically.
      */
     suspend fun whatShouldIWatch(): ActionPlan = dispatch(DeepLink.Suggest)

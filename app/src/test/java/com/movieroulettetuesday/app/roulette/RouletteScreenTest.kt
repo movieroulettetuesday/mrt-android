@@ -43,7 +43,7 @@ class RouletteScreenTest {
 
     private fun spinToReveal() {
         compose.setContent { MrtTheme { RouletteScreen(vm) } }
-        compose.onNodeWithTag("roulette-status").assertTextEquals("Tap to spin")
+        compose.onNodeWithTag("roulette-status").assertTextEquals("Tap to spin: the wheel picks at random.")
         compose.mainClock.autoAdvance = false
         compose.onNodeWithTag("spin-hub").performClick()
         compose.mainClock.advanceTimeBy(500)

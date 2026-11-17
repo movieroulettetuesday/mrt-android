@@ -20,8 +20,13 @@
     <string name="shortcut_watchlist_short">Watchlist</string>
     <string name="shortcut_watchlist_long">Watchlist</string>
     <string name="shortcut_watchlist_feature">watchlist</string>
-    <string name="shortcut_suggest_short">What to watch</string>
-    <string name="shortcut_suggest_long">What should I watch in Movie Roulette</string>
-    <string name="shortcut_suggest_feature">suggest</string>
+    <string name="shortcut_suggest_short">Pick for me</string>
+    <string name="shortcut_suggest_long">Pick a movie for me</string>
+    <!-- Assistant OPEN_APP_FEATURE synonyms for the Pick for Me shortcut (inline inventory: a match passes the shortcutId, "suggest"). -->
+    <string-array name="shortcut_suggest_features">
+        <item>Pick for me</item>
+        <item>Pick a movie for me</item>
+        <item>What should I watch</item>
+    </string-array>
     <string name="shortcut_disabled">This shortcut is unavailable.</string>
 </resources>

@@ -63,7 +63,7 @@ fun RouletteScreen(
     onOpenMovie: ((String) -> Unit)? = null,
     topBar: @Composable () -> Unit = {},
     haptics: Boolean = false,
-    /** Optional “What should I watch?” control, under the header. Hidden when empty. */
+    /** Optional Pick for Me control, under the header. Hidden when empty. */
     headerExtra: @Composable () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -197,10 +197,19 @@ private fun WheelSlot(
             val status = state.notice ?: when {
                 state.isSpinning -> "Spinning…"
                 state.lastCategory != null -> "Landed on ${state.lastCategory!!.displayName}"
-                else -> "Tap to spin"
+                else -> IDLE_HINT
             }
             Box(Modifier.height(RouletteLayout.HINT_HEIGHT.dp), contentAlignment = Alignment.TopCenter) {
-                Text(status, Modifier.testTag("roulette-status"), style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+                val hintStyle = MaterialTheme.typography.titleMedium
+                Text(
+                    status,
+                    Modifier.testTag("roulette-status"),
+                    style = hintStyle,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    // The longer idle hint shrinks to fit the hint slot on a narrow wheel column.
+                    autoSize = TextAutoSize.StepBased(minFontSize = hintStyle.fontSize * 0.7f, maxFontSize = hintStyle.fontSize, stepSize = 1.sp),
+                )
             }
         }
     }
@@ -366,3 +375,6 @@ private fun OverflowVerticalColumn(
         content = content,
     )
 }
+
+/** Idle wheel hint (plan §3a): says outright that Spin is chance, unlike Pick for Me. */
+const val IDLE_HINT = "Tap to spin: the wheel picks at random."

@@ -210,7 +210,7 @@ class MrtApplication : Application() {
     /** Open this movie’s Where to Watch section after [pendingMovie] navigation. */
     val pendingWhereToWatch = MutableStateFlow<String?>(null)
 
-    /** On-device “What should I watch?” model. Tests replace this with a fake. */
+    /** On-device Pick for Me model. Tests replace this with a fake. */
     var suggestionModel: SuggestionModel = UnavailableSuggestionModel
         get() = field
         set(value) { field = value }

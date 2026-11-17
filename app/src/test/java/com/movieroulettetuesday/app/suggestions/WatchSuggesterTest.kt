@@ -8,6 +8,7 @@ import com.movieroulettetuesday.app.catalog.StreamingInfo.Provider
 import com.movieroulettetuesday.app.movies.MyServices
 import com.movieroulettetuesday.app.movies.PersonalRatings
 import com.movieroulettetuesday.app.movies.WatchStatus
+import com.movieroulettetuesday.app.search.nl.NLFixtures
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.runBlocking
@@ -15,17 +16,20 @@ import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class FakeSuggestionModel(
     var availability: SuggestionAvailability = SuggestionAvailability.Available,
-    var responses: MutableList<WatchSuggestion?> = mutableListOf(),
+    var responses: MutableList<String?> = mutableListOf(),
     var lastPrompt: String? = null,
     var calls: Int = 0,
+    var warmups: Int = 0,
 ) : SuggestionModel {
     override suspend fun availability() = availability
-    override suspend fun generate(prompt: String): WatchSuggestion? {
+    override suspend fun warmup() { warmups++ }
+    override suspend fun generate(prompt: String): String? {
         lastPrompt = prompt
         calls++
         return if (responses.isEmpty()) null else responses.removeAt(0)
@@ -35,88 +39,191 @@ class FakeSuggestionModel(
 @OptIn(ExperimentalCoroutinesApi::class)
 class WatchSuggesterTest {
     private val netflix = Provider(8, "Netflix")
+    private val tubi = Provider(73, "Tubi")
     private val laura = Movie("laura-1944", "Laura", 1944, "Thriller", categories = listOf("noir"), streaming = StreamingInfo(stream = listOf(netflix)))
-    private val rain = Movie("the-devils-rain-1975", "The Devil’s Rain", 1975, "Horror", categories = listOf("horror"))
+    private val rain = Movie("the-devils-rain-1975", "The Devil’s Rain", 1975, "Horror", categories = listOf("horror"), streaming = StreamingInfo(free = listOf(tubi)))
+    private val evil = Movie("christmas-evil-1980", "Christmas Evil", 1980, "Horror", categories = listOf("horror"))
     private val catalog = MovieCatalog(
-        categories = listOf(RouletteCategory("noir", "Noir", colorHex = "#111", movieIds = listOf(laura.id))),
-        movies = listOf(laura, rain),
+        categories = listOf(
+            RouletteCategory("noir", "Noir", colorHex = "#111", movieIds = listOf(laura.id)),
+            RouletteCategory("horror", "Horror", colorHex = "#222", movieIds = listOf(rain.id, evil.id)),
+        ),
+        movies = listOf(laura, rain, evil),
     )
 
     private fun suggester(model: SuggestionModel) = WatchSuggester(model) { catalog }
+    private fun input(ratings: PersonalRatings = PersonalRatings(), recent: Set<String> = emptySet(), services: MyServices = MyServices(), seed: Long = 1) =
+        PickInput(ratings, recent, services, seed)
 
     @Test
-    fun contextIsOnDeviceOnlyAndHasNoNetwork() {
-        val ratings = PersonalRatings()
-            .withStatus(WatchStatus.WantToWatch, laura.id, 1)
-            .withHalfStars(8, rain.id, 2)
-        val ctx = suggester(FakeSuggestionModel()).buildContext(
-            ratings,
-            recentIds = setOf(rain.id),
-            services = MyServices(setOf(8)),
-        )!!
-        val lines = ctx.asPromptLines().joinToString("\n")
-        val prompt = suggester(FakeSuggestionModel()).prompt(ctx)
-        assertFalse(lines.contains("http://") || lines.contains("https://"))
-        assertFalse(prompt.contains("http://") || prompt.contains("https://"))
+    fun regressionUnratedNotOnWatchlistNeverClaimsWatchlistOrRating() = runBlocking {
+        // Matthew, 1.1 (15): the reason said “on your watchlist, you gave it 4 stars” for neither.
+        val model = FakeSuggestionModel(responses = mutableListOf("""{"pick":1,"vibe":"scares","why":"It's on your watchlist and you gave it 4 stars."}"""))
+        val only = MovieCatalog(categories = catalog.categories, movies = listOf(evil))
+        val out = WatchSuggester(model) { only }.suggest(input(), fromShortcut = false) as SuggestionOutcome.Ready
+        val shown = listOfNotNull(out.reason.headline, out.reason.factsLine, out.reason.spoken(out.movie)).joinToString(" | ")
+        assertFalse(shown, shown.contains("watchlist", ignoreCase = true))
+        assertFalse(shown, shown.contains("star", ignoreCase = true))
+        assertFalse(shown, shown.contains("gave it"))
+        assertEquals(listOf("Not watched yet", "From the Horror category"), out.reason.facts.map { it.text })
+    }
+
+    @Test
+    fun modelOnlyPicksTheIndexAndVibeAndTheAppWritesTheFacts() = runBlocking {
+        val ratings = PersonalRatings().withStatus(WatchStatus.WantToWatch, laura.id, 1)
+        val model = FakeSuggestionModel(responses = mutableListOf("""{"pick":1,"vibe":"thrills"}"""))
+        val out = suggester(model).suggest(input(ratings, services = MyServices(setOf(8))), fromShortcut = false) as SuggestionOutcome.Ready
+        assertEquals(laura, out.movie) // watchlist + service ranks first
+        assertEquals(Vibe.Thrills, out.reason.vibe)
+        assertEquals("Edge-of-your-seat.", out.reason.headline)
+        assertEquals(listOf("On your watchlist", "Not watched yet", "Streaming on Netflix", "From the Noir category"), out.reason.facts.map { it.text })
+        assertEquals(
+            "Try Laura (1944). Edge-of-your-seat. It’s on your watchlist and streaming on Netflix.",
+            out.reason.spoken(out.movie),
+        )
+        assertEquals("one attempt only", 1, model.calls)
+    }
+
+    @Test
+    fun promptRowsStateEveryFieldAsYesOrNoAndCarryNoIdsOrUrls() = runBlocking {
+        val ratings = PersonalRatings().withStatus(WatchStatus.WantToWatch, laura.id, 1)
+        val model = FakeSuggestionModel()
+        suggester(model).suggest(input(ratings, services = MyServices(setOf(8))), fromShortcut = false)
+        val prompt = model.lastPrompt!!
+        val rows = prompt.lines().filter { it.matches(Regex("""^\d+\. .*""")) }
+        assertEquals(3, rows.size)
+        assertTrue(rows[0], rows[0].startsWith("1. Laura (1944) · Thriller · categories: Noir · watchlist: yes · watched: no · rated: no · on your services: Netflix · free: no"))
+        rows.forEach { row ->
+            listOf("watchlist: ", "watched: ", "rated: ", "on your services: ", "free: ").forEach { assertTrue("$row lacks $it", row.contains(it)) }
+        }
+        assertTrue(rows.any { it.contains("watchlist: no") })
+        assertTrue(rows.any { it.contains("free: yes") })
+        assertTrue(prompt.contains("""{"pick":"""))
+        assertFalse(prompt.contains("laura-1944"))
+        assertFalse(prompt.contains("http"))
         assertFalse(prompt.contains("movies.json"))
-        assertFalse(prompt.contains("personal-ratings"))
-        // Compact facts are present in the on-device context rows.
-        assertTrue(lines.contains("laura-1944"))
-        assertTrue(lines.contains("Laura"))
-        assertTrue(lines.contains("watchlist"))
-        assertTrue(lines.contains("rated:4"))
-        assertTrue(lines.contains("recent"))
-        assertTrue(lines.contains("Netflix"))
-        // No plots, no raw JSON, no other listeners' ratings in the context rows.
-        assertFalse(lines.contains("plot"))
-        assertFalse(lines.contains("movies.json"))
     }
 
     @Test
-    fun validIdIsAccepted() = runBlocking {
-        val model = FakeSuggestionModel(responses = mutableListOf(WatchSuggestion("laura-1944", "It’s on your watchlist.")))
-        val ctx = suggester(model).buildContext(PersonalRatings(), emptySet(), MyServices())!!
-        val out = suggester(model).suggest(ctx, fromShortcut = false)
-        val ready = out as SuggestionOutcome.Ready
-        assertEquals("laura-1944", ready.movie.id)
-        assertEquals("It’s on your watchlist.", ready.why)
-        assertEquals(1, model.calls)
+    fun fullCatalogPromptStaysNearFourHundredTokens() = runBlocking {
+        val cat = NLFixtures.catalog
+        val model = FakeSuggestionModel()
+        WatchSuggester(model) { cat }.suggest(input(services = MyServices(setOf(8, 9, 1899, 337, 15))), fromShortcut = false)
+        val prompt = model.lastPrompt!!
+        val rows = prompt.lines().count { it.matches(Regex("""^\d+\. .*""")) }
+        assertEquals(PickCandidates.CAP, rows)
+        // ~4 characters per token: well under 1,000 tokens (plan: ~400), against Gemini Nano's ~4,000-token input.
+        assertTrue("prompt is ${prompt.length} chars", prompt.length < 2_400)
     }
 
     @Test
-    fun unknownIdIsRejectedAndRetriedOnce() = runBlocking {
-        val model = FakeSuggestionModel(
-            responses = mutableListOf(
-                WatchSuggestion("not-a-movie", "nope"),
-                WatchSuggestion("still-wrong", "nope"),
-            ),
-        )
-        val ctx = suggester(model).buildContext(PersonalRatings(), emptySet(), MyServices())!!
-        val out = suggester(model).suggest(ctx, fromShortcut = false)
-        assertEquals(SuggestionOutcome.OfferSpin, out)
-        assertEquals(2, model.calls)
+    fun watchedRatedAndRecentAreExcludedWhenEnoughRemain() {
+        val extra = (1..5).map { Movie("m$it", "M$it", 2000 + it, "Comedy") }
+        val cat = catalog.copy(movies = catalog.movies + extra)
+        val ratings = PersonalRatings()
+            .withStatus(WatchStatus.Watched, laura.id, 1)
+            .withHalfStars(4, rain.id, 2) // rated = watched
+        val got = PickCandidates.select(cat, ratings, setOf(evil.id), MyServices(), seed = 3).map { it.movie.id }
+        assertFalse(laura.id in got)
+        assertFalse(rain.id in got)
+        assertFalse(evil.id in got)
+        assertEquals(5, got.size)
     }
 
     @Test
-    fun retrySucceedsWhenTheSecondIdIsValid() = runBlocking {
-        val model = FakeSuggestionModel(
-            responses = mutableListOf(
-                WatchSuggestion("ghost", "no"),
-                WatchSuggestion("laura-1944", "A classic."),
-            ),
-        )
-        val ctx = suggester(model).buildContext(PersonalRatings(), emptySet(), MyServices())!!
-        val out = suggester(model).suggest(ctx, fromShortcut = false) as SuggestionOutcome.Ready
-        assertEquals("laura-1944", out.movie.id)
-        assertEquals(2, model.calls)
+    fun relaxesToRecentThenToRewatchesRatedFourOrMore() {
+        val ratings = PersonalRatings().withHalfStars(8, laura.id, 1).withHalfStars(7, rain.id, 2)
+        // Only evil is unwatched, and it is recent: relax to recent, then add laura (4 stars), never rain (3.5).
+        val got = PickCandidates.select(catalog, ratings, setOf(evil.id), MyServices(), seed = 1).map { it.movie.id }.toSet()
+        assertEquals(setOf(evil.id, laura.id), got)
+    }
+
+    @Test
+    fun capsAtTwelveAndTieBreaksAreSeededAndReproducible() {
+        val many = (1..40).map { Movie("m$it", "M$it", 2000, "Comedy") }
+        val cat = MovieCatalog(categories = emptyList(), movies = many)
+        val a = PickCandidates.select(cat, PersonalRatings(), emptySet(), MyServices(), seed = 42).map { it.movie.id }
+        val b = PickCandidates.select(cat, PersonalRatings(), emptySet(), MyServices(), seed = 42).map { it.movie.id }
+        val c = PickCandidates.select(cat, PersonalRatings(), emptySet(), MyServices(), seed = 43).map { it.movie.id }
+        assertEquals(12, a.size)
+        assertEquals(a, b)
+        assertNotEquals(a, c)
+    }
+
+    @Test
+    fun scoresWatchlistThreeServiceTwoFreeOne() {
+        val ratings = PersonalRatings().withStatus(WatchStatus.WantToWatch, rain.id, 1)
+        assertEquals(2, PickCandidates.score(laura, PersonalRatings(), MyServices(setOf(8))))
+        assertEquals(0, PickCandidates.score(laura, PersonalRatings(), MyServices()))
+        assertEquals(4, PickCandidates.score(rain, ratings, MyServices()))
+        assertEquals(0, PickCandidates.score(evil, PersonalRatings(), MyServices(setOf(8))))
+    }
+
+    @Test
+    fun noCandidatesAtAllOffersSpin() = runBlocking {
+        val ratings = PersonalRatings().withHalfStars(2, laura.id, 1).withHalfStars(2, rain.id, 1).withHalfStars(2, evil.id, 1)
+        assertEquals(SuggestionOutcome.OfferSpin, suggester(FakeSuggestionModel()).suggest(input(ratings), fromShortcut = false))
+    }
+
+    @Test
+    fun anyModelFailureShowsTheTopScoredCandidateWithFactsNotSpin() = runBlocking {
+        val ratings = PersonalRatings().withStatus(WatchStatus.WantToWatch, laura.id, 1)
+        for (reply in listOf(null, "", "not json", """{"pick":9,"vibe":"laughs"}""", """{"pick":"1","vibe":"laughs"}""",
+            """{"pick":1,"vibe":"spooky"}""", """{"pick":1}""", """{"pick":1,"vibe":"thrills","why":"x"}""", """[1,"laughs"]""")) {
+            val model = FakeSuggestionModel(responses = mutableListOf(reply))
+            val out = suggester(model).suggest(input(ratings, services = MyServices(setOf(8))), fromShortcut = false)
+            val ready = out as SuggestionOutcome.Ready
+            assertEquals("reply $reply", laura, ready.movie)
+            assertFalse(ready.reason.fromModel)
+            assertEquals(PickReason.FALLBACK_LINE, ready.reason.headline)
+            assertEquals(1, model.calls)
+        }
+        val throwing = object : SuggestionModel {
+            override suspend fun availability() = SuggestionAvailability.Available
+            override suspend fun generate(prompt: String): String? = error("AICore quota")
+        }
+        val out = suggester(throwing).suggest(input(ratings, services = MyServices(setOf(8))), fromShortcut = false) as SuggestionOutcome.Ready
+        assertEquals(laura, out.movie)
+        assertFalse(out.reason.fromModel)
+    }
+
+    @Test
+    fun fallbackLineOnlyWhenThePickReallyCameFromTheWatchlistOrServices() {
+        val plain = PickReason(null, listOf(Fact.NotWatched), fromModel = false)
+        assertEquals(null, plain.headline)
+        assertEquals(PickReason.FALLBACK_LINE, PickReason(null, listOf(Fact.Streaming("Netflix")), fromModel = false).headline)
+    }
+
+    @Test
+    fun aMismatchedVibeIsReplacedByTheGenresAndBannedTextDropsIt() {
+        val cands = PickCandidates.select(catalog, PersonalRatings(), emptySet(), MyServices(), seed = 1)
+        val i = cands.indexOfFirst { it.movie == evil } + 1
+        val laughs = WatchSuggester.resolve("""{"pick":$i,"vibe":"laughs"}""", cands, catalog, input())
+        assertEquals(evil, laughs.movie)
+        assertEquals(Vibe.Scares, laughs.reason.vibe)
+        val classicTooNew = WatchSuggester.resolve("""{"pick":$i,"vibe":"classic"}""", cands, catalog, input())
+        assertEquals("1980 is not old-school", Vibe.Scares, classicTooNew.reason.vibe)
+        val j = cands.indexOfFirst { it.movie == laura } + 1
+        assertEquals(Vibe.Classic, WatchSuggester.resolve("""{"pick":$j,"vibe":"classic"}""", cands, catalog, input()).reason.vibe)
+    }
+
+    @Test
+    fun bannedPhrasesCoverWatchlistRatingsServicesAndProviders() {
+        val providers = setOf("Netflix", "Max")
+        listOf("on your watchlist", "Watch list pick", "you rated it", "4 stars", "★★★", "3/5", "out of ten", "you haven’t seen it",
+            "streaming now", "free tonight", "Oscar winner", "critics loved it", "on Netflix", "HBO MAX").forEach {
+            assertTrue(it, BannedPhrases.matches(it, providers))
+        }
+        listOf("Gloriously weird.", "Big, loud fun.", "maximum dread", "{\"pick\":3,\"vibe\":\"cult\"}").forEach {
+            assertFalse(it, BannedPhrases.matches(it, providers))
+        }
     }
 
     @Test
     fun availabilityBranches() = runBlocking {
-        val ctx = suggester(FakeSuggestionModel()).buildContext(PersonalRatings(), emptySet(), MyServices())!!
         suspend fun run(avail: SuggestionAvailability, fromShortcut: Boolean): SuggestionOutcome {
             val model = FakeSuggestionModel(availability = avail)
-            return suggester(model).suggest(ctx, fromShortcut)
+            return suggester(model).suggest(input(), fromShortcut)
         }
         assertEquals(SuggestionOutcome.Hidden, run(SuggestionAvailability.Unavailable, fromShortcut = false))
         assertEquals(SuggestionOutcome.OfferSpin, run(SuggestionAvailability.Unavailable, fromShortcut = true))
@@ -125,30 +232,18 @@ class WatchSuggesterTest {
     }
 
     @Test
-    fun parseResponseReadsJsonAndIgnoresFences() {
-        val raw = WatchSuggester.parseResponse("""```json
-{"movieId":"laura-1944","why":"A stylish noir."}
-```""")
-        assertEquals("laura-1944", raw!!.movieId)
-        assertEquals("A stylish noir.", raw.why)
-        assertEquals(null, WatchSuggester.parseResponse("not json"))
-        assertEquals(null, WatchSuggester.parseResponse("""{"why":"no id"}"""))
-    }
-
-    @Test
     fun unavailableModelNeverCallsGenerate() = runBlocking {
-        val model = FakeSuggestionModel(availability = SuggestionAvailability.Unavailable, responses = mutableListOf(WatchSuggestion("laura-1944", "x")))
-        val ctx = suggester(model).buildContext(PersonalRatings(), emptySet(), MyServices())!!
-        assertEquals(SuggestionOutcome.Hidden, suggester(model).suggest(ctx, fromShortcut = false))
+        val model = FakeSuggestionModel(availability = SuggestionAvailability.Unavailable, responses = mutableListOf("""{"pick":1,"vibe":"laughs"}"""))
+        assertEquals(SuggestionOutcome.Hidden, suggester(model).suggest(input(), fromShortcut = false))
         assertEquals(0, model.calls)
     }
 
     @Test
-    fun hungGenerateTimesOutAndOffersSpin() = runTest {
+    fun hungGenerateTimesOutAfterThreeSecondsAndShowsTheAppsPick() = runTest {
         var cancelled = 0
         val model = object : SuggestionModel {
             override suspend fun availability() = SuggestionAvailability.Available
-            override suspend fun generate(prompt: String): WatchSuggestion? {
+            override suspend fun generate(prompt: String): String? {
                 try {
                     awaitCancellation()
                 } finally {
@@ -156,10 +251,28 @@ class WatchSuggesterTest {
                 }
             }
         }
-        val ctx = suggester(model).buildContext(PersonalRatings(), emptySet(), MyServices())!!
-        val inApp = suggester(model).suggest(ctx, fromShortcut = false)
-        assertEquals(SuggestionOutcome.OfferSpin, inApp)
-        assertEquals("timeout uses the shared generate budget", WatchSuggester.GENERATE_TIMEOUT_MS, currentTime)
+        val out = suggester(model).suggest(input(), fromShortcut = false)
+        assertTrue(out is SuggestionOutcome.Ready)
+        assertFalse((out as SuggestionOutcome.Ready).reason.fromModel)
+        assertEquals(3_000L, WatchSuggester.GENERATE_TIMEOUT_MS)
+        assertEquals(WatchSuggester.GENERATE_TIMEOUT_MS, currentTime)
         assertEquals("the hung generate call was cancelled", 1, cancelled)
+    }
+
+    @Test
+    fun recentIsTheTenMostRecentUniqueSpins() {
+        val ids = (1..15).map { "m$it" } + listOf("m1", "m2")
+        assertEquals((1..10).map { "m$it" }.toSet(), WatchSuggester.recentIds(ids))
+    }
+
+    @Test
+    fun strictParser() {
+        assertEquals(PickParser.ModelPick(2, Vibe.Cult), PickParser.parse("""{"pick":3,"vibe":"cult"}""", 12))
+        assertEquals(PickParser.ModelPick(0, Vibe.FeelGood), PickParser.parse("```json\n{\"vibe\":\"feelGood\",\"pick\":1}\n```", 12))
+        assertEquals(null, PickParser.parse("""{"pick":0,"vibe":"cult"}""", 12))
+        assertEquals(null, PickParser.parse("""{"pick":13,"vibe":"cult"}""", 12))
+        assertEquals(null, PickParser.parse("""{"pick":2.5,"vibe":"cult"}""", 12))
+        assertEquals(null, PickParser.parse("""Sure! {"pick":3,"vibe":"cult"}""", 12))
+        assertEquals(null, PickParser.parse("""{"pick":3,"vibe":"Cult"}""", 12))
     }
 }
