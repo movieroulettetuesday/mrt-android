@@ -34,7 +34,6 @@ object PickForMeCopy {
     const val NOT_READY_BUTTON = "Suggestions aren’t ready yet"
     const val NOT_READY = "Suggestions aren’t ready yet."
     const val CARD_TITLE = "Picked for You"
-    const val CARD_HEADER = "PICKED FOR YOU"
     const val WHY = "WHY"
     const val LOADING = "Picking from your watchlist and services…"
     const val CANCEL = "Cancel"
@@ -66,13 +65,6 @@ fun WatchSuggestionCard(
                 Modifier.semantics { heading() },
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                PickForMeCopy.CARD_HEADER,
-                Modifier.testTag("watch-suggestion-header"),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
             )
             Text(movie.title, Modifier.testTag("watch-suggestion-title"), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
             Text("${movie.year}  ·  ${movie.genre}", Modifier.testTag("watch-suggestion-meta"), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
