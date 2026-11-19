@@ -32,9 +32,12 @@ scripts/install-hooks.sh                     # once per clone: pre-push secret s
 
 ## Release signing
 
-Signing reads only environment variables; nothing secret is ever committed:
+Signing values come only from environment variables, `~/.gradle/gradle.properties`, or an untracked
+`keystore.properties`; nothing secret is ever committed. The default (Play upload key) uses
 `MRT_UPLOAD_KEYSTORE` (path), `MRT_UPLOAD_KEYSTORE_PASSWORD`, `MRT_UPLOAD_KEY_ALIAS`, `MRT_UPLOAD_KEY_PASSWORD`.
 When any is missing, `assembleRelease`/`bundleRelease` produce an unsigned artifact.
+Sideload APKs use the app signing key (`MRT_APP_*`, `-Pmrt.releaseSigning=app`); see `docs/SIDELOAD.md`
+and `scripts/build-sideload-apk.sh`.
 
 ## Secrets
 

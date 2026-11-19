@@ -1,5 +1,6 @@
 import java.security.MessageDigest
 import groovy.json.JsonSlurper
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,14 +8,48 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-// Release signing comes only from environment variables; nothing secret lives in the repo.
-// When any of them is missing, the release build is simply left unsigned.
-val uploadKeystore: String? = System.getenv("MRT_UPLOAD_KEYSTORE")
-val uploadKeystorePassword: String? = System.getenv("MRT_UPLOAD_KEYSTORE_PASSWORD")
-val uploadKeyAlias: String? = System.getenv("MRT_UPLOAD_KEY_ALIAS")
-val uploadKeyPassword: String? = System.getenv("MRT_UPLOAD_KEY_PASSWORD")
-val hasUploadKey = listOf(uploadKeystore, uploadKeystorePassword, uploadKeyAlias, uploadKeyPassword)
-    .all { !it.isNullOrBlank() } && file(uploadKeystore!!).isFile
+// Release signing. Nothing secret lives in the repo (it is public). Each value is read, in order, from:
+//   1. an environment variable            MRT_<PROFILE>_KEYSTORE, ..._KEYSTORE_PASSWORD, ..._KEY_ALIAS, ..._KEY_PASSWORD
+//   2. a Gradle property                  mrt.<profile>.keystore, .keystorePassword, .keyAlias, .keyPassword
+//      (put these in ~/.gradle/gradle.properties on the signing machine, never in this repo)
+//   3. an untracked keystore.properties   same keys as 2, at the repo root (gitignored + blocked by scan-secrets.sh)
+// Profiles:
+//   UPLOAD = Play upload key (bundleRelease for Play). Default; unchanged env names.
+//   APP    = app signing key (the key registered with Play App Signing), used for sideload APKs.
+// Pick one with -Pmrt.releaseSigning=app (or MRT_RELEASE_SIGNING=app). The default profile falls back to an
+// unsigned release build when its values are missing, so CI and forks still build; an explicitly
+// requested APP profile fails instead, so a sideload build is never silently unsigned.
+val localSigningProps = Properties().apply {
+    val f = rootProject.file("keystore.properties")
+    if (f.isFile) f.inputStream().use { load(it) }
+}
+fun signingValue(profile: String, envSuffix: String, propSuffix: String): String? {
+    val key = "mrt.${profile.lowercase()}.$propSuffix"
+    return System.getenv("MRT_${profile}_$envSuffix")?.takeIf { it.isNotBlank() }
+        ?: providers.gradleProperty(key).orNull?.takeIf { it.isNotBlank() }
+        ?: localSigningProps.getProperty(key)?.takeIf { it.isNotBlank() }
+}
+data class MrtSigning(val profile: String, val storeFile: File, val storePass: String, val alias: String, val keyPass: String)
+fun signingProfile(profile: String): MrtSigning? {
+    val store = signingValue(profile, "KEYSTORE", "keystore")
+    val storePass = signingValue(profile, "KEYSTORE_PASSWORD", "keystorePassword")
+    val alias = signingValue(profile, "KEY_ALIAS", "keyAlias")
+    val keyPass = signingValue(profile, "KEY_PASSWORD", "keyPassword")
+    if (store == null || storePass == null || alias == null || keyPass == null) return null
+    val f = file(store)
+    return if (f.isFile) MrtSigning(profile, f, storePass, alias, keyPass) else null
+}
+val releaseSigningProfile: String = (providers.gradleProperty("mrt.releaseSigning").orNull
+    ?: System.getenv("MRT_RELEASE_SIGNING") ?: "upload").trim().uppercase()
+require(releaseSigningProfile in setOf("UPLOAD", "APP")) { "mrt.releaseSigning must be 'upload' or 'app'" }
+val releaseSigning: MrtSigning? = signingProfile(releaseSigningProfile)
+if (releaseSigningProfile == "APP" && releaseSigning == null) {
+    throw GradleException(
+        "mrt.releaseSigning=app but the APP signing values are missing or the keystore file does not exist. " +
+            "Set MRT_APP_KEYSTORE / MRT_APP_KEYSTORE_PASSWORD / MRT_APP_KEY_ALIAS / MRT_APP_KEY_PASSWORD " +
+            "(or mrt.app.* in ~/.gradle/gradle.properties). See docs/SIDELOAD.md.",
+    )
+}
 
 android {
     namespace = "com.movieroulettetuesday.app"
@@ -64,12 +99,12 @@ android {
     }
 
     signingConfigs {
-        if (hasUploadKey) {
-            create("upload") {
-                storeFile = file(uploadKeystore!!)
-                storePassword = uploadKeystorePassword
-                keyAlias = uploadKeyAlias
-                keyPassword = uploadKeyPassword
+        releaseSigning?.let { cfg ->
+            create("mrtRelease") {
+                storeFile = cfg.storeFile
+                storePassword = cfg.storePass
+                keyAlias = cfg.alias
+                keyPassword = cfg.keyPass
             }
         }
     }
@@ -79,10 +114,11 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            if (hasUploadKey) {
-                signingConfig = signingConfigs.getByName("upload")
+            if (releaseSigning != null) {
+                signingConfig = signingConfigs.getByName("mrtRelease")
+                logger.lifecycle("MRT: release build signed with the ${releaseSigning.profile} key profile.")
             } else {
-                logger.lifecycle("MRT: upload key env vars not set; release build will be unsigned.")
+                logger.lifecycle("MRT: ${releaseSigningProfile} signing values not set; release build will be unsigned.")
             }
         }
     }
