@@ -34,7 +34,7 @@ scripts/build-sideload-apk.sh --expect-cert <app-signing-cert-sha256>
 
 It runs `:app:assembleRelease` with the `APP` profile, checks the signature with `apksigner`
 (min SDK 26), refuses a certificate other than the expected one, and writes
-`app/build/sideload/mrt-android-<versionName>.apk` plus a `.sha256` file. It prints the
+`app/build/sideload/mrt-android-<versionName>-<versionCode>.apk` plus a `.sha256` file. It prints the
 version, commit, size, APK SHA-256 and signing-certificate SHA-256 (all public values).
 
 ## Updating over a debug build

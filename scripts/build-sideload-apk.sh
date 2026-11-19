@@ -51,7 +51,7 @@ commit="$(git rev-parse --short=8 HEAD)"
 
 out_dir="app/build/sideload"
 mkdir -p "$out_dir"
-name="mrt-android-${version_name}.apk"
+name="mrt-android-${version_name}-${version_code}.apk"
 cp "$apk" "$out_dir/$name"
 ( cd "$out_dir" && sha256sum "$name" > "$name.sha256" )
 sha="$(cut -d' ' -f1 "$out_dir/$name.sha256")"
