@@ -4,6 +4,9 @@ All notable changes to Movie Roulette Tuesday for Android.
 
 ## 1.1 (versionCode 3)
 
+Released Nov 19, 2026 as a sideload APK on [GitHub Releases](https://github.com/movieroulettetuesday/mrt-android/releases/tag/v1.1-android) ([install guide](https://movieroulettetuesday.github.io/movie-roulette-tuesday/android.html)) until Google Play.
+
+
 - Search Movies and Episodes by title, year, episode number (like S4E39, 4x39 or "season 4 episode 39"), genre, or streaming service.
 - On supported devices with Gemini Nano, type a question such as "free 80s horror I haven't watched" and it becomes filters you can remove. A question about the other list takes you there. Regular search still works when Gemini Nano isn't available.
 - On supported devices with Gemini Nano, Pick for Me on the Roulette tab chooses an unwatched movie, favoring your watchlist and your services, and gives a short reason from fixed lines plus facts the app already knows. The button is hidden when Gemini Nano isn't available and says it isn't ready yet while the model downloads.
