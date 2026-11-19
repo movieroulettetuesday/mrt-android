@@ -6,8 +6,19 @@ Native Android port of the Movie Roulette Tuesday iOS app
 
 - Package / applicationId: `com.movieroulettetuesday.app` (same as the iOS bundle id)
 - minSdk 26, targetSdk/compileSdk 36
-- Versioning: `versionName` is semantic (`MAJOR.MINOR.PATCH`); `versionCode` is an integer that goes up by 1 for every Play upload and is never reused.
+- Current version: **1.1** (`versionCode` 3). `versionName` is semantic (`MAJOR.MINOR.PATCH`); `versionCode` is an integer that goes up by 1 for every Play upload and is never reused.
 - Feature parity checklist: [PARITY.md](PARITY.md) · backend options: [docs/backend-options.md](docs/backend-options.md) · dev notes: [docs/NOTES.md](docs/NOTES.md)
+
+## Features
+
+- Search Movies and Episodes by title, year, episode number (S4E39, 4x39, "season 4 episode 39"), genre, or streaming service.
+- On supported devices with Gemini Nano (on-device), a question becomes filters you can remove. A question about the other list switches lists. Regular search still works when Nano isn't available.
+- On supported devices with Gemini Nano, Pick for Me on the Roulette tab chooses an unwatched movie, favoring your watchlist and your services, and gives a short reason from fixed lines plus facts the app already knows. The button is hidden when Nano is unavailable, and it shows that it isn't ready yet while the model downloads.
+- The home-screen widget Spin of the Day.
+- Four app shortcuts: Spin, Latest episode, Watchlist, and Pick for Me.
+- House Rules explains the wheel, Pick for Me, Search, your lists, shortcuts, and the widget.
+- Spin and Stop are easier to tap on a smaller wheel, and the result sheet scrolls only when the content doesn't fit.
+- The bundled catalog has 184 movies.
 
 ## Build
 

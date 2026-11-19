@@ -46,7 +46,7 @@ has been moved to compileSdk 37. The flag-off APK has no `androidx.appfunctions`
 | `markWatched`   | `mrt://watched/{id}`                   | `Watched`; does not invent a rating           |
 | `whereToWatch`  | `mrt://wtw/{id}`                       | Speak providers; open the movie’s WTW section |
 | `openOnProvider`| `mrt://movie/{id}/provider/{name}`     | `ProviderLaunch.open`                         |
-| `whatShouldIWatch` | `mrt://suggest`                     | On-device suggestion, or offer Spin           |
+| `whatShouldIWatch` | `mrt://suggest`                     | Pick for Me (on-device); offers Spin if Nano is unavailable |
 
 Test with `adb shell cmd app_function` once a flag-on build is installed on Android 16+.
 
