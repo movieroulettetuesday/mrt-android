@@ -34,7 +34,9 @@ if [ ! -f "$apk" ]; then
 fi
 
 "$apksigner" verify --min-sdk-version 26 "$apk" >/dev/null
-cert="$("$apksigner" verify --print-certs "$apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -1)"
+# First signer's cert digest. Handles both "Signer #1 certificate ..." and "V2 Signer: certificate ..." output.
+# awk reads all input (no early exit), so pipefail never sees a SIGPIPE from the producer.
+cert="$("$apksigner" verify --print-certs "$apk" | awk '/certificate SHA-256 digest: / && !c {print $NF; c=1}')"
 if [ -z "$cert" ]; then
   echo "build-sideload-apk: could not read the signing certificate." >&2
   exit 1
@@ -44,7 +46,7 @@ if [ -n "$expect_cert" ] && [ "$cert" != "$expect_cert" ]; then
   exit 1
 fi
 
-badging="$("$aapt2" dump badging "$apk" | head -1)"
+badging="$("$aapt2" dump badging "$apk" | awk '/^package:/ && !c {print; c=1}')"
 version_name="$(echo "$badging" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")"
 version_code="$(echo "$badging" | sed -n "s/.*versionCode='\([^']*\)'.*/\1/p")"
 commit="$(git rev-parse --short=8 HEAD)"
