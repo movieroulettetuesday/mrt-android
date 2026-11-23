@@ -1,6 +1,6 @@
 # Sideload APK builds (GitHub Releases)
 
-Until Google Play is live, MRT Android can be shared as a signed APK on GitHub Releases.
+MRT Android is distributed as a signed APK on GitHub Releases, with an install guide on the website.
 This repo is **public**: no keystore, password, or `keystore.properties` is ever committed.
 `.gitignore` and `scripts/scan-secrets.sh` (pre-push hook) both block them.
 
