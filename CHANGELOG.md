@@ -4,7 +4,7 @@ All notable changes to Movie Roulette Tuesday for Android.
 
 ## 1.1 (versionCode 3)
 
-Released Nov 19, 2026 as a sideload APK on [GitHub Releases](https://github.com/movieroulettetuesday/mrt-android/releases/tag/v1.1-android) ([install guide](https://movieroulettetuesday.github.io/movie-roulette-tuesday/android.html)) until Google Play.
+Released Nov 19, 2026 as a signed APK on [GitHub Releases](https://github.com/movieroulettetuesday/mrt-android/releases/tag/v1.1-android) ([install guide](https://movieroulettetuesday.github.io/movie-roulette-tuesday/android.html)).
 
 
 - Search Movies and Episodes by title, year, episode number (like S4E39, 4x39 or "season 4 episode 39"), genre, or streaming service.

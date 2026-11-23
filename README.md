@@ -7,7 +7,7 @@ Native Android port of the Movie Roulette Tuesday iOS app
 - Package / applicationId: `com.movieroulettetuesday.app` (same as the iOS bundle id)
 - minSdk 26, targetSdk/compileSdk 36
 - Current version: **1.1** (`versionCode` 3). `versionName` is semantic (`MAJOR.MINOR.PATCH`); `versionCode` is an integer that goes up by 1 for every Play upload and is never reused.
-- **Download:** [Movie Roulette Tuesday 1.1 for Android](https://github.com/movieroulettetuesday/mrt-android/releases/tag/v1.1-android) (`mrt-android-1.1-3.apk`, Android 8.0+) · [install guide](https://movieroulettetuesday.github.io/movie-roulette-tuesday/android.html). A sideloaded APK until the app is on Google Play. Signing certificate SHA-256: `6b5d157e8b04b923e9b83840b742104675acbc691eeaaa8718020dbb2f4dac0c`.
+- **Download:** [Movie Roulette Tuesday 1.1 for Android](https://github.com/movieroulettetuesday/mrt-android/releases/tag/v1.1-android) (`mrt-android-1.1-3.apk`, Android 8.0+) · [install guide](https://movieroulettetuesday.github.io/movie-roulette-tuesday/android.html). Distributed as a signed APK on GitHub Releases plus the install guide. Signing certificate SHA-256: `6b5d157e8b04b923e9b83840b742104675acbc691eeaaa8718020dbb2f4dac0c`.
 - Feature parity checklist: [PARITY.md](PARITY.md) · backend options: [docs/backend-options.md](docs/backend-options.md) · dev notes: [docs/NOTES.md](docs/NOTES.md)
 
 ## Features
