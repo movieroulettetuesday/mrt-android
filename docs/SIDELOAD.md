@@ -4,18 +4,20 @@ MRT Android is distributed as a signed APK on GitHub Releases, with an install g
 This repo is **public**: no keystore, password, or `keystore.properties` is ever committed.
 `.gitignore` and `scripts/scan-secrets.sh` (pre-push hook) both block them.
 
-## One key for sideload and Play
+## Signing keys
 
-Sideload APKs are signed with the **app signing key**: the same key that is later registered
-under Play App Signing ("Use my own key", exported with PEPK). Because Android only lets an app
-update in place when the new APK has the same package name **and** the same signing certificate,
-people who sideloaded can later update to the Play version without uninstalling (which would erase
-their ratings, watchlist and spin history). Play uploads use a separate **upload key**.
+Release APKs are signed with the **app signing key** (alias `mrt-app`), kept only on the signing
+machine. Android only lets an app update in place when the new APK has the same package name **and**
+the same signing certificate, so every release must be signed with this key: a different key would
+force people to uninstall, which erases their ratings, watchlist and spin history.
+
+The default `UPLOAD` profile is a leftover from the dropped Google Play plan; its key is an unused
+spare and is not needed to build releases.
 
 | Profile | Used for | Values |
 |---|---|---|
-| `UPLOAD` (default) | `bundleRelease` uploaded to Play | `MRT_UPLOAD_KEYSTORE`, `MRT_UPLOAD_KEYSTORE_PASSWORD`, `MRT_UPLOAD_KEY_ALIAS`, `MRT_UPLOAD_KEY_PASSWORD` |
-| `APP` | sideload APKs | `MRT_APP_KEYSTORE`, `MRT_APP_KEYSTORE_PASSWORD`, `MRT_APP_KEY_ALIAS`, `MRT_APP_KEY_PASSWORD` |
+| `UPLOAD` (default) | unused spare; unsigned build when values are missing | `MRT_UPLOAD_KEYSTORE`, `MRT_UPLOAD_KEYSTORE_PASSWORD`, `MRT_UPLOAD_KEY_ALIAS`, `MRT_UPLOAD_KEY_PASSWORD` |
+| `APP` | release APKs on GitHub Releases | `MRT_APP_KEYSTORE`, `MRT_APP_KEYSTORE_PASSWORD`, `MRT_APP_KEY_ALIAS`, `MRT_APP_KEY_PASSWORD` |
 
 Each value is read from the environment variable first, then the Gradle property
 `mrt.<profile>.keystore` / `.keystorePassword` / `.keyAlias` / `.keyPassword` (for example in
