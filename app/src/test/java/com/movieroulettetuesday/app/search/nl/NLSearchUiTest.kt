@@ -89,7 +89,7 @@ class NLSearchUiTest {
         compose.onNodeWithTag("nl-chip-Genre").assertIsDisplayed().assertTextContains("Horror")
         compose.onNodeWithTag("nl-chip-Free").assertIsDisplayed()
         assertEquals(listOf("free horror"), model.questions)
-        footer("27 of $total movies")
+        footer("28 of $total movies")
 
         // Removing a chip re-runs apply without asking the model again.
         compose.onNodeWithTag("movies-list").performScrollToNode(hasTestTag("nl-chips"))

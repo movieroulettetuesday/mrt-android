@@ -1,7 +1,7 @@
 {
   "_generated" : {
     "by" : "tools/vector-gen (runs iOS RouletteCore unchanged)",
-    "iosCommit" : "a0433b7",
+    "iosCommit" : "f3a6a04",
     "note" : "Do not edit by hand. Non-finite numbers are encoded as the strings \"NaN\", \"Infinity\", \"-Infinity\". Compare floats with abs tolerance 1e-9 unless a case says otherwise. Dates are ISO-8601 UTC."
   },
   "appSpinSequence" : {
@@ -79,7 +79,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "passengers-2016",
+            "movieId" : "one-false-move-1991",
             "outcome" : "normal",
             "rotation" : 23475.049016382029,
             "wasForcedRespin" : false
@@ -111,7 +111,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "the-ugly-stepsister-2025",
+            "movieId" : "passengers-2016",
             "outcome" : "normal",
             "rotation" : 33920.117317250129,
             "wasForcedRespin" : false
@@ -127,7 +127,7 @@
           {
             "categoryId" : "cat-scifi",
             "landed" : "cat-scifi",
-            "movieId" : "strawberry-mansion-2021",
+            "movieId" : "project-hail-mary-2026",
             "outcome" : "normal",
             "rotation" : 38703,
             "wasForcedRespin" : false
@@ -135,7 +135,7 @@
           {
             "categoryId" : "cat-scifi",
             "landed" : "cat-scifi",
-            "movieId" : "lord-of-illusions-1995",
+            "movieId" : "the-thing-1982",
             "outcome" : "normal",
             "rotation" : 41241.722582498543,
             "wasForcedRespin" : false
@@ -143,7 +143,7 @@
           {
             "categoryId" : "cat-action",
             "landed" : "cat-action",
-            "movieId" : "judge-dredd-1995",
+            "movieId" : "shaft-1971",
             "outcome" : "normal",
             "rotation" : 43713.784461980198,
             "wasForcedRespin" : false
@@ -175,7 +175,7 @@
           {
             "categoryId" : "cat-criterion",
             "landed" : "cat-criterion",
-            "movieId" : "the-great-escape-1963",
+            "movieId" : "dog-day-afternoon-1975",
             "outcome" : "normal",
             "rotation" : 53561.061577545857,
             "wasForcedRespin" : false
@@ -231,7 +231,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "passengers-2016",
+            "movieId" : "one-false-move-1991",
             "outcome" : "normal",
             "rotation" : 1158.5465383400351,
             "wasForcedRespin" : false
@@ -255,7 +255,7 @@
           {
             "categoryId" : "cat-listener",
             "landed" : "cat-listener",
-            "movieId" : "passengers-2016",
+            "movieId" : "one-false-move-1991",
             "outcome" : "normal",
             "rotation" : 3315,
             "wasForcedRespin" : false
@@ -271,7 +271,7 @@
           {
             "categoryId" : "cat-action",
             "landed" : "cat-action",
-            "movieId" : "red-dawn-1984",
+            "movieId" : "final-destination-2000",
             "outcome" : "normal",
             "rotation" : 5209.9646878412241,
             "wasForcedRespin" : false
@@ -295,7 +295,7 @@
           {
             "categoryId" : "cat-action",
             "landed" : "cat-action",
-            "movieId" : "the-manchurian-candidate-1962",
+            "movieId" : "the-hitcher-1986",
             "outcome" : "normal",
             "rotation" : 7361.8678248399847,
             "wasForcedRespin" : false
@@ -1377,7 +1377,7 @@
         "categoryId" : "cat-listener",
         "isJackpot" : false,
         "landed" : "cat-listener",
-        "movieId" : "passengers-2016",
+        "movieId" : "one-false-move-1991",
         "seed" : 8,
         "wasForcedRespin" : false
       },
@@ -1965,17 +1965,17 @@
       "note" : "history is fixed (not appended) between picks; one unit double consumed per pick",
       "picks" : [
         "the-thing-1982",
-        "the-thing-1982",
-        "the-ugly-stepsister-2025",
-        "the-ugly-stepsister-2025",
+        "runaway-train-1985",
+        "passengers-2016",
+        "passengers-2016",
         "the-pirates-of-penzance-1983",
-        "the-ugly-stepsister-2025",
+        "passengers-2016",
         "the-thing-1982",
-        "passengers-2016",
-        "passengers-2016",
+        "one-false-move-1991",
+        "one-false-move-1991",
         "strawberry-mansion-2021",
         "strawberry-mansion-2021",
-        "the-ugly-stepsister-2025"
+        "passengers-2016"
       ],
       "seed" : 7
     }
