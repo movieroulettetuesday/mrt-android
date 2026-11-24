@@ -19,7 +19,7 @@ Native Android port of the Movie Roulette Tuesday iOS app
 - Four app shortcuts: Spin, Latest episode, Watchlist, and Pick for Me.
 - House Rules explains the wheel, Pick for Me, Search, your lists, shortcuts, and the widget.
 - Spin and Stop are easier to tap on a smaller wheel, and the result sheet scrolls only when the content doesn't fit.
-- The bundled catalog has 184 movies.
+- The bundled catalog has 185 movies.
 
 ## Build
 

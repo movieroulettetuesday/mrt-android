@@ -151,7 +151,7 @@ class NLSearchApplyTest {
         val f = NLSearchFilter(genre = "Horror", freeOnly = true)
         val before = ids(f)
         val after = ids(f.removing(NLChip.Field.Free))
-        assertEquals(27, before.size)
+        assertEquals(28, before.size)
         assertEquals(44, after.size)
         assertTrue(after.containsAll(before))
     }
@@ -177,7 +177,7 @@ class NLSearchApplyTest {
         val chips = NLSearchFilter(genre = "Horror", freeOnly = true)
         val newest = MovieQuery("free horror", sort = MovieSort.YearNewest, nl = chips).apply(movies, none, stats, noServices, catalog)
         assertEquals(newest.sortedWith(compareByDescending<com.movieroulettetuesday.app.catalog.Movie> { it.year }.thenBy { it.title }), newest)
-        assertEquals(27, newest.size)
+        assertEquals(28, newest.size)
     }
 
     @Test
